@@ -12,7 +12,8 @@ import {
   Bell,
   ShieldCheck,
   HelpCircle,
-  X
+  X,
+  ChevronLeft
 } from "lucide-react";
 
 interface SideNavProps {
@@ -37,17 +38,26 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
     };
   }, [isOpen, onClose]);
 
-  // Close sidebar when route changes (mobile)
+  // Close sidebar when route changes on mobile
   useEffect(() => {
-    onClose();
-  }, [location.pathname, onClose]);
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        onClose();
+      }
+    };
+    
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [onClose]);
 
   const isActive = (path: string) => location.pathname === path;
   
   const navItems = [
-    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+    { name: "Control Room", path: "/dashboard", icon: LayoutDashboard },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
-    { name: "AI Insights", path: "/insights", icon: PieChart },
+    { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
   ];
 
@@ -60,7 +70,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
 
   return (
     <>
-      {/* Overlay - shown only on mobile */}
+      {/* Overlay - mobile only */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
@@ -71,13 +81,13 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
       {/* Sidebar */}
       <div 
         ref={sidebarRef}
-        className={`fixed top-0 left-0 bottom-0 z-50 w-[280px] bg-background border-r border-border transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 bottom-0 z-40 w-[280px] bg-background border-r border-border transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
         <div className="h-full flex flex-col overflow-y-auto">
-          {/* Header (mobile only) */}
-          <div className="md:hidden h-16 flex items-center justify-between px-4 border-b">
+          {/* Header with collapse button */}
+          <div className="h-16 flex items-center justify-between px-4 border-b">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold">
                 VC
@@ -86,9 +96,24 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
                 VortexCore
               </span>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onClose}
+                className="md:flex hidden"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onClose}
+                className="md:hidden"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
           
           {/* User profile */}
@@ -98,6 +123,9 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
             </div>
             <h3 className="font-medium text-foreground">Alex Volkov</h3>
             <p className="text-sm text-muted-foreground">alex@vortexcore.com</p>
+            <div className="mt-2 text-xs px-2 py-1 bg-muted rounded-full">
+              Default Currency: <span className="font-medium">₦ NGN</span>
+            </div>
           </div>
           
           {/* Main navigation */}
@@ -152,6 +180,16 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
           </div>
         </div>
       </div>
+      
+      {/* Toggle button that appears when sidebar is closed (desktop only) */}
+      {!isOpen && (
+        <button
+          onClick={onClose}
+          className="fixed left-4 bottom-4 z-40 h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md flex items-center justify-center md:flex hidden"
+        >
+          <LayoutDashboard className="h-5 w-5" />
+        </button>
+      )}
     </>
   );
 }

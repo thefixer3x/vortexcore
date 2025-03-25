@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X, Bell, Sun, Moon } from "lucide-react";
+import { VortexAISearch } from "@/components/ai/VortexAISearch";
 
 export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
   const [scrolled, setScrolled] = useState(false);
@@ -36,11 +37,11 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
       case "/":
         return "Login";
       case "/dashboard":
-        return "Dashboard";
+        return "Control Room";
       case "/transactions":
         return "Transactions";
       case "/insights":
-        return "AI Insights";
+        return "VortexAI";
       case "/settings":
         return "Settings";
       default:
@@ -79,14 +80,14 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
         </div>
         
         {location.pathname !== "/" && (
-          <div className="md:flex hidden items-center gap-1">
+          <div className="hidden md:flex items-center gap-1">
             <Link to="/dashboard">
               <Button
                 variant={isActive("/dashboard") ? "default" : "ghost"}
                 size="sm"
                 className={`rounded-full px-4 ${isActive("/dashboard") ? "" : "hover:bg-muted"}`}
               >
-                Dashboard
+                Control Room
               </Button>
             </Link>
             <Link to="/transactions">
@@ -104,7 +105,7 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
                 size="sm"
                 className={`rounded-full px-4 ${isActive("/insights") ? "" : "hover:bg-muted"}`}
               >
-                Insights
+                VortexAI
               </Button>
             </Link>
             <Link to="/settings">
@@ -119,7 +120,11 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
           </div>
         )}
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          {location.pathname !== "/" && (
+            <VortexAISearch />
+          )}
+          
           {location.pathname !== "/" && (
             <Button
               variant="ghost"
