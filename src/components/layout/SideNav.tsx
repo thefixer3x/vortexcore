@@ -13,7 +13,8 @@ import {
   ShieldCheck,
   HelpCircle,
   X,
-  ChevronLeft
+  ChevronLeft,
+  Globe
 } from "lucide-react";
 
 interface SideNavProps {
@@ -123,8 +124,9 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
             </div>
             <h3 className="font-medium text-foreground">Alex Volkov</h3>
             <p className="text-sm text-muted-foreground">alex@vortexcore.com</p>
-            <div className="mt-2 text-xs px-2 py-1 bg-muted rounded-full">
-              Default Currency: <span className="font-medium">₦ NGN</span>
+            <div className="mt-2 text-xs px-2 py-1 bg-muted rounded-full flex items-center gap-1">
+              <Globe className="h-3 w-3" />
+              <span>Default Currency: <span className="font-medium">₦ NGN</span></span>
             </div>
           </div>
           

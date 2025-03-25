@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Fingerprint, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Fingerprint, Mail, Lock, Eye, EyeOff, Globe } from "lucide-react";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -111,6 +111,10 @@ export function LoginForm() {
             >
               Remember me
             </label>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Globe className="h-3 w-3 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">₦ NGN</span>
           </div>
         </div>
         
