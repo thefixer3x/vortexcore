@@ -14,6 +14,7 @@ import {
   HelpCircle,
   X,
   ChevronLeft,
+  ChevronRight,
   Globe
 } from "lucide-react";
 
@@ -189,7 +190,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
           onClick={onClose}
           className="fixed left-4 bottom-4 z-40 h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md flex items-center justify-center md:flex hidden"
         >
-          <LayoutDashboard className="h-5 w-5" />
+          <ChevronRight className="h-5 w-5" />
         </button>
       )}
     </>

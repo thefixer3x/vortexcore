@@ -42,12 +42,16 @@ const mockAccounts = [
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+  
   return (
     <div className="min-h-screen bg-background flex">
-      <SideNav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <SideNav isOpen={sidebarOpen} onClose={toggleSidebar} />
       
-      <div className="flex-1">
-        <NavBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "md:ml-[280px]" : ""}`}>
+        <NavBar toggleSidebar={toggleSidebar} />
         
         <main className="pt-16 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
           {/* Header */}
