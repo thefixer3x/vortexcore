@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { Home } from "lucide-react";
+import { Home, Users } from "lucide-react";
 
 // Import section components
 import { PersonalSettings } from "@/components/settings/sections/PersonalSettings";
