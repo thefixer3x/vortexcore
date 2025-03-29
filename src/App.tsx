@@ -12,6 +12,7 @@ import Transactions from "./pages/Transactions";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Ecosystem from "./pages/Ecosystem";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => {
           <div className="min-h-screen flex flex-col">
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/ecosystem" element={<Ecosystem />} />
               <Route 
                 path="/dashboard" 
                 element={

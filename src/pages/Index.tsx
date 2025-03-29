@@ -4,6 +4,7 @@ import { VortexAIChat } from "@/components/ai/VortexAIChat";
 import { SecurityBadges } from "@/components/marketing/SecurityBadges";
 import { PartnerLogos } from "@/components/marketing/PartnerLogos";
 import { ValueAddedServices } from "@/components/marketing/ValueAddedServices";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -16,7 +17,8 @@ const Index = () => {
             </div>
             <span className="font-semibold text-xl tracking-tight">VortexCore</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <Link to="/ecosystem" className="text-sm font-medium hover:underline mr-2">Ecosystem</Link>
             <a href="#" className="text-sm font-medium hover:underline">Features</a>
             <a href="#" className="text-sm font-medium hover:underline">Pricing</a>
             <a href="#" className="text-sm font-medium hover:underline">Support</a>
