@@ -1,19 +1,15 @@
 
 import { Link as RouterLink } from "react-router-dom";
-import { ArrowRight, ArrowDown, ChevronRight, ShieldCheck, Brain, BarChart4, FileCheck, ExternalLink } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { HeroSection } from "@/components/marketing/ecosystem/HeroSection";
 import { EcosystemModules } from "@/components/marketing/ecosystem/EcosystemModules";
-import { HowItWorks } from "@/components/marketing/ecosystem/HowItWorks";
-import { UseCases } from "@/components/marketing/ecosystem/UseCases";
 import { PartnerCTA } from "@/components/marketing/ecosystem/PartnerCTA";
 import { Footer } from "@/components/marketing/Footer";
 
 const Ecosystem = () => {
   // Update document title for SEO
-  document.title = "VortexCore | Intelligent Financial Infrastructure Platform";
+  document.title = "VortexCore | Ecosystem Coming Soon";
   
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -31,14 +27,11 @@ const Ecosystem = () => {
             <RouterLink to="/ecosystem" className="text-sm font-medium hover:text-primary transition-colors">
               Ecosystem
             </RouterLink>
-            <RouterLink to="#use-cases" className="text-sm font-medium hover:text-primary transition-colors">
-              Use Cases
-            </RouterLink>
-            <RouterLink to="#how-it-works" className="text-sm font-medium hover:text-primary transition-colors">
-              How It Works
+            <RouterLink to="#ecosystem" className="text-sm font-medium hover:text-primary transition-colors">
+              Features
             </RouterLink>
             <RouterLink to="#partner" className="text-sm font-medium hover:text-primary transition-colors">
-              Partner With Us
+              Early Access
             </RouterLink>
           </div>
           
@@ -57,16 +50,10 @@ const Ecosystem = () => {
         {/* Hero Section */}
         <HeroSection />
         
-        {/* Ecosystem Modules */}
+        {/* Ecosystem Modules - Show a simplified version */}
         <EcosystemModules />
         
-        {/* How It Works */}
-        <HowItWorks />
-        
-        {/* Use Cases */}
-        <UseCases />
-        
-        {/* Partner CTA */}
+        {/* Partner CTA - This has been updated to include a "coming soon" message */}
         <PartnerCTA />
       </main>
       

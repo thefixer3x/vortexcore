@@ -15,27 +15,27 @@ export const HeroSection = () => {
       <div className="container mx-auto max-w-4xl animate-fade-in">
         <div className="mb-3">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-            Financial Infrastructure for the Future
+            Coming Soon
           </span>
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-foreground">
-          Empowering Financial Innovation Across Borders
+          The Future of Financial Infrastructure
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-          Explore the intelligent ecosystem powering real-time compliance, risk intelligence, and fintech infrastructure.
+          We're building an intelligent ecosystem to power real-time compliance, risk intelligence, and fintech solutions. Stay tuned for our full launch.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="rounded-full flex items-center gap-2" onClick={scrollToEcosystem}>
-            Explore the Ecosystem
+            Explore Preview
             <ArrowRight className="h-4 w-4" />
           </Button>
           <Button variant="outline" size="lg" className="rounded-full">
-            Watch Demo
+            Join Waitlist
           </Button>
         </div>
         
         <div className="mt-20 opacity-80">
-          <p className="text-sm text-muted-foreground mb-3">Trusted by forward-thinking companies</p>
+          <p className="text-sm text-muted-foreground mb-3">Backed by industry leaders</p>
           <div className="flex flex-wrap justify-center gap-8">
             {['Partner 1', 'Partner 2', 'Partner 3', 'Partner 4', 'Partner 5'].map((partner, index) => (
               <div key={index} className="h-10 flex items-center justify-center">

@@ -1,17 +1,23 @@
 
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const PartnerCTA = () => {
   return (
     <section id="partner" className="py-24 px-4 bg-muted/30">
       <div className="container mx-auto max-w-4xl text-center">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
-          Partner With Us to Build the Future
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto mb-10">
-          Join forces with our team to create innovative financial solutions that transform the way people and businesses manage money.
-        </p>
+        <div className="mb-12">
+          <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
+            Coming Soon
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
+            Full Ecosystem Launch in Progress
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+            We're working on expanding our ecosystem to provide even more powerful financial solutions. 
+            Be the first to know when we launch new features and capabilities.
+          </p>
+        </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="rounded-full">
@@ -27,13 +33,14 @@ export const PartnerCTA = () => {
         </div>
         
         <div className="mt-16 p-8 rounded-xl bg-card border border-muted">
-          <h3 className="text-xl font-medium mb-4">Ready to get started?</h3>
+          <h3 className="text-xl font-medium mb-4">Join the waitlist</h3>
           <p className="text-muted-foreground mb-6">
-            Experience the power of VortexCore with a personalized demo tailored to your business needs.
+            Get early access to our full ecosystem of financial products and services.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto">
-              Schedule a Meeting
+            <Button className="w-full sm:w-auto flex items-center gap-2">
+              Get Early Access
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

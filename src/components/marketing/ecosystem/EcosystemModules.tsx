@@ -43,15 +43,20 @@ export const EcosystemModules = () => {
     <section id="ecosystem" className="py-20 px-4">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Meet the Ecosystem</h2>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Preview Our Ecosystem</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our modular platform adapts to your unique needs, whether you're a startup or an enterprise.
+            A sneak peek at our upcoming modular platform designed to adapt to your unique needs.
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {modules.map((module, index) => (
-            <Card key={index} className={`border overflow-hidden bg-gradient-to-br ${module.color} hover:shadow-md transition-all duration-300 animate-fade-in`} style={{animationDelay: `${index * 150}ms`}}>
+            <Card key={index} className={`border overflow-hidden bg-gradient-to-br ${module.color} hover:shadow-md transition-all duration-300 animate-fade-in relative`} style={{animationDelay: `${index * 150}ms`}}>
+              <div className="absolute top-3 right-3">
+                <span className="inline-block px-2 py-0.5 bg-primary/20 text-primary rounded-full text-xs font-medium">
+                  Coming Soon
+                </span>
+              </div>
               <CardHeader className="pb-2">
                 <div className={`inline-flex items-center justify-center p-2 rounded-lg ${module.iconColor} bg-white/50 dark:bg-black/10 mb-2`}>
                   <module.icon className="h-6 w-6" />
@@ -66,7 +71,7 @@ export const EcosystemModules = () => {
               </CardContent>
               <CardFooter>
                 <Button variant="ghost" size="sm" className="group text-sm px-0">
-                  Learn more 
+                  Join waitlist 
                   <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardFooter>
