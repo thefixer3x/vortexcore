@@ -15,7 +15,7 @@ export function useAuthProviders() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: window.location.origin + '/auth/callback',
+          redirectTo: "https://auth.vortexcore.app/auth/callback",
         }
       });
       
@@ -84,7 +84,7 @@ export function useAuthProviders() {
   return {
     loading,
     signInWithGoogle: () => signInWithProvider('google'),
-    signInWithInstagram: () => signInWithProvider('instagram'),
+    signInWithInstagram: () => signInWithProvider('instagram' as Provider),
     signInWithTwitter: () => signInWithProvider('twitter'),
     signInWithLinkedIn: () => signInWithProvider('linkedin_oidc'),
     setupTwoFactorAuth,

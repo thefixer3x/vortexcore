@@ -3,3 +3,7 @@ project_id = "muyhurqfcsjqtnbozyir"
 
 [functions.auth]
 verify_jwt = true
+
+[[domains]]
+name = "auth.vortexcore.app"
+custom_domain = true

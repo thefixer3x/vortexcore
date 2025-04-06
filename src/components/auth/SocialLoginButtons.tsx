@@ -2,11 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { useAuthProviders } from "@/hooks/use-auth-providers";
 import { 
-  LogoGithub, 
-  LogoGoogle, 
-  LogoInstagram, 
-  LogoLinkedin, 
-  LogoTwitter 
+  Github, 
+  Twitter, 
+  Instagram, 
+  Linkedin, 
+  Mail 
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -59,7 +59,7 @@ export function SocialLoginButtons() {
         {isLoading === 'google' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <LogoGoogle className="h-4 w-4" />
+          <Mail className="h-4 w-4" />
         )}
         <span>Google</span>
       </Button>
@@ -74,7 +74,7 @@ export function SocialLoginButtons() {
         {isLoading === 'twitter' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <LogoTwitter className="h-4 w-4" />
+          <Twitter className="h-4 w-4" />
         )}
         <span>X (Twitter)</span>
       </Button>
@@ -89,7 +89,7 @@ export function SocialLoginButtons() {
         {isLoading === 'linkedin' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <LogoLinkedin className="h-4 w-4" />
+          <Linkedin className="h-4 w-4" />
         )}
         <span>LinkedIn</span>
       </Button>
@@ -104,7 +104,7 @@ export function SocialLoginButtons() {
         {isLoading === 'instagram' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <LogoInstagram className="h-4 w-4" />
+          <Instagram className="h-4 w-4" />
         )}
         <span>Instagram</span>
       </Button>
