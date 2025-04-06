@@ -45,39 +45,48 @@ export type Database = {
       api_logs: {
         Row: {
           created_at: string
+          domain: string | null
           endpoint: string
           id: string
           ip_address: string | null
+          monitoring_status: string | null
           request_data: Json | null
           request_method: string
           response_data: Json | null
           response_status: number | null
+          response_time: number | null
           service: string
           user_agent: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
+          domain?: string | null
           endpoint: string
           id?: string
           ip_address?: string | null
+          monitoring_status?: string | null
           request_data?: Json | null
           request_method: string
           response_data?: Json | null
           response_status?: number | null
+          response_time?: number | null
           service: string
           user_agent?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
+          domain?: string | null
           endpoint?: string
           id?: string
           ip_address?: string | null
+          monitoring_status?: string | null
           request_data?: Json | null
           request_method?: string
           response_data?: Json | null
           response_status?: number | null
+          response_time?: number | null
           service?: string
           user_agent?: string | null
           user_id?: string | null
