@@ -1,1 +1,5 @@
+
 project_id = "muyhurqfcsjqtnbozyir"
+
+[functions.auth]
+verify_jwt = true

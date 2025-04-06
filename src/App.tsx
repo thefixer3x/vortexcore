@@ -13,6 +13,7 @@ import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
+import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/ecosystem" element={<Ecosystem />} />
+              <Route path="/auth/callback" element={<AuthCallbackHandler />} />
               <Route 
                 path="/dashboard" 
                 element={

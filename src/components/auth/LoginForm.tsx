@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Fingerprint, Mail, Lock, Eye, EyeOff, Globe } from "lucide-react";
+import { Fingerprint, Mail, Lock, Eye, EyeOff, Globe, ShieldCheck } from "lucide-react";
+import { SocialLoginButtons } from "./SocialLoginButtons";
+import { TwoFactorAuthForm } from "./TwoFactorAuthForm";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -13,20 +17,78 @@ export function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
   const navigate = useNavigate();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        toast({
+          title: "Authentication Error",
+          description: error.message,
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      if (data.user && data.session) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome back to VortexCore!"
+        });
+        navigate("/dashboard");
+      } else {
+        // Check if 2FA is required
+        setShowTwoFactor(true);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Authentication Error",
+        description: "An unexpected error occurred during login",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  
+  const handleBiometricLogin = async () => {
+    // For demonstration, we'll just simulate a successful login
+    // In a real implementation, this would integrate with the Capacitor biometric plugin
     setIsLoading(true);
     
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
+      toast({
+        title: "Biometric Authentication",
+        description: "Successfully authenticated with biometrics"
+      });
       navigate("/dashboard");
     }, 1500);
   };
   
-  const toggleShowPassword = () => setShowPassword(!showPassword);
+  if (showTwoFactor) {
+    return (
+      <TwoFactorAuthForm 
+        email={email}
+        onVerified={() => navigate("/dashboard")}
+        onCancel={() => setShowTwoFactor(false)}
+      />
+    );
+  }
 
   return (
     <div className="w-full max-w-md space-y-8 animate-fade-in">
@@ -118,18 +180,30 @@ export function LoginForm() {
           </div>
         </div>
         
-        <Button
-          type="submit"
-          className="w-full relative overflow-hidden"
-          disabled={isLoading}
-        >
-          {isLoading ? "Signing in..." : "Sign in"}
-          {isLoading && (
-            <span className="absolute inset-0 flex items-center justify-center">
-              <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
-            </span>
-          )}
-        </Button>
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            type="submit"
+            className="w-full relative overflow-hidden"
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading && (
+              <span className="absolute inset-0 flex items-center justify-center">
+                <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
+              </span>
+            )}
+          </Button>
+          
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowTwoFactor(true)}
+            className="flex-none"
+            title="Enable 2FA"
+          >
+            <ShieldCheck className="h-4 w-4" />
+          </Button>
+        </div>
       </form>
       
       <div className="relative">
@@ -141,13 +215,21 @@ export function LoginForm() {
         </div>
       </div>
       
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-4">
+        <SocialLoginButtons />
+        
         <Button 
           variant="outline" 
           type="button"
           className="flex items-center justify-center gap-2"
+          onClick={handleBiometricLogin}
+          disabled={isLoading}
         >
-          <Fingerprint className="h-4 w-4" />
+          {isLoading ? (
+            <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
+          ) : (
+            <Fingerprint className="h-4 w-4" />
+          )}
           <span>Continue with Biometrics</span>
         </Button>
         
