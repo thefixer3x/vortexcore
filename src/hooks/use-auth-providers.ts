@@ -84,7 +84,8 @@ export function useAuthProviders() {
   return {
     loading,
     signInWithGoogle: () => signInWithProvider('google'),
-    signInWithInstagram: () => signInWithProvider('instagram' as Provider),
+    // Use a function to cast instagram to Provider type since it's not directly in the Provider type
+    signInWithInstagram: () => signInWithProvider('instagram' as unknown as Provider),
     signInWithTwitter: () => signInWithProvider('twitter'),
     signInWithLinkedIn: () => signInWithProvider('linkedin_oidc'),
     setupTwoFactorAuth,

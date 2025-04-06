@@ -16,7 +16,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     detectSessionInUrl: true,
     storage: localStorage,
-    // Use custom domain for auth callbacks
-    site: 'https://auth.vortexcore.app'
+    // Custom redirect URL for auth callbacks
+    redirectTo: 'https://auth.vortexcore.app/auth/callback'
   }
 });
