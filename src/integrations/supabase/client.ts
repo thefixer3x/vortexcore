@@ -15,11 +15,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storage: localStorage,
-    // Correctly configured redirect options
-    redirect: {
-      login: 'https://auth.vortexcore.app/auth/callback',
-      callback: 'https://auth.vortexcore.app/auth/callback'
-    }
+    storage: localStorage
   }
 });
