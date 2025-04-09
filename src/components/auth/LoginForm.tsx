@@ -39,7 +39,9 @@ export function LoginForm() {
         email,
         password,
         options: {
-          data: metadata
+          // Remove the data property and use metadata directly
+          captchaToken: undefined,
+          metadata // This is the correct way to pass metadata
         }
       });
       
