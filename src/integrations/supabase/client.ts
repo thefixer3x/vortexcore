@@ -16,7 +16,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     detectSessionInUrl: true,
     storage: localStorage,
-    // Custom redirect URL is now correctly configured in the options.redirect object
+    // Correctly configured redirect options
     redirect: {
       login: 'https://auth.vortexcore.app/auth/callback',
       callback: 'https://auth.vortexcore.app/auth/callback'

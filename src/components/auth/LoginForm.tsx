@@ -2,18 +2,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Fingerprint, Mail, Lock, Eye, EyeOff, Globe, ShieldCheck } from "lucide-react";
+import { Globe, ShieldCheck } from "lucide-react";
 import { SocialLoginButtons } from "./SocialLoginButtons";
-import { TwoFactorAuthForm } from "./TwoFactorAuthForm";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useLocation } from "@/hooks/use-location";
 import { LoginFormHeader } from "./LoginFormHeader";
 import { EmailPasswordFields } from "./EmailPasswordFields";
 import { LoginFormFooter } from "./LoginFormFooter";
+import { TwoFactorVerification } from "./TwoFactorVerification";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -30,7 +28,7 @@ export function LoginForm() {
     
     try {
       // If we have location data, include it in metadata
-      const metadata = location.country ? {
+      const locationData = location.country ? {
         login_country: location.country,
         login_city: location.city
       } : undefined;
@@ -39,9 +37,7 @@ export function LoginForm() {
         email,
         password,
         options: {
-          // Remove the data property and use metadata directly
-          captchaToken: undefined,
-          metadata // This is the correct way to pass metadata
+          captchaToken: undefined
         }
       });
       
@@ -77,26 +73,10 @@ export function LoginForm() {
     }
   };
   
-  const handleBiometricLogin = async () => {
-    // For demonstration, we'll just simulate a successful login
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Biometric Authentication",
-        description: "Successfully authenticated with biometrics"
-      });
-      navigate("/dashboard");
-    }, 1500);
-  };
-  
   if (showTwoFactor) {
     return (
-      <TwoFactorAuthForm 
+      <TwoFactorVerification 
         email={email}
-        onVerified={() => navigate("/dashboard")}
         onCancel={() => setShowTwoFactor(false)}
       />
     );
@@ -174,10 +154,7 @@ export function LoginForm() {
         </div>
       </div>
       
-      <LoginFormFooter 
-        isLoading={isLoading}
-        onBiometricLogin={handleBiometricLogin}
-      />
+      <LoginFormFooter isLoading={isLoading} />
     </div>
   );
 }
