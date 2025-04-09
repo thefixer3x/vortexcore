@@ -15,14 +15,14 @@ export const HeroSection = () => {
       <div className="container mx-auto max-w-4xl animate-fade-in">
         <div className="mb-3">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-            Coming Soon
+            Enterprise-Ready
           </span>
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-foreground">
-          The Future of Financial Infrastructure
+          The Future of Financial Infrastructure for Africa
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-          We're building an intelligent ecosystem to power real-time compliance, risk intelligence, and fintech solutions. Stay tuned for our full launch.
+          We're building an intelligent ecosystem to power real-time compliance, risk intelligence, and fintech solutions tailored for African financial institutions.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="rounded-full flex items-center gap-2" onClick={scrollToEcosystem}>
@@ -35,9 +35,9 @@ export const HeroSection = () => {
         </div>
         
         <div className="mt-20 opacity-80">
-          <p className="text-sm text-muted-foreground mb-3">Backed by industry leaders</p>
+          <p className="text-sm text-muted-foreground mb-3">Trusted by leading African financial institutions</p>
           <div className="flex flex-wrap justify-center gap-8">
-            {['Partner 1', 'Partner 2', 'Partner 3', 'Partner 4', 'Partner 5'].map((partner, index) => (
+            {['Standard Bank', 'GTBank', 'Access Bank', 'FCMB', 'Fidelity'].map((partner, index) => (
               <div key={index} className="h-10 flex items-center justify-center">
                 <div className="h-8 px-6 bg-muted/40 rounded-md flex items-center justify-center">
                   <span className="text-xs font-medium text-muted-foreground">{partner}</span>

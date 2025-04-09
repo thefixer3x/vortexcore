@@ -86,6 +86,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
         className={`fixed top-0 left-0 bottom-0 z-40 w-[280px] bg-background border-r border-border transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
+        aria-label="Sidebar navigation"
       >
         <div className="h-full flex flex-col overflow-y-auto">
           {/* Header with collapse button */}
@@ -104,6 +105,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
                 size="icon" 
                 onClick={onClose}
                 className="md:flex hidden"
+                aria-label="Collapse sidebar"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -112,6 +114,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
                 size="icon" 
                 onClick={onClose}
                 className="md:hidden"
+                aria-label="Close sidebar"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -189,6 +192,8 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
         <button
           onClick={onClose}
           className="fixed left-4 bottom-4 z-40 h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md flex items-center justify-center md:flex hidden"
+          aria-label="Expand sidebar"
+          title="Expand sidebar"
         >
           <ChevronRight className="h-5 w-5" />
         </button>

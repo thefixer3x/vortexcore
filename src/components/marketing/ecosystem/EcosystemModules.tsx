@@ -10,7 +10,8 @@ const modules = [
     description: "Compliance as a Service",
     content: "Streamline regulatory requirements with automated KYC/AML processes, transaction monitoring, and real-time compliance checks.",
     color: "from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20",
-    iconColor: "text-blue-600 dark:text-blue-400"
+    iconColor: "text-blue-600 dark:text-blue-400",
+    price: "₦55,000"
   },
   {
     icon: BarChart4,
@@ -18,7 +19,8 @@ const modules = [
     description: "Real-time risk scoring and RegTech AI",
     content: "Analyze patterns, detect fraud, and make data-driven decisions with our advanced risk scoring engine.",
     color: "from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20",
-    iconColor: "text-amber-600 dark:text-amber-400"
+    iconColor: "text-amber-600 dark:text-amber-400",
+    price: "₦65,000"
   },
   {
     icon: Brain,
@@ -26,7 +28,8 @@ const modules = [
     description: "Data intelligence platform",
     content: "Transform financial data into actionable insights with our AI-powered analytics and visualization tools.",
     color: "from-emerald-50 to-emerald-100 dark:from-emerald-950/20 dark:to-emerald-900/20",
-    iconColor: "text-emerald-600 dark:text-emerald-400"
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    price: "₦75,000"
   },
   {
     icon: ShieldCheck,
@@ -34,7 +37,8 @@ const modules = [
     description: "Security and risk monitoring",
     content: "Protect your financial infrastructure with enterprise-grade security, continuous monitoring, and rapid incident response.",
     color: "from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20",
-    iconColor: "text-purple-600 dark:text-purple-400"
+    iconColor: "text-purple-600 dark:text-purple-400",
+    price: "₦85,000"
   }
 ];
 
@@ -65,9 +69,12 @@ export const EcosystemModules = () => {
                 <CardDescription>{module.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground mb-3">
                   {module.content}
                 </p>
+                <div className="text-sm font-semibold">
+                  Starting from {module.price}/month
+                </div>
               </CardContent>
               <CardFooter>
                 <Button variant="ghost" size="sm" className="group text-sm px-0">

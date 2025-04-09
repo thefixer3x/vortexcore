@@ -14,7 +14,7 @@ export const PartnerCTA = () => {
             Full Ecosystem Launch in Progress
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-            We're working on expanding our ecosystem to provide even more powerful financial solutions. 
+            We're working on expanding our ecosystem to provide even more powerful financial solutions tailored for African markets. 
             Be the first to know when we launch new features and capabilities.
           </p>
         </div>
@@ -35,7 +35,7 @@ export const PartnerCTA = () => {
         <div className="mt-16 p-8 rounded-xl bg-card border border-muted">
           <h3 className="text-xl font-medium mb-4">Join the waitlist</h3>
           <p className="text-muted-foreground mb-6">
-            Get early access to our full ecosystem of financial products and services.
+            Get early access to our full ecosystem of financial products and services starting at ₦55,000/month.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button className="w-full sm:w-auto flex items-center gap-2">

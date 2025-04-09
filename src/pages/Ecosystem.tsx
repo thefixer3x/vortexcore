@@ -1,9 +1,10 @@
 
 import { Link as RouterLink } from "react-router-dom";
-import { ArrowRight, ChevronRight, MapPin, Shield, Globe, Lock } from "lucide-react";
+import { ArrowRight, ChevronRight, MapPin, Shield, Globe, Lock, Award, Sparkles, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroSection } from "@/components/marketing/ecosystem/HeroSection";
 import { EcosystemModules } from "@/components/marketing/ecosystem/EcosystemModules";
+import { HowItWorks } from "@/components/marketing/ecosystem/HowItWorks";
 import { PartnerCTA } from "@/components/marketing/ecosystem/PartnerCTA";
 import { Footer } from "@/components/marketing/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,7 +69,7 @@ const EnterpriseFeatures = () => {
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <span className="text-sm font-medium">Starting from $99/month</span>
+                <span className="text-sm font-medium">Starting from ₦55,000/month</span>
                 <Button variant="ghost" size="sm" className="group">
                   Learn more
                   <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -82,6 +83,80 @@ const EnterpriseFeatures = () => {
           <Button size="lg" className="rounded-full">
             Contact Sales
           </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const PremiumServices = () => {
+  const services = [
+    {
+      icon: Award,
+      title: "Dedicated Support",
+      description: "24/7 dedicated technical support with priority response times",
+      price: "₦55,000",
+      color: "text-amber-500"
+    },
+    {
+      icon: Sparkles,
+      title: "AI-Powered Insights",
+      description: "Advanced analytics and predictive risk modeling for your business",
+      price: "₦75,000",
+      color: "text-blue-500"
+    },
+    {
+      icon: Server,
+      title: "Enterprise Infrastructure",
+      description: "Dedicated servers and resources with 99.99% uptime guarantee",
+      price: "₦95,000",
+      color: "text-purple-500"
+    }
+  ];
+
+  return (
+    <section id="premium-services" className="py-16 px-4 bg-background">
+      <div className="container mx-auto">
+        <div className="text-center mb-10">
+          <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
+            Services
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            Premium Services
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Tailored solutions to help your business scale and succeed
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {services.map((service, index) => (
+            <Card key={index} className="border-2 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+              <CardHeader>
+                <div className={`inline-flex items-center justify-center p-3 rounded-full ${service.color} bg-muted/30 mb-4`}>
+                  <service.icon className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">{service.title}</CardTitle>
+                <CardDescription>{service.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <div className="mt-4 mb-6">
+                  <p className="text-3xl font-bold">{service.price}<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+                </div>
+                <ul className="space-y-2">
+                  {[1, 2, 3].map((_, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <ChevronRight className="h-4 w-4 text-primary" />
+                      <span>Premium Feature {i + 1}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full">Get Started</Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
@@ -114,6 +189,9 @@ const Ecosystem = () => {
             <RouterLink to="#enterprise" className="text-sm font-medium hover:text-primary transition-colors">
               Enterprise
             </RouterLink>
+            <RouterLink to="#premium-services" className="text-sm font-medium hover:text-primary transition-colors">
+              Services
+            </RouterLink>
             <RouterLink to="#partner" className="text-sm font-medium hover:text-primary transition-colors">
               Early Access
             </RouterLink>
@@ -137,8 +215,14 @@ const Ecosystem = () => {
         {/* Ecosystem Modules */}
         <EcosystemModules />
         
-        {/* Enterprise Features - New section */}
+        {/* How It Works Section */}
+        <HowItWorks />
+        
+        {/* Enterprise Features */}
         <EnterpriseFeatures />
+        
+        {/* Premium Services - New section */}
+        <PremiumServices />
         
         {/* Partner CTA */}
         <PartnerCTA />
