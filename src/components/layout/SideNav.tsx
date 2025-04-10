@@ -54,6 +54,13 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
     };
   }, [onClose]);
 
+  useEffect(() => {
+    // Close sidebar on route change on mobile
+    if (window.innerWidth < 768) {
+      onClose();
+    }
+  }, [location.pathname, onClose]);
+
   const isActive = (path: string) => location.pathname === path;
   
   const navItems = [
@@ -77,6 +84,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
         <div 
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
           onClick={onClose}
+          aria-hidden="true"
         />
       )}
       
@@ -87,6 +95,7 @@ export function SideNav({ isOpen, onClose }: SideNavProps) {
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
         aria-label="Sidebar navigation"
+        role="navigation"
       >
         <div className="h-full flex flex-col overflow-y-auto">
           {/* Header with collapse button */}

@@ -85,7 +85,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children, toggleSidebar, isOpen }: DashboardLayoutProps) => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <NavBar toggleSidebar={toggleSidebar} />
+      <NavBar toggleSidebar={toggleSidebar} sidebarOpen={isOpen} />
       <div className="flex flex-1 pt-16 relative">
         <SideNav isOpen={isOpen} onClose={toggleSidebar} />
         <main className={`flex-1 transition-all duration-300 ${isOpen ? "md:ml-[280px]" : ""}`}>

@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Good afternoon, Alex</h1>
           <p className="text-muted-foreground">Here's what's happening with your accounts today</p>

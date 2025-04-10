@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X, Bell, Sun, Moon } from "lucide-react";
 import { VortexAISearch } from "@/components/ai/VortexAISearch";
 
-export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
+export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => void, sidebarOpen: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const isMobile = useIsMobile();
@@ -49,22 +49,27 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
     }
   };
 
+  const isDashboardRoute = location.pathname !== "/";
+
   return (
     <div
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
       }`}
     >
-      <div className="flex items-center justify-between px-4 h-16">
+      <div className={`flex items-center justify-between px-4 h-16 ${
+        isDashboardRoute && sidebarOpen && !isMobile ? "md:ml-[280px]" : ""
+      }`}>
         <div className="flex items-center gap-3">
-          {location.pathname !== "/" && (
+          {isDashboardRoute && (
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
               className="md:hidden"
+              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              <Menu className="h-5 w-5" />
+              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           )}
           <div className="flex items-center gap-2">
@@ -79,7 +84,7 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
           </div>
         </div>
         
-        {location.pathname !== "/" && (
+        {isDashboardRoute && (
           <div className="hidden md:flex items-center gap-1">
             <Link to="/dashboard">
               <Button
@@ -121,11 +126,11 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
         )}
 
         <div className="flex items-center gap-2">
-          {location.pathname !== "/" && (
+          {isDashboardRoute && (
             <VortexAISearch />
           )}
           
-          {location.pathname !== "/" && (
+          {isDashboardRoute && (
             <Button
               variant="ghost"
               size="icon"
@@ -146,7 +151,7 @@ export function NavBar({ toggleSidebar }: { toggleSidebar: () => void }) {
             {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
           
-          {isMobile && location.pathname !== "/" && (
+          {isMobile && isDashboardRoute && (
             <div className="text-sm font-medium ml-2">{getPageTitle()}</div>
           )}
         </div>

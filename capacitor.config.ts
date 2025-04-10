@@ -18,6 +18,12 @@ const config: CapacitorConfig = {
     allowsBackForwardNavigationGestures: true,
     // Necessary for App Store compliance
     limitsNavigationsToAppBoundDomains: true
+  },
+  // Add default currency configuration
+  plugins: {
+    LocalNotifications: {
+      defaultCurrency: 'NGN'
+    }
   }
 };
 
