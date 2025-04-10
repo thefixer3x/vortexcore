@@ -7,11 +7,12 @@ import { Menu, X, Bell, Sun, Moon } from "lucide-react";
 import { VortexAISearch } from "@/components/ai/VortexAISearch";
 import { useSidebar } from "@/contexts/SidebarContext";
 
-export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => void, sidebarOpen: boolean }) {
+export function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
+  const { isOpen, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,12 +46,14 @@ export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => vo
         return "VortexAI";
       case "/settings":
         return "Settings";
+      case "/users":
+        return "User Management";
       default:
         return "VortexCore APP";
     }
   };
 
-  const isDashboardRoute = location.pathname !== "/";
+  const isDashboardRoute = location.pathname !== "/" && location.pathname !== "/ecosystem";
 
   return (
     <div
@@ -59,7 +62,7 @@ export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => vo
       }`}
     >
       <div className={`flex items-center justify-between px-4 h-16 ${
-        isDashboardRoute && sidebarOpen && !isMobile ? "md:ml-[280px]" : ""
+        isDashboardRoute && isOpen && !isMobile ? "md:ml-[280px]" : ""
       }`}>
         <div className="flex items-center gap-3">
           {isDashboardRoute && (
@@ -68,9 +71,9 @@ export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => vo
               size="icon"
               onClick={toggleSidebar}
               className="md:hidden"
-              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+              aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
             >
-              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           )}
           <div className="flex items-center gap-2">
@@ -121,6 +124,15 @@ export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => vo
                 className={`rounded-full px-4 ${isActive("/settings") ? "" : "hover:bg-muted"}`}
               >
                 Settings
+              </Button>
+            </Link>
+            <Link to="/users">
+              <Button
+                variant={isActive("/users") ? "default" : "ghost"}
+                size="sm"
+                className={`rounded-full px-4 ${isActive("/users") ? "" : "hover:bg-muted"}`}
+              >
+                Users
               </Button>
             </Link>
           </div>

@@ -13,7 +13,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <NavBar toggleSidebar={toggleSidebar} sidebarOpen={isOpen} />
+      <NavBar />
       <div className="flex flex-1 pt-16 relative">
         <SideNav isOpen={isOpen} onClose={toggleSidebar} />
         <main className={`flex-1 transition-all duration-300 ${isOpen ? "md:ml-[280px]" : ""}`}>

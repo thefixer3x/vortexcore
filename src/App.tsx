@@ -15,6 +15,22 @@ import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 
+// Create a new page for User Management
+const Users = () => (
+  <div className="animate-fade-in">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+        <p className="text-muted-foreground">Manage user accounts and permissions</p>
+      </div>
+    </div>
+    <div className="p-8 text-center">
+      <h2 className="text-xl font-medium mb-2">User Management Coming Soon</h2>
+      <p className="text-muted-foreground">This feature is currently under development.</p>
+    </div>
+  </div>
+);
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -29,6 +45,8 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/ecosystem" element={<Ecosystem />} />
               <Route path="/auth/callback" element={<AuthCallbackHandler />} />
+              
+              {/* Dashboard routes with layout */}
               <Route 
                 path="/dashboard" 
                 element={
@@ -58,6 +76,14 @@ const App = () => {
                 element={
                   <DashboardLayout>
                     <Settings />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/users" 
+                element={
+                  <DashboardLayout>
+                    <Users />
                   </DashboardLayout>
                 } 
               />
