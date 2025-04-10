@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X, Bell, Sun, Moon } from "lucide-react";
 import { VortexAISearch } from "@/components/ai/VortexAISearch";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 export function NavBar({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => void, sidebarOpen: boolean }) {
   const [scrolled, setScrolled] = useState(false);

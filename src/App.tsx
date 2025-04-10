@@ -1,12 +1,11 @@
 
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SideNav } from "@/components/layout/SideNav";
-import { NavBar } from "@/components/layout/NavBar";
+import { SidebarProvider } from "@/contexts/SidebarContext";
+import { DashboardLayout } from "@/layouts/DashboardLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -19,82 +18,55 @@ import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/ecosystem" element={<Ecosystem />} />
-            <Route path="/auth/callback" element={<AuthCallbackHandler />} />
-            <Route 
-              path="/dashboard" 
-              element={
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={sidebarOpen}>
-                  <Dashboard />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/transactions" 
-              element={
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={sidebarOpen}>
-                  <Transactions />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/insights" 
-              element={
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={sidebarOpen}>
-                  <Insights />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/settings" 
-              element={
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={sidebarOpen}>
-                  <Settings />
-                </DashboardLayout>
-              } 
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <SidebarProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/ecosystem" element={<Ecosystem />} />
+              <Route path="/auth/callback" element={<AuthCallbackHandler />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <DashboardLayout>
+                    <Dashboard />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/transactions" 
+                element={
+                  <DashboardLayout>
+                    <Transactions />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/insights" 
+                element={
+                  <DashboardLayout>
+                    <Insights />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <DashboardLayout>
+                    <Settings />
+                  </DashboardLayout>
+                } 
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </SidebarProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
-  );
-};
-
-// Dashboard Layout with collapsible sidebar
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-  toggleSidebar: () => void;
-  isOpen: boolean;
-}
-
-const DashboardLayout = ({ children, toggleSidebar, isOpen }: DashboardLayoutProps) => {
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <NavBar toggleSidebar={toggleSidebar} sidebarOpen={isOpen} />
-      <div className="flex flex-1 pt-16 relative">
-        <SideNav isOpen={isOpen} onClose={toggleSidebar} />
-        <main className={`flex-1 transition-all duration-300 ${isOpen ? "md:ml-[280px]" : ""}`}>
-          <div className="container mx-auto p-4">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
   );
 };
 

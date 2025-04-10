@@ -1,7 +1,4 @@
-
 import { useState } from "react";
-import { NavBar } from "@/components/layout/NavBar";
-import { SideNav } from "@/components/layout/SideNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -135,9 +132,8 @@ const mockTransactions: Transaction[] = [
 ];
 
 const Transactions = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(mockTransactions);
+  const [filteredTransactions, setFilteredTransactions] = useState(mockTransactions);
   
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -188,156 +184,147 @@ const Transactions = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <SideNav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className="flex-1">
-        <NavBar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+    <div className="animate-fade-in">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
+          <p className="text-muted-foreground">Manage and analyze your financial activities</p>
+        </div>
         
-        <main className="pt-16 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8 animate-fade-in">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
-              <p className="text-muted-foreground">Manage and analyze your financial activities</p>
-            </div>
-            
-            <div className="flex gap-3">
-              <Button variant="outline" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                Date Range
-              </Button>
-              <Button variant="outline" className="gap-2">
-                <Download className="h-4 w-4" />
-                Export
-              </Button>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                New Transaction
-              </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Date Range
+          </Button>
+          <Button variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Transaction
+          </Button>
+        </div>
+      </div>
+      
+      <Card className="rounded-xl overflow-hidden mb-8 animate-fade-in">
+        <Tabs defaultValue="all" className="w-full">
+          <div className="px-6 pt-6 pb-2 border-b">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <TabsList>
+                <TabsTrigger value="all">All Transactions</TabsTrigger>
+                <TabsTrigger value="income">Income</TabsTrigger>
+                <TabsTrigger value="expense">Expenses</TabsTrigger>
+                <TabsTrigger value="pending">Pending</TabsTrigger>
+              </TabsList>
+              
+              <div className="flex gap-2">
+                <div className="relative w-full md:w-auto">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <Search className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <Input
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    placeholder="Search transactions..."
+                    className="pl-10 w-full md:w-[240px]"
+                  />
+                </div>
+                <Button variant="outline" size="icon">
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
           
-          <Card className="rounded-xl overflow-hidden mb-8 animate-fade-in">
-            <Tabs defaultValue="all" className="w-full">
-              <div className="px-6 pt-6 pb-2 border-b">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <TabsList>
-                    <TabsTrigger value="all">All Transactions</TabsTrigger>
-                    <TabsTrigger value="income">Income</TabsTrigger>
-                    <TabsTrigger value="expense">Expenses</TabsTrigger>
-                    <TabsTrigger value="pending">Pending</TabsTrigger>
-                  </TabsList>
-                  
-                  <div className="flex gap-2">
-                    <div className="relative w-full md:w-auto">
-                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      <Input
-                        value={searchTerm}
-                        onChange={handleSearch}
-                        placeholder="Search transactions..."
-                        className="pl-10 w-full md:w-[240px]"
-                      />
-                    </div>
-                    <Button variant="outline" size="icon">
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <TabsContent value="all" className="m-0">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Reference</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredTransactions.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center h-32">
-                            No transactions found
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        filteredTransactions.map((transaction) => (
-                          <TableRow key={transaction.id} className="hover:bg-muted/50 cursor-pointer">
-                            <TableCell className="font-medium">
-                              {formatDate(transaction.date)}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                                  transaction.type === "income" 
-                                    ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
-                                    : "bg-primary/10 text-primary"
-                                }`}>
-                                  {transaction.type === "income" ? (
-                                    <ArrowDownLeft className="h-4 w-4" />
-                                  ) : getCategoryIcon(transaction.category)}
-                                </div>
-                                <span>{transaction.description}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="capitalize">
-                                {transaction.category}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground text-sm">
-                              {transaction.reference}
-                            </TableCell>
-                            <TableCell className={`text-right font-medium ${
+          <TabsContent value="all" className="m-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Reference</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center h-32">
+                        No transactions found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredTransactions.map((transaction) => (
+                      <TableRow key={transaction.id} className="hover:bg-muted/50 cursor-pointer">
+                        <TableCell className="font-medium">
+                          {formatDate(transaction.date)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
                               transaction.type === "income" 
-                                ? "text-green-600 dark:text-green-400" 
-                                : ""
+                                ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
+                                : "bg-primary/10 text-primary"
                             }`}>
-                              {transaction.type === "income" ? "+" : "-"}
-                              {formatCurrency(transaction.amount, transaction.currency)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Badge variant="secondary" className="text-xs">
-                                {transaction.status}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="income" className="m-0">
-                <div className="h-[400px] flex items-center justify-center">
-                  <p className="text-muted-foreground">Income transactions will be displayed here</p>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="expense" className="m-0">
-                <div className="h-[400px] flex items-center justify-center">
-                  <p className="text-muted-foreground">Expense transactions will be displayed here</p>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="pending" className="m-0">
-                <div className="h-[400px] flex items-center justify-center">
-                  <p className="text-muted-foreground">Pending transactions will be displayed here</p>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </Card>
-        </main>
-      </div>
+                              {transaction.type === "income" ? (
+                                <ArrowDownLeft className="h-4 w-4" />
+                              ) : getCategoryIcon(transaction.category)}
+                            </div>
+                            <span>{transaction.description}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {transaction.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {transaction.reference}
+                        </TableCell>
+                        <TableCell className={`text-right font-medium ${
+                          transaction.type === "income" 
+                            ? "text-green-600 dark:text-green-400" 
+                            : ""
+                        }`}>
+                          {transaction.type === "income" ? "+" : "-"}
+                          {formatCurrency(transaction.amount, transaction.currency)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="secondary" className="text-xs">
+                            {transaction.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="income" className="m-0">
+            <div className="h-[400px] flex items-center justify-center">
+              <p className="text-muted-foreground">Income transactions will be displayed here</p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="expense" className="m-0">
+            <div className="h-[400px] flex items-center justify-center">
+              <p className="text-muted-foreground">Expense transactions will be displayed here</p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="pending" className="m-0">
+            <div className="h-[400px] flex items-center justify-center">
+              <p className="text-muted-foreground">Pending transactions will be displayed here</p>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </Card>
     </div>
   );
 };
