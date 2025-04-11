@@ -19,14 +19,27 @@ import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 const Users = () => (
   <div className="animate-fade-in">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
-        <p className="text-muted-foreground">Manage user accounts and permissions</p>
-      </div>
+      <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+      <p className="text-muted-foreground">Manage user accounts and permissions</p>
     </div>
     <div className="p-8 text-center">
       <h2 className="text-xl font-medium mb-2">User Management Coming Soon</h2>
       <p className="text-muted-foreground">This feature is currently under development.</p>
+    </div>
+  </div>
+);
+
+// Temporary component for features that are coming soon
+const ComingSoon = ({ title }: { title: string }) => (
+  <div className="animate-fade-in">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-6">
+      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+      <p className="text-muted-foreground">This feature is on the way</p>
+    </div>
+    <div className="p-8 text-center border rounded-lg shadow-sm my-8">
+      <h2 className="text-xl font-medium mb-2">{title} - Coming Soon</h2>
+      <p className="text-muted-foreground mb-4">This feature is currently under development and will be available in a future update.</p>
+      <p className="text-sm text-muted-foreground">We appreciate your patience as we work to bring you the best experience.</p>
     </div>
   </div>
 );
@@ -87,6 +100,33 @@ const App = () => {
                   </DashboardLayout>
                 } 
               />
+              
+              {/* Add temporary routes for missing pages */}
+              <Route 
+                path="/notifications" 
+                element={
+                  <DashboardLayout>
+                    <ComingSoon title="Notifications" />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/security" 
+                element={
+                  <DashboardLayout>
+                    <ComingSoon title="Security" />
+                  </DashboardLayout>
+                } 
+              />
+              <Route 
+                path="/help" 
+                element={
+                  <DashboardLayout>
+                    <ComingSoon title="Help & Support" />
+                  </DashboardLayout>
+                } 
+              />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </SidebarProvider>

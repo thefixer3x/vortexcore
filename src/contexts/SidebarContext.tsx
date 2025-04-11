@@ -61,8 +61,12 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
 
 export function useSidebar() {
   const context = useContext(SidebarContext);
+  
+  // Enhanced error handling with more informative message
   if (context === undefined) {
+    console.error("SidebarContext Error: useSidebar() was called outside of SidebarProvider. Check your component hierarchy.");
     throw new Error("useSidebar must be used within a SidebarProvider");
   }
+  
   return context;
 }
