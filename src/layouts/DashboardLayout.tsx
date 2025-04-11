@@ -9,14 +9,14 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { isOpen, toggleSidebar } = useSidebar();
+  const { sidebarOpen, toggleSidebar } = useSidebar();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <NavBar />
       <div className="flex flex-1 pt-16 relative">
-        <SideNav isOpen={isOpen} onClose={toggleSidebar} />
-        <main className={`flex-1 transition-all duration-300 ${isOpen ? "md:ml-[280px]" : ""}`}>
+        <SideNav />
+        <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "md:ml-[280px]" : ""}`}>
           <div className="container mx-auto p-4">
             {children}
           </div>

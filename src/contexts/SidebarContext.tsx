@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 type SidebarContextType = {
-  isOpen: boolean;
+  sidebarOpen: boolean;
   toggleSidebar: () => void;
 };
 
@@ -14,7 +14,7 @@ const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   // Initialize from cookie if available
-  const [isOpen, setIsOpen] = useState(() => {
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof document !== 'undefined') {
       const cookie = document.cookie
         .split('; ')
@@ -29,7 +29,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   });
 
   const toggleSidebar = () => {
-    setIsOpen(prev => {
+    setSidebarOpen(prev => {
       const newState = !prev;
       // Set cookie to persist state
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${newState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
@@ -40,8 +40,8 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   // Effect to close sidebar on mobile by default
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768 && isOpen) {
-        setIsOpen(false);
+      if (window.innerWidth < 768 && sidebarOpen) {
+        setSidebarOpen(false);
       }
     };
 
@@ -50,10 +50,10 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isOpen]);
+  }, [sidebarOpen]);
 
   return (
-    <SidebarContext.Provider value={{ isOpen, toggleSidebar }}>
+    <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar }}>
       {children}
     </SidebarContext.Provider>
   );

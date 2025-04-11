@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ export function NavBar() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
-  const { isOpen, toggleSidebar } = useSidebar();
+  const { sidebarOpen, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,7 +61,7 @@ export function NavBar() {
       }`}
     >
       <div className={`flex items-center justify-between px-4 h-16 ${
-        isDashboardRoute && isOpen && !isMobile ? "md:ml-[280px]" : ""
+        isDashboardRoute && sidebarOpen && !isMobile ? "md:ml-[280px]" : ""
       }`}>
         <div className="flex items-center gap-3">
           {isDashboardRoute && (
@@ -71,9 +70,9 @@ export function NavBar() {
               size="icon"
               onClick={toggleSidebar}
               className="md:hidden"
-              aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           )}
           <div className="flex items-center gap-2">
