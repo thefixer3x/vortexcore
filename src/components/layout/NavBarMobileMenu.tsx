@@ -10,7 +10,10 @@ export function NavBarMobileMenu() {
     <Button
       variant="ghost"
       size="icon"
-      onClick={toggleSidebar}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent event bubbling
+        toggleSidebar();
+      }}
       className="md:hidden"
       aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
     >

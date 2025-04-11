@@ -24,9 +24,15 @@ export function SideNav() {
   const { sidebarOpen, toggleSidebar } = useSidebar();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
+  // Handle clicks outside the sidebar to close it on mobile
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node) && sidebarOpen) {
+      if (
+        sidebarRef.current && 
+        !sidebarRef.current.contains(event.target as Node) && 
+        sidebarOpen && 
+        window.innerWidth < 768
+      ) {
         toggleSidebar();
       }
     };
@@ -37,12 +43,12 @@ export function SideNav() {
     };
   }, [sidebarOpen, toggleSidebar]);
 
-  // Close sidebar when route changes on mobile
+  // Close sidebar when route changes on mobile - fixed to check window width
   useEffect(() => {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 768 && sidebarOpen) {
       toggleSidebar();
     }
-  }, [location.pathname, toggleSidebar]);
+  }, [location.pathname]); // Remove toggleSidebar from dependency array to avoid infinite loop
 
   const mainNavItems = [
     { name: "Control Room", path: "/dashboard", icon: LayoutDashboard },
@@ -64,7 +70,10 @@ export function SideNav() {
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
-          onClick={toggleSidebar}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSidebar();
+          }}
           aria-hidden="true"
         />
       )}
@@ -74,7 +83,7 @@ export function SideNav() {
         ref={sidebarRef}
         className={`fixed top-0 left-0 bottom-0 z-40 w-[280px] bg-background border-r border-border transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        } pt-16 md:pt-16`}
         aria-label="Sidebar navigation"
         role="navigation"
       >

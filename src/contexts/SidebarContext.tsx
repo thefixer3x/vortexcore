@@ -37,7 +37,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // Effect to close sidebar on mobile by default
+  // Effect to close sidebar on mobile by default - run only on mount
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768 && sidebarOpen) {
@@ -50,7 +50,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [sidebarOpen]);
+  }, []); // Empty dependency array so it only runs on mount
 
   return (
     <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar }}>
