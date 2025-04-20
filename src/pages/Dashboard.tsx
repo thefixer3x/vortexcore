@@ -45,25 +45,26 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold tracking-tight">Good afternoon, Alex</h1>
           <p className="text-muted-foreground">Here's what's happening with your accounts today</p>
         </div>
-        
-        <div className="flex gap-3">
-          <Button className="gap-2">
+
+        {/* Responsive: stack actions on mobile */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-3">
+          <Button className="gap-2 w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             Add Account
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 w-full sm:w-auto">
             <CreditCard className="h-4 w-4" />
             New Payment
           </Button>
         </div>
       </div>
-      
-      {/* Account Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+      {/* Account Cards - stack vertically on mobile */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
         {mockAccounts.map((account) => (
           <AccountCard key={account.id} account={account} className="animate-scale-in" />
         ))}
-        
+
         <Card className="rounded-xl border border-dashed flex items-center justify-center animate-scale-in">
           <CardContent className="p-6 flex flex-col items-center text-center">
             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
@@ -80,13 +81,13 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
         <Card className="col-span-1 rounded-xl animate-fade-in">
           <CardContent className="p-6">
             <h3 className="font-medium mb-4">Quick Actions</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
               <Button variant="outline" className="h-auto py-3 justify-start">
                 <div className="flex flex-col items-start text-left">
                   <div className="flex items-center mb-1">
@@ -134,14 +135,14 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="col-span-1 md:col-span-2 rounded-xl animate-fade-in">
           <CardContent className="p-6">
             <TransactionList />
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Insights */}
       <div className="mb-8">
         <InsightWidget />

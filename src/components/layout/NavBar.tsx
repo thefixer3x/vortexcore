@@ -4,9 +4,8 @@ import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { NavBarBrand } from "./NavBarBrand";
-import { NavBarLinks } from "./NavBarLinks";
-import { NavBarActions } from "./NavBarActions";
 import { NavBarMobileMenu } from "./NavBarMobileMenu";
+import { VortexAISearch } from "@/components/ai/VortexAISearch"; // Directly import search
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -37,10 +36,23 @@ export function NavBar() {
           {isDashboardRoute && <NavBarMobileMenu />}
           <NavBarBrand />
         </div>
-        
-        {isDashboardRoute && <NavBarLinks />}
-        
-        <NavBarActions />
+
+        {/* On mobile dashboard: only show search; On desktop: regular nav */}
+        {isDashboardRoute && isMobile ? (
+          <div className="flex items-center">
+            <VortexAISearch />
+          </div>
+        ) : (
+          // Hide NavBarLinks and NavBarActions on mobile dashboard, but show them elsewhere
+          <>
+            {isDashboardRoute && !isMobile && (
+              <>
+                {/* Desktop: no navBarLinks, only search as agreed */}
+                <div className="ml-4"><VortexAISearch /></div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
