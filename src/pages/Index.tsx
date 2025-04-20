@@ -1,16 +1,27 @@
-
 import { LoginForm } from "@/components/auth/LoginForm";
 import { VortexAIChat } from "@/components/ai/VortexAIChat";
 import { SecurityBadges } from "@/components/marketing/SecurityBadges";
 import { PartnerLogos } from "@/components/marketing/PartnerLogos";
 import { ValueAddedServices } from "@/components/marketing/ValueAddedServices";
 import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full py-6 px-4 md:px-8 bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center justify-between md:hidden">
+          <div className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-md">
+              VC
+            </div>
+            <span className="font-semibold text-xl tracking-tight">VortexCore</span>
+          </div>
+          <button className="flex items-center justify-center h-10 w-10 rounded-md focus:outline-none focus:ring-2 focus:ring-ring md:hidden" aria-label="Menu">
+            <Menu className="h-6 w-6 text-muted-foreground" />
+          </button>
+        </div>
+        <div className="container mx-auto items-center justify-between hidden md:flex">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
               VC
@@ -37,13 +48,10 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Security Badges */}
           <SecurityBadges />
 
-          {/* Value Added Services */}
           <ValueAddedServices />
 
-          {/* Partner Logos */}
           <PartnerLogos />
         </div>
 
@@ -54,7 +62,6 @@ const Index = () => {
         </div>
       </main>
       
-      {/* VortexAI Chat */}
       <VortexAIChat />
     </div>
   );
