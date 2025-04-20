@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -43,12 +42,14 @@ export function SideNav() {
     };
   }, [sidebarOpen, toggleSidebar]);
 
-  // Close sidebar when route changes on mobile - fixed to check window width
+  // Close sidebar when route changes on mobile
   useEffect(() => {
     if (window.innerWidth < 768 && sidebarOpen) {
-      toggleSidebar();
+      // Use a timeout to avoid state updates during render
+      const timer = setTimeout(() => toggleSidebar(), 0);
+      return () => clearTimeout(timer);
     }
-  }, [location.pathname]); // Remove toggleSidebar from dependency array to avoid infinite loop
+  }, [location.pathname, sidebarOpen, toggleSidebar]);
 
   const mainNavItems = [
     { name: "Control Room", path: "/dashboard", icon: LayoutDashboard },
@@ -70,10 +71,7 @@ export function SideNav() {
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSidebar();
-          }}
+          onClick={() => toggleSidebar()}
           aria-hidden="true"
         />
       )}
