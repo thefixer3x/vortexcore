@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { FileUpload, Upload } from "lucide-react";
+import { File, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -37,7 +37,7 @@ export function BankStatementAnalysis() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileUpload className="h-5 w-5" />
+          <File className="h-5 w-5" />
           Bank Statement Analysis
         </CardTitle>
       </CardHeader>
