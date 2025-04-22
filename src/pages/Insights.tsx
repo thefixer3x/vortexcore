@@ -3,24 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InsightWidget } from "@/components/dashboard/InsightWidget";
+import { BankStatementAnalysis } from "@/components/insights/BankStatementAnalysis";
 import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-  PieChart,
-  Pie,
-  Legend
-} from "recharts";
-import { Calendar, Download, Filter, BellRing, TrendingUp, TrendingDown, Check, AlertTriangle } from "lucide-react";
+  Calendar, 
+  Download, 
+  Filter,
+  BellRing,
+  TrendingUp,
+  TrendingDown,
+  Check,
+  AlertTriangle
+} from "lucide-react";
 
-// Sample data for charts
 const spendingTrend = [
   { month: "Jan", amount: 1200 },
   { month: "Feb", amount: 1800 },
@@ -130,7 +124,6 @@ const Insights = () => {
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">AI Insights</h1>
@@ -153,7 +146,6 @@ const Insights = () => {
         </div>
       </div>
       
-      {/* Financial Overview */}
       <Card className="rounded-xl overflow-hidden mb-8 animate-fade-in">
         <Tabs defaultValue="overview" className="w-full">
           <div className="px-6 pt-6 border-b">
@@ -172,6 +164,7 @@ const Insights = () => {
               <TabsTrigger value="income">Income</TabsTrigger>
               <TabsTrigger value="expenses">Expenses</TabsTrigger>
               <TabsTrigger value="savings">Savings</TabsTrigger>
+              <TabsTrigger value="statements">Bank Statements</TabsTrigger>
             </TabsList>
           </div>
           
@@ -271,15 +264,17 @@ const Insights = () => {
               <p className="text-muted-foreground">Savings analytics will be displayed here</p>
             </div>
           </TabsContent>
+
+          <TabsContent value="statements" className="p-6">
+            <BankStatementAnalysis />
+          </TabsContent>
         </Tabs>
       </Card>
       
-      {/* Spending Breakdown */}
       <div className="mb-8">
         <InsightWidget />
       </div>
       
-      {/* AI Recommendations */}
       <Card className="rounded-xl overflow-hidden animate-fade-in">
         <div className="px-6 py-4 border-b">
           <div className="flex items-center justify-between">
