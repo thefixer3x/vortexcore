@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,6 @@ import { LoginFormHeader } from "./LoginFormHeader";
 import { EmailPasswordFields } from "./EmailPasswordFields";
 import { LoginFormFooter } from "./LoginFormFooter";
 import { TwoFactorVerification } from "./TwoFactorVerification";
-
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,26 +19,25 @@ export function LoginForm() {
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
     try {
       // If we have location data, include it in metadata
       const locationData = location.country ? {
         login_country: location.country,
         login_city: location.city
       } : undefined;
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const {
+        data,
+        error
+      } = await supabase.auth.signInWithPassword({
         email,
         password,
         options: {
           captchaToken: undefined
         }
       });
-      
       if (error) {
         toast({
           title: "Authentication Error",
@@ -50,7 +47,6 @@ export function LoginForm() {
         setIsLoading(false);
         return;
       }
-      
       if (data.user && data.session) {
         toast({
           title: "Login Successful",
@@ -72,74 +68,38 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
-  
   if (showTwoFactor) {
-    return (
-      <TwoFactorVerification 
-        email={email}
-        onCancel={() => setShowTwoFactor(false)}
-      />
-    );
+    return <TwoFactorVerification email={email} onCancel={() => setShowTwoFactor(false)} />;
   }
-
-  return (
-    <div className="w-full max-w-md space-y-8 animate-fade-in">
+  return <div className="w-full max-w-md space-y-8 animate-fade-in">
       <LoginFormHeader />
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <EmailPasswordFields 
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-        />
+        <EmailPasswordFields email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
         
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="remember" 
-              checked={rememberMe}
-              onCheckedChange={() => setRememberMe(!rememberMe)}
-            />
-            <label
-              htmlFor="remember"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
+            <Checkbox id="remember" checked={rememberMe} onCheckedChange={() => setRememberMe(!rememberMe)} />
+            <label htmlFor="remember" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Remember me
             </label>
           </div>
           <div className="flex items-center space-x-1">
             <Globe className="h-3 w-3 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">₦ NGN</span>
-            {location.country && (
-              <span className="text-xs text-muted-foreground ml-1">
-                ({location.country})
-              </span>
-            )}
+            {location.country}
           </div>
         </div>
         
         <div className="flex items-center justify-center gap-2">
-          <Button
-            type="submit"
-            className="w-full relative overflow-hidden"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full relative overflow-hidden" disabled={isLoading}>
             {isLoading ? "Signing in..." : "Sign in"}
-            {isLoading && (
-              <span className="absolute inset-0 flex items-center justify-center">
+            {isLoading && <span className="absolute inset-0 flex items-center justify-center">
                 <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
-              </span>
-            )}
+              </span>}
           </Button>
           
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setShowTwoFactor(true)}
-            className="flex-none"
-            title="Enable 2FA"
-          >
+          <Button type="button" variant="outline" onClick={() => setShowTwoFactor(true)} className="flex-none" title="Enable 2FA">
             <ShieldCheck className="h-4 w-4" />
           </Button>
         </div>
@@ -155,6 +115,5 @@ export function LoginForm() {
       </div>
       
       <LoginFormFooter isLoading={isLoading} />
-    </div>
-  );
+    </div>;
 }
