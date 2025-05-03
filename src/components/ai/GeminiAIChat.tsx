@@ -2,21 +2,31 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { Loader2, Send, Bot, User } from "lucide-react";
+import { Loader2, Send, Bot, User, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Message {
   role: 'user' | 'model';
   content: string;
 }
 
+const GEMINI_MODELS = [
+  { value: 'gemini-pro', label: 'Gemini Pro' },
+  { value: 'gemini-pro-vision', label: 'Gemini Pro Vision' },
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Beta)' },
+  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
+];
+
 export function GeminiAIChat() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [model, setModel] = useState<string>("gemini-pro");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -48,7 +58,7 @@ export function GeminiAIChat() {
 
       // Call the Supabase Edge Function
       const { data, error } = await supabase.functions.invoke("gemini-ai", {
-        body: { prompt, history },
+        body: { prompt, history, model },
       });
 
       if (error) {
@@ -64,6 +74,12 @@ export function GeminiAIChat() {
       // Add AI response to messages
       if (data?.response) {
         setMessages(prev => [...prev, { role: 'model', content: data.response }]);
+      } else if (data?.error) {
+        toast({
+          title: "AI Response Error",
+          description: data.error,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error in Gemini AI chat:", error);
@@ -78,14 +94,71 @@ export function GeminiAIChat() {
     }
   };
 
+  const clearChat = () => {
+    setMessages([]);
+    toast({
+      title: "Chat cleared",
+      description: "All messages have been cleared",
+    });
+  };
+
   return (
     <Card className="flex flex-col h-[600px]">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Bot className="h-5 w-5 text-primary" /> Gemini AI Assistant
-        </CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div>
+          <CardTitle className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary" /> Gemini AI Assistant
+          </CardTitle>
+          <CardDescription>Powered by Google's Gemini AI</CardDescription>
+        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Settings className="h-4 w-4" />
+              <span className="sr-only">Settings</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">AI Model Settings</h4>
+                <p className="text-sm text-muted-foreground">
+                  Choose which Gemini AI model to use
+                </p>
+              </div>
+              <div className="grid gap-2">
+                <div className="grid gap-2">
+                  <Select
+                    value={model}
+                    onValueChange={value => {
+                      setModel(value);
+                      toast({
+                        title: "Model changed",
+                        description: `Now using ${GEMINI_MODELS.find(m => m.value === value)?.label}`,
+                      });
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GEMINI_MODELS.map((model) => (
+                        <SelectItem key={model.value} value={model.value}>
+                          {model.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button variant="outline" onClick={clearChat}>
+                  Clear Chat History
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
+      <CardContent className="flex-1 flex flex-col pt-2">
         <div className="flex-1 overflow-y-auto mb-4 space-y-4">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
