@@ -120,6 +120,45 @@ export type Database = {
         }
         Relationships: []
       }
+      child_profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          created_at: string
+          grade: string | null
+          id: string
+          language: string | null
+          nickname: string
+          parent_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          language?: string | null
+          nickname: string
+          parent_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          language?: string | null
+          nickname?: string
+          parent_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           context: string | null
@@ -152,6 +191,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      parent_comments: {
+        Row: {
+          child_id: string | null
+          comment: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          child_id?: string | null
+          comment: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          child_id?: string | null
+          comment?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_comments_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "child_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -218,6 +286,154 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      stripe_customers: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          stripe_customer_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          stripe_customer_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          stripe_customer_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stripe_prices: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          currency: string
+          id: string
+          interval: string | null
+          interval_count: number | null
+          product_id: string
+          stripe_price_id: string
+          type: string
+          unit_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          currency: string
+          id?: string
+          interval?: string | null
+          interval_count?: number | null
+          product_id: string
+          stripe_price_id: string
+          type: string
+          unit_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          currency?: string
+          id?: string
+          interval?: string | null
+          interval_count?: number | null
+          product_id?: string
+          stripe_price_id?: string
+          type?: string
+          unit_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "stripe_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stripe_products: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          stripe_product_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          stripe_product_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          stripe_product_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      stripe_subscriptions: {
+        Row: {
+          cancel_at: string | null
+          created_at: string | null
+          current_period_end: string
+          customer_id: string
+          id: string
+          status: string
+          stripe_subscription_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          cancel_at?: string | null
+          created_at?: string | null
+          current_period_end: string
+          customer_id: string
+          id?: string
+          status: string
+          stripe_subscription_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          cancel_at?: string | null
+          created_at?: string | null
+          current_period_end?: string
+          customer_id?: string
+          id?: string
+          status?: string
+          stripe_subscription_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_subscriptions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "stripe_customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
