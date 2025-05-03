@@ -163,6 +163,43 @@ const PremiumServices = () => {
   );
 };
 
+// Add a new section for the Gemini AI Demo
+const GeminiAIDemo = () => {
+  return (
+    <section id="gemini-demo" className="py-16 px-4 bg-muted/30">
+      <div className="container mx-auto">
+        <div className="max-w-4xl mx-auto bg-background rounded-xl shadow-lg overflow-hidden">
+          <div className="md:flex">
+            <div className="p-8 md:p-12">
+              <div className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
+                Enterprise AI Demo
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">
+                Experience Gemini AI
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Try our interactive demo powered by Google's advanced Gemini AI models. 
+                Discover how this technology can transform your business workflows and decision-making processes.
+              </p>
+              <div className="flex gap-4">
+                <Button asChild>
+                  <RouterLink to="/ecosystem/gemini">
+                    Try Gemini AI <ArrowRight className="ml-2 h-4 w-4" />
+                  </RouterLink>
+                </Button>
+                <Button variant="outline">Learn More</Button>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-primary/80 to-primary h-48 md:h-auto md:w-1/3 flex items-center justify-center p-8">
+              <Sparkles className="h-20 w-20 text-primary-foreground" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Ecosystem = () => {
   // Update document title for SEO
   document.title = "VortexCore | Enterprise Security Solutions";
@@ -191,6 +228,9 @@ const Ecosystem = () => {
             </RouterLink>
             <RouterLink to="#premium-services" className="text-sm font-medium hover:text-primary transition-colors">
               Services
+            </RouterLink>
+            <RouterLink to="#gemini-demo" className="text-sm font-medium hover:text-primary transition-colors">
+              Gemini AI
             </RouterLink>
             <RouterLink to="#partner" className="text-sm font-medium hover:text-primary transition-colors">
               Early Access
@@ -221,8 +261,11 @@ const Ecosystem = () => {
         {/* Enterprise Features */}
         <EnterpriseFeatures />
         
-        {/* Premium Services - New section */}
+        {/* Premium Services */}
         <PremiumServices />
+        
+        {/* Gemini AI Demo Section - New section */}
+        <GeminiAIDemo />
         
         {/* Partner CTA */}
         <PartnerCTA />

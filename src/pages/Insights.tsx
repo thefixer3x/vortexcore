@@ -3,7 +3,6 @@ import { InsightsHeader } from "@/components/insights/InsightsHeader";
 import { FinancialOverviewTabs } from "@/components/insights/FinancialOverviewTabs";
 import { InsightWidget } from "@/components/dashboard/InsightWidget";
 import { AIRecommendations } from "@/components/insights/AIRecommendations";
-import { GeminiAIChat } from "@/components/ai/GeminiAIChat";
 
 const spendingTrend = [
   { month: "Jan", amount: 1200 },
@@ -101,10 +100,6 @@ const Insights = () => {
       </div>
       
       <AIRecommendations suggestions={aiSuggestions} />
-      
-      <div className="mt-8">
-        <GeminiAIChat />
-      </div>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
+import GeminiDemo from "./pages/GeminiDemo";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 
 // Create a new page for User Management
@@ -57,6 +58,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/ecosystem" element={<Ecosystem />} />
+              <Route path="/ecosystem/gemini" element={<GeminiDemo />} />
               <Route path="/auth/callback" element={<AuthCallbackHandler />} />
               
               {/* Dashboard routes with layout */}
