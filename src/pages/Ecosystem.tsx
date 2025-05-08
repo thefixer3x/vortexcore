@@ -1,4 +1,3 @@
-
 import { Link as RouterLink } from "react-router-dom";
 import { ArrowRight, ChevronRight, MapPin, Shield, Globe, Lock, Award, Sparkles, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -163,7 +162,7 @@ const PremiumServices = () => {
   );
 };
 
-// Add a new section for the Gemini AI Demo
+// Updated Gemini AI Demo section with new naming
 const GeminiAIDemo = () => {
   return (
     <section id="gemini-demo" className="py-16 px-4 bg-muted/30">
@@ -172,19 +171,20 @@ const GeminiAIDemo = () => {
           <div className="md:flex">
             <div className="p-8 md:p-12">
               <div className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
-                Enterprise AI Demo
+                Enterprise AI
               </div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">
-                Experience Gemini AI
+                VortexCore AI Assistant
               </h2>
               <p className="text-muted-foreground mb-6">
-                Try our interactive demo powered by Google's advanced Gemini AI models. 
-                Discover how this technology can transform your business workflows and decision-making processes.
+                Experience our powerful AI assistant that enhances your financial workflows.
+                Built with advanced language models, our AI provides intelligent insights
+                and assistance tailored to your business needs.
               </p>
               <div className="flex gap-4">
                 <Button asChild>
                   <RouterLink to="/ecosystem/gemini">
-                    Try Gemini AI <ArrowRight className="ml-2 h-4 w-4" />
+                    Try VortexCore AI <ArrowRight className="ml-2 h-4 w-4" />
                   </RouterLink>
                 </Button>
                 <Button variant="outline">Learn More</Button>

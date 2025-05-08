@@ -14,13 +14,13 @@ const GeminiDemo = () => {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">Gemini AI Demo</h1>
+          <h1 className="text-3xl font-bold">VortexCore AI</h1>
         </div>
         
         <p className="text-muted-foreground">
-          Experience the power of Google's Gemini AI models directly within VortexCore. 
-          This interactive demo showcases how our enterprise clients can leverage advanced 
-          AI capabilities for personalized assistance, data analysis, and more.
+          Experience the power of VortexCore's advanced AI capabilities. 
+          Our enterprise-grade language models provide intelligent assistance, 
+          data analysis, and personalized recommendations for your financial workflows.
         </p>
         
         <div className="mt-4">

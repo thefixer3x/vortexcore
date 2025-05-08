@@ -15,11 +15,12 @@ interface Message {
   content: string;
 }
 
-const GEMINI_MODELS = [
-  { value: 'gemini-pro', label: 'Gemini Pro' },
-  { value: 'gemini-pro-vision', label: 'Gemini Pro Vision' },
-  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Beta)' },
-  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
+// Updated model names with business-focused terminology
+const VORTEX_AI_MODELS = [
+  { value: 'gemini-pro', label: 'VortexAI Standard' },
+  { value: 'gemini-pro-vision', label: 'VortexAI Vision' },
+  { value: 'gemini-2.0-flash', label: 'VortexAI Enterprise' },
+  { value: 'gemini-1.5-flash', label: 'VortexAI Accelerated' },
 ];
 
 export function GeminiAIChat() {
@@ -107,9 +108,9 @@ export function GeminiAIChat() {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" /> Gemini AI Assistant
+            <Bot className="h-5 w-5 text-primary" /> VortexCore AI Assistant
           </CardTitle>
-          <CardDescription>Powered by Google's Gemini AI</CardDescription>
+          <CardDescription>Powered by advanced language models</CardDescription>
         </div>
         <Popover>
           <PopoverTrigger asChild>
@@ -123,7 +124,7 @@ export function GeminiAIChat() {
               <div className="space-y-2">
                 <h4 className="font-medium leading-none">AI Model Settings</h4>
                 <p className="text-sm text-muted-foreground">
-                  Choose which Gemini AI model to use
+                  Choose which VortexAI model to use
                 </p>
               </div>
               <div className="grid gap-2">
@@ -134,7 +135,7 @@ export function GeminiAIChat() {
                       setModel(value);
                       toast({
                         title: "Model changed",
-                        description: `Now using ${GEMINI_MODELS.find(m => m.value === value)?.label}`,
+                        description: `Now using ${VORTEX_AI_MODELS.find(m => m.value === value)?.label}`,
                       });
                     }}
                   >
@@ -142,7 +143,7 @@ export function GeminiAIChat() {
                       <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
-                      {GEMINI_MODELS.map((model) => (
+                      {VORTEX_AI_MODELS.map((model) => (
                         <SelectItem key={model.value} value={model.value}>
                           {model.label}
                         </SelectItem>
@@ -163,7 +164,7 @@ export function GeminiAIChat() {
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-muted-foreground text-center">
-                Start a conversation with Gemini AI.
+                Start a conversation with VortexCore AI.
                 <br />
                 Ask any question or request assistance.
               </p>
