@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Globe, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { SocialLoginButtons } from "./SocialLoginButtons";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -84,10 +85,8 @@ export function LoginForm() {
               Remember me
             </label>
           </div>
-          <div className="flex items-center space-x-1">
-            <Globe className="h-3 w-3 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">₦ NGN</span>
-            {location.country}
+          <div>
+            {location.country && <span className="text-xs text-muted-foreground">{location.country}</span>}
           </div>
         </div>
         

@@ -1,7 +1,7 @@
+
 import { LoginForm } from "@/components/auth/LoginForm";
 import { VortexAIChat } from "@/components/ai/VortexAIChat";
 import { SecurityBadges } from "@/components/marketing/SecurityBadges";
-import { PartnerLogos } from "@/components/marketing/PartnerLogos";
 import { ValueAddedServices } from "@/components/marketing/ValueAddedServices";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
@@ -38,7 +38,7 @@ const Index = () => {
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-8 md:py-12 lg:py-16 flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-20">
-        <div className="order-2 md:order-1 w-full md:w-1/2 flex flex-col justify-center space-y-8 animate-fade-in">
+        <div className="order-1 w-full md:w-1/2 flex flex-col justify-center space-y-8 animate-fade-in">
           <div className="space-y-4">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Take control of your financial ecosystem
@@ -51,11 +51,9 @@ const Index = () => {
           <SecurityBadges />
 
           <ValueAddedServices />
-
-          <PartnerLogos />
         </div>
 
-        <div className="order-1 md:order-2 w-full md:w-1/2 flex items-center justify-center md:justify-end">
+        <div className="order-2 w-full md:w-1/2 flex items-center justify-center md:justify-end">
           <div className="w-full max-w-md p-6 rounded-xl border bg-card shadow-lg animate-fade-in">
             <LoginForm />
           </div>
