@@ -7,37 +7,29 @@ import { HowItWorks } from "@/components/marketing/ecosystem/HowItWorks";
 import { PartnerCTA } from "@/components/marketing/ecosystem/PartnerCTA";
 import { Footer } from "@/components/marketing/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
 const EnterpriseFeatures = () => {
-  const features = [
-    {
-      icon: MapPin,
-      title: "Advanced Location Intelligence",
-      description: "Detect and analyze user locations for enhanced security and regional compliance",
-      color: "text-blue-500"
-    },
-    {
-      icon: Shield,
-      title: "Enterprise Authentication",
-      description: "Custom domain authentication with multi-factor authentication and social logins",
-      color: "text-green-500"
-    },
-    {
-      icon: Globe,
-      title: "Custom Domain Integration",
-      description: "Use your own domain for all authentication flows and API endpoints",
-      color: "text-purple-500"
-    },
-    {
-      icon: Lock,
-      title: "Enhanced Security",
-      description: "IP-based restrictions, session management, and advanced audit logs",
-      color: "text-amber-500"
-    }
-  ];
-
-  return (
-    <section id="enterprise" className="py-16 px-4 bg-muted/20">
+  const features = [{
+    icon: MapPin,
+    title: "Advanced Location Intelligence",
+    description: "Detect and analyze user locations for enhanced security and regional compliance",
+    color: "text-blue-500"
+  }, {
+    icon: Shield,
+    title: "Enterprise Authentication",
+    description: "Custom domain authentication with multi-factor authentication and social logins",
+    color: "text-green-500"
+  }, {
+    icon: Globe,
+    title: "Custom Domain Integration",
+    description: "Use your own domain for all authentication flows and API endpoints",
+    color: "text-purple-500"
+  }, {
+    icon: Lock,
+    title: "Enhanced Security",
+    description: "IP-based restrictions, session management, and advanced audit logs",
+    color: "text-amber-500"
+  }];
+  return <section id="enterprise" className="py-16 px-4 bg-muted/20">
       <div className="container mx-auto">
         <div className="text-center mb-10">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
@@ -52,8 +44,7 @@ const EnterpriseFeatures = () => {
         </div>
         
         <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {features.map((feature, index) => (
-            <Card key={index} className="border overflow-hidden hover:shadow-md transition-all duration-300">
+          {features.map((feature, index) => <Card key={index} className="border overflow-hidden hover:shadow-md transition-all duration-300">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <div className={`p-2 rounded-full ${feature.color} bg-muted/50`}>
@@ -74,8 +65,7 @@ const EnterpriseFeatures = () => {
                   <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardFooter>
-            </Card>
-          ))}
+            </Card>)}
         </div>
         
         <div className="mt-12 text-center">
@@ -84,37 +74,29 @@ const EnterpriseFeatures = () => {
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 const PremiumServices = () => {
-  const services = [
-    {
-      icon: Award,
-      title: "Dedicated Support",
-      description: "24/7 dedicated technical support with priority response times",
-      price: "₦55,000",
-      color: "text-amber-500"
-    },
-    {
-      icon: Sparkles,
-      title: "AI-Powered Insights",
-      description: "Advanced analytics and predictive risk modeling for your business",
-      price: "₦75,000",
-      color: "text-blue-500"
-    },
-    {
-      icon: Server,
-      title: "Enterprise Infrastructure",
-      description: "Dedicated servers and resources with 99.99% uptime guarantee",
-      price: "₦95,000",
-      color: "text-purple-500"
-    }
-  ];
-
-  return (
-    <section id="premium-services" className="py-16 px-4 bg-background">
+  const services = [{
+    icon: Award,
+    title: "Dedicated Support",
+    description: "24/7 dedicated technical support with priority response times",
+    price: "₦55,000",
+    color: "text-amber-500"
+  }, {
+    icon: Sparkles,
+    title: "AI-Powered Insights",
+    description: "Advanced analytics and predictive risk modeling for your business",
+    price: "₦75,000",
+    color: "text-blue-500"
+  }, {
+    icon: Server,
+    title: "Enterprise Infrastructure",
+    description: "Dedicated servers and resources with 99.99% uptime guarantee",
+    price: "₦95,000",
+    color: "text-purple-500"
+  }];
+  return <section id="premium-services" className="py-16 px-4 bg-background">
       <div className="container mx-auto">
         <div className="text-center mb-10">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
@@ -129,8 +111,7 @@ const PremiumServices = () => {
         </div>
         
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {services.map((service, index) => (
-            <Card key={index} className="border-2 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+          {services.map((service, index) => <Card key={index} className="border-2 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
               <CardHeader>
                 <div className={`inline-flex items-center justify-center p-3 rounded-full ${service.color} bg-muted/30 mb-4`}>
                   <service.icon className="h-6 w-6" />
@@ -143,48 +124,42 @@ const PremiumServices = () => {
                   <p className="text-3xl font-bold">{service.price}<span className="text-sm font-normal text-muted-foreground">/month</span></p>
                 </div>
                 <ul className="space-y-2">
-                  {[1, 2, 3].map((_, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm">
+                  {[1, 2, 3].map((_, i) => <li key={i} className="flex items-center gap-2 text-sm">
                       <ChevronRight className="h-4 w-4 text-primary" />
                       <span>Premium Feature {i + 1}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </CardContent>
               <CardFooter>
                 <Button className="w-full">Get Started</Button>
               </CardFooter>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
 
-// Updated Gemini AI Demo section with new naming
+// Add a new section for the Gemini AI Demo
 const GeminiAIDemo = () => {
-  return (
-    <section id="gemini-demo" className="py-16 px-4 bg-muted/30">
+  return <section id="gemini-demo" className="py-16 px-4 bg-muted/30">
       <div className="container mx-auto">
         <div className="max-w-4xl mx-auto bg-background rounded-xl shadow-lg overflow-hidden">
           <div className="md:flex">
             <div className="p-8 md:p-12">
               <div className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
-                Enterprise AI
+                Enterprise AI Demo
               </div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">
-                VortexCore AI Assistant
+                Experience Gemini AI
               </h2>
               <p className="text-muted-foreground mb-6">
-                Experience our powerful AI assistant that enhances your financial workflows.
-                Built with advanced language models, our AI provides intelligent insights
-                and assistance tailored to your business needs.
+                Try our interactive demo powered by Google's advanced Gemini AI models. 
+                Discover how this technology can transform your business workflows and decision-making processes.
               </p>
               <div className="flex gap-4">
                 <Button asChild>
                   <RouterLink to="/ecosystem/gemini">
-                    Try VortexCore AI <ArrowRight className="ml-2 h-4 w-4" />
+                    Try Gemini AI <ArrowRight className="ml-2 h-4 w-4" />
                   </RouterLink>
                 </Button>
                 <Button variant="outline">Learn More</Button>
@@ -196,16 +171,12 @@ const GeminiAIDemo = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 const Ecosystem = () => {
   // Update document title for SEO
   document.title = "VortexCore | Enterprise Security Solutions";
-  
-  return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+  return <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header with transparent background */}
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto flex items-center justify-between py-6 px-4">
@@ -229,9 +200,7 @@ const Ecosystem = () => {
             <RouterLink to="#premium-services" className="text-sm font-medium hover:text-primary transition-colors">
               Services
             </RouterLink>
-            <RouterLink to="#gemini-demo" className="text-sm font-medium hover:text-primary transition-colors">
-              Gemini AI
-            </RouterLink>
+            
             <RouterLink to="#partner" className="text-sm font-medium hover:text-primary transition-colors">
               Early Access
             </RouterLink>
@@ -272,8 +241,6 @@ const Ecosystem = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Ecosystem;
