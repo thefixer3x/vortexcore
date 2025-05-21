@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,11 @@ import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
 import GeminiDemo from "./pages/GeminiDemo";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
+import ProtectedLayout from "./layouts/ProtectedLayout";
+import BeneficiaryManager from "./pages/BeneficiaryManager";
+import BulkUpload from "./pages/BulkUpload";
+import CategoryManager from "./pages/CategoryManager";
+import BulkPaymentDashboard from "./pages/BulkPaymentDashboard";
 
 // Create a new page for User Management
 const Users = () => (
@@ -128,6 +132,21 @@ const App = () => {
                   </DashboardLayout>
                 } 
               />
+
+              {/* Payment-related routes */}
+              <Route 
+                path="/profile/payments" 
+                element={<ProtectedLayout />}
+              >
+                <Route 
+                  path="beneficiaries" 
+                  element={<BeneficiaryManager />}
+                >
+                  <Route path="upload" element={<BulkUpload />} />
+                  <Route path="categories" element={<CategoryManager />} />
+                </Route>
+                <Route path="bulk-payments" element={<BulkPaymentDashboard />} />
+              </Route>
               
               <Route path="*" element={<NotFound />} />
             </Routes>
