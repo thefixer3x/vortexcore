@@ -63,8 +63,6 @@ const Index = () => {
           </div>
         </div>
       </main>
-      
-      <VortexAIChat />
     </div>
   );
 };
