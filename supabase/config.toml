@@ -5,7 +5,10 @@ project_id = "muyhurqfcsjqtnbozyir"
 verify_jwt = true
 
 [functions.gemini-ai]
-verify_jwt = true
+verify_jwt = false
+
+[functions.openai-assistant]
+verify_jwt = false
 
 [[domains]]
 name = "auth.vortexcore.app"

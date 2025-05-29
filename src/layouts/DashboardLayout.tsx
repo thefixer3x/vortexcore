@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { SideNav } from "@/components/layout/SideNav";
+import { EnhancedSideNav } from "@/components/layout/EnhancedSideNav";
 import { NavBar } from "@/components/layout/NavBar";
 import { useSidebar } from "@/contexts/SidebarContext";
 
@@ -9,14 +9,16 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { sidebarOpen, toggleSidebar } = useSidebar();
+  const { sidebarOpen } = useSidebar();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <NavBar />
       <div className="flex flex-1 pt-16 relative">
-        <SideNav />
-        <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "md:ml-[280px]" : ""}`}>
+        <EnhancedSideNav />
+        <main className={`flex-1 transition-all duration-300 ${
+          sidebarOpen ? "md:ml-[280px]" : "md:ml-16"
+        }`}>
           <div className="container mx-auto p-4">
             {children}
           </div>

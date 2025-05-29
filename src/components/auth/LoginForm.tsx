@@ -12,6 +12,8 @@ import { LoginFormHeader } from "./LoginFormHeader";
 import { EmailPasswordFields } from "./EmailPasswordFields";
 import { LoginFormFooter } from "./LoginFormFooter";
 import { TwoFactorVerification } from "./TwoFactorVerification";
+import { useAuth } from "@/contexts/AuthContext";
+import LogRocket from "logrocket";
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +22,7 @@ export function LoginForm() {
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { identifyUser } = useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -29,6 +32,13 @@ export function LoginForm() {
         login_country: location.country,
         login_city: location.city
       } : undefined;
+      
+      // Log login attempt
+      LogRocket.track('login_attempt', {
+        method: 'email',
+        location: location.country || 'unknown'
+      });
+      
       const {
         data,
         error
@@ -39,16 +49,49 @@ export function LoginForm() {
           captchaToken: undefined
         }
       });
+      
       if (error) {
-        toast({
-          title: "Authentication Error",
-          description: error.message,
-          variant: "destructive"
+        console.error("Login error:", error);
+        
+        // Log failed login attempt
+        LogRocket.track('login_failed', {
+          method: 'email',
+          reason: error.message,
+          status: error.status
         });
+        
+        // Handle specific error cases
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Invalid Credentials",
+            description: "Please check your email and password and try again",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Authentication Error",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+        
         setIsLoading(false);
         return;
       }
       if (data.user && data.session) {
+        // Log successful login and identify user in LogRocket
+        LogRocket.track('login_successful', {
+          method: 'email',
+          location: location.country || 'unknown'
+        });
+        
+        // Identify user in our auth context
+        identifyUser({
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.full_name || data.user.email
+        });
+        
         toast({
           title: "Login Successful",
           description: "Welcome back to VortexCore!"
@@ -60,6 +103,12 @@ export function LoginForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
+      // Log failed login attempt
+      LogRocket.track('login_failed', {
+        method: 'email',
+        error: error.message || 'unknown_error'
+      });
+      
       toast({
         title: "Authentication Error",
         description: "An unexpected error occurred during login",

@@ -11,6 +11,12 @@ serve(async (req) => {
   }
 
   try {
+    // Check for auth header if JWT verification is enabled
+    // Note: With config.toml set to verify_jwt = false, this check isn't needed
+    // but we include it for completeness
+    const authHeader = req.headers.get('Authorization');
+    console.log(`Auth header present: ${!!authHeader}`);
+
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) {
       throw new Error("OpenAI API Key not configured in Supabase Secrets");

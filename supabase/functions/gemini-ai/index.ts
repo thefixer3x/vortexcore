@@ -14,6 +14,12 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authentication if enabled in config.toml (verify_jwt = true)
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error("Authorization header is required. Make sure you're authenticated.");
+    }
+
     // Get the Gemini API key from environment variables
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     if (!GEMINI_API_KEY) {

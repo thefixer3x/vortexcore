@@ -1,6 +1,5 @@
 
 import { LoginForm } from "@/components/auth/LoginForm";
-import { GeminiAIChat } from "@/components/ai/GeminiAIChat";
 import { SecurityBadges } from "@/components/marketing/SecurityBadges";
 import { ValueAddedServices } from "@/components/marketing/ValueAddedServices";
 import { Link } from "react-router-dom";
@@ -47,11 +46,7 @@ const Index = () => {
               Link all your accounts, manage transactions, and get AI-powered financial insights with our secure and intelligent banking aggregation platform.
             </p>
           </div>
-          {/* Real AI Chat Integration */}
-          <div className="mt-8">
-            <GeminiAIChat />
-          </div>
-
+          
           <SecurityBadges />
 
           <ValueAddedServices />

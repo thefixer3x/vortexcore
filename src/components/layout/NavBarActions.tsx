@@ -1,34 +1,24 @@
 
 import { Button } from "@/components/ui/button";
 import { Bell, Sun, Moon } from "lucide-react";
-import { useEffect, useState } from "react";
 import { VortexAISearch } from "@/components/ai/VortexAISearch";
 import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function NavBarActions() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const isMobile = useIsMobile();
   
   const isDashboardRoute = location.pathname !== "/" && location.pathname !== "/ecosystem";
-  
-  useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setIsDarkMode(isDark);
-  }, []);
-
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    setIsDarkMode(!isDarkMode);
-  };
   
   const getPageTitle = () => {
     switch (location.pathname) {
       case "/":
         return "Login";
       case "/dashboard":
-        return "Control Room";
+        return "Dashboard";
       case "/transactions":
         return "Transactions";
       case "/insights":
@@ -65,8 +55,9 @@ export function NavBarActions() {
         size="icon"
         onClick={toggleTheme}
         aria-label="Toggle theme"
+        className="hover:bg-muted/50 transition-colors"
       >
-        {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
       </Button>
       
       {isMobile && isDashboardRoute && (

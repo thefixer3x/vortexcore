@@ -1,8 +1,25 @@
-import React, { createContext } from 'react';
+import React, { createContext, ReactNode } from 'react';
 
-export const PaymentStatusContext = createContext(null);
+interface PaymentStatus {
+  isPending?: boolean;
+  isProcessing?: boolean;
+  lastUpdated?: Date;
+}
 
-export function PaymentStatusProvider({ children }) {
+interface PaymentStatusContextType {
+  paymentStatus?: PaymentStatus;
+  refreshStatus?: () => void;
+}
+
+export const PaymentStatusContext = createContext<PaymentStatusContextType>({});
+
+interface PaymentStatusProviderProps {
+  children: ReactNode;
+}
+
+export function PaymentStatusProvider({ children }: PaymentStatusProviderProps) {
+  // This is a placeholder implementation that can be expanded later
+  // when actual payment functionality is needed
   return (
     <PaymentStatusContext.Provider value={{}}>
       {children}

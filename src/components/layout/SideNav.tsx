@@ -17,11 +17,13 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import { SideNavHeader } from "./SideNavHeader";
 import { SideNavProfile } from "./SideNavProfile";
 import { SideNavSection } from "./SideNavSection";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function SideNav() {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useSidebar();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   // Handle clicks outside the sidebar to close it on mobile
   useEffect(() => {

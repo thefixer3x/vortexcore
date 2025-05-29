@@ -27,6 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "react-router-dom";
 
 interface Transaction {
   id: string;
@@ -187,7 +188,16 @@ const Transactions = () => {
     <div className="animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <Link 
+              to="/dashboard" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title="Back to Dashboard"
+            >
+              <Home className="h-5 w-5" />
+            </Link>
+            <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
+          </div>
           <p className="text-muted-foreground">Manage and analyze your financial activities</p>
         </div>
         

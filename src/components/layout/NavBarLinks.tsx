@@ -14,7 +14,7 @@ export function NavBarLinks() {
           size="sm"
           className={`rounded-full px-4 ${isActive("/dashboard") ? "" : "hover:bg-muted"}`}
         >
-          Control Room
+          Dashboard
         </Button>
       </Link>
       <Link to="/transactions">

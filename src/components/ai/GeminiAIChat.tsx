@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import LogRocket from "logrocket";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   role: 'user' | 'model';
@@ -30,6 +32,7 @@ export function GeminiAIChat() {
   const [model, setModel] = useState<string>("gemini-pro");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { getAccessToken, isAuthenticated } = useAuth();
 
   // Scroll to bottom of messages
   useEffect(() => {
@@ -40,6 +43,13 @@ export function GeminiAIChat() {
     e.preventDefault();
     
     if (!prompt.trim()) return;
+    
+    // Track AI prompt sent event
+    LogRocket.track('ai_prompt_sent', {
+      model: model,
+      promptLength: prompt.length,
+      historyLength: messages.length
+    });
     
     const userMessage: Message = {
       role: 'user',
@@ -57,9 +67,21 @@ export function GeminiAIChat() {
         content: msg.content
       }));
 
+      // Get auth token if authenticated
+      let authHeaders = {};
+      if (isAuthenticated) {
+        const token = await getAccessToken();
+        if (token) {
+          authHeaders = {
+            Authorization: `Bearer ${token}`
+          };
+        }
+      }
+
       // Call the Supabase Edge Function
       const { data, error } = await supabase.functions.invoke("gemini-ai", {
         body: { prompt, history, model },
+        headers: authHeaders
       });
 
       if (error) {
