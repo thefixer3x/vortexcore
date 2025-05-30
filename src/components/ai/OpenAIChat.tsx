@@ -51,24 +51,23 @@ export function OpenAIChat() {
     setMessage("");
     setIsLoading(true);
     
-    // Track AI prompt sent event
-    LogRocket.track('ai_prompt_sent', {
-      provider: 'vortex-ai',
-      promptLength: message.length,
-      historyLength: messages.length
-    });
-    
     try {
+      // Track AI prompt sent event
+      LogRocket.track('ai_prompt_sent', {
+        provider: 'vortex-ai',
+        promptLength: message.length,
+        historyLength: messages.length
+      });
+      
       // Prepare conversation history for the API
       const history = messages.map(msg => ({
         role: msg.role,
         content: msg.content
       }));
 
-      // Simple heuristic: if the user appears to want live data, ask the router for real‑time mode
-      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
-
       // Get auth token if authenticated
+      // Heuristic to decide if the user is asking for live‑data answers
+      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
       let authHeaders = {};
       if (isAuthenticated) {
         const token = await getAccessToken();
@@ -79,10 +78,11 @@ export function OpenAIChat() {
         }
       }
 
-      // --- Streamed request to ai‑router ---
-      // Use the correct way to access Supabase URL
-      const SUPABASE_URL = process.env.SUPABASE_URL || 'https://muyhurqfcsjqtnbozyir.supabase.co';
-      const endpoint = `${SUPABASE_URL}/functions/v1/ai-router`;
+      // Get location if needed (removed for now to prevent errors)
+      // const location = await getLocation();
+      
+      // Use the Supabase client's URL
+      const endpoint = `${process.env.VITE_SUPABASE_URL || 'https://muyhurqfcsjqtnbozyir.supabase.co'}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
@@ -95,6 +95,8 @@ export function OpenAIChat() {
         },
         body: JSON.stringify({
           messages: [...history, { role: 'user', content: message }],
+          // location: location, // Removed for now
+          model: 'gpt-4', // Default model
           wantRealtime
         })
       });
@@ -110,25 +112,75 @@ export function OpenAIChat() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
       let assistantText = '';
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        assistantText += decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, { stream: true });
 
-        // Push incremental content into the last assistant bubble
-        setMessages(prev => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: 'assistant', content: assistantText };
-          return updated;
-        });
+        // Split on newlines to get complete SSE frames
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // keep incomplete line in buffer
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data:')) continue;
+
+          const payload = trimmed.replace(/^data:\s*/, '');
+          if (payload === '[DONE]') {
+            buffer = '';
+            break;
+          }
+
+          try {
+            const json = JSON.parse(payload);
+            const delta = json.choices?.[0]?.delta?.content ?? '';
+            if (delta) {
+              assistantText += delta;
+              // Update the last assistant bubble incrementally
+              setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+                return updated;
+              });
+            }
+          } catch {
+            // If it isn't valid JSON, just append raw text
+            assistantText += payload;
+            setMessages(prev => {
+              const updated = [...prev];
+              updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+              return updated;
+            });
+          }
+        }
       }
     } catch (error) {
       console.error("Error in OpenAI chat:", error);
+      
+      // Remove the loading message if it exists
+      setMessages(prev => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.role === 'assistant' && !lastMessage.content) {
+          return prev.slice(0, -1);
+        }
+        return prev;
+      });
+      
+      // Add error message
+      setMessages(prev => [
+        ...prev, 
+        { 
+          role: 'assistant', 
+          content: 'I\'m sorry, I encountered an error while processing your request. Please try again.' 
+        }
+      ]);
+      
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -181,7 +233,22 @@ export function OpenAIChat() {
       <div className="mb-2 w-80 md:w-96 bg-card rounded-lg shadow-lg border border-border overflow-hidden flex flex-col max-h-[500px]">
         <div className="bg-primary p-3 text-primary-foreground flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10">
+              <img 
+                src="/favicon.svg" 
+                alt="VortexAI" 
+                className="h-5 w-5 text-primary-foreground" 
+                onError={(e) => {
+                  // Fallback to text if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = document.createElement('span');
+                  fallback.className = 'text-sm font-bold text-primary-foreground';
+                  fallback.textContent = 'V';
+                  target.parentNode?.appendChild(fallback);
+                }}
+              />
+            </div>
             <h3 className="font-medium">VortexAI Assistant</h3>
           </div>
           <div className="flex items-center">
@@ -215,21 +282,33 @@ export function OpenAIChat() {
         </div>
         
         <form onSubmit={handleSendMessage} className="p-3 border-t">
-          <div className="flex gap-2">
+          <div className="relative flex gap-2">
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 min-h-[60px] resize-none"
+              placeholder="Type a message... (Press Enter to send, Shift+Enter for new line)"
+              className="flex-1 min-h-[60px] resize-none pr-10"
               disabled={isLoading}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSendMessage(e);
+                  if (message.trim()) {
+                    handleSendMessage(e);
+                  }
                 }
               }}
             />
-            <Button type="submit" size="icon" className="h-10 w-10" disabled={isLoading || !message.trim()}>
+            <div className="absolute right-2 bottom-2 flex items-center gap-1">
+              <span className="text-xs text-muted-foreground">
+                {isLoading ? 'Sending...' : '⏎ to send'}
+              </span>
+            </div>
+            <Button 
+              type="submit" 
+              size="icon" 
+              className="h-10 w-10 self-end" 
+              disabled={isLoading || !message.trim()}
+            >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
@@ -237,8 +316,19 @@ export function OpenAIChat() {
               )}
             </Button>
           </div>
-          <div className="mt-2 flex justify-end">
-            <Button variant="ghost" size="sm" onClick={clearChat} className="text-xs">
+          <div className="mt-2 flex justify-between items-center">
+            <span className="text-xs text-muted-foreground ml-1">
+              Shift+Enter for new line
+            </span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={(e) => {
+                e.preventDefault();
+                clearChat();
+              }} 
+              className="text-xs"
+            >
               Clear Chat
             </Button>
           </div>
