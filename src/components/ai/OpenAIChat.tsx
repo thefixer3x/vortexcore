@@ -53,7 +53,7 @@ export function OpenAIChat() {
     
     // Track AI prompt sent event
     LogRocket.track('ai_prompt_sent', {
-      provider: 'openai',
+      provider: 'vortex-ai',
       promptLength: message.length,
       historyLength: messages.length
     });
@@ -64,7 +64,10 @@ export function OpenAIChat() {
         role: msg.role,
         content: msg.content
       }));
-      
+
+      // Simple heuristic: if the user appears to want live data, ask the router for real‑time mode
+      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
+
       // Get auth token if authenticated
       let authHeaders = {};
       if (isAuthenticated) {
@@ -75,36 +78,50 @@ export function OpenAIChat() {
           };
         }
       }
-      
-      // Call the openai-assistant function to maintain compatibility
-      // We'll temporarily revert back to using the direct endpoint until the router is fully tested
-      const { data, error } = await supabase.functions.invoke("openai-assistant", {
-        body: { 
-          prompt: message, 
-          history,
-          model: "gpt-4o-mini" // Use the latest compact model for better performance
+
+      // --- Streamed request to ai‑router ---
+      // Use the correct way to access Supabase URL
+      const SUPABASE_URL = process.env.SUPABASE_URL || 'https://muyhurqfcsjqtnbozyir.supabase.co';
+      const endpoint = `${SUPABASE_URL}/functions/v1/ai-router`;
+
+      // Add a placeholder assistant bubble so the UI can live‑update
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders
         },
-        headers: authHeaders
+        body: JSON.stringify({
+          messages: [...history, { role: 'user', content: message }],
+          wantRealtime
+        })
       });
-      
-      if (error) {
-        console.error("Error calling OpenAI:", error);
+
+      if (!res.ok || !res.body) {
         toast({
-          title: "Error",
-          description: "Failed to get a response from the AI assistant",
-          variant: "destructive",
+          title: 'VortexAI Error',
+          description: 'Failed to connect to VortexAI',
+          variant: 'destructive'
         });
         return;
       }
-      
-      // Add AI response to messages
-      if (data?.response) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-      } else if (data?.error) {
-        toast({
-          title: "AI Response Error",
-          description: data.error,
-          variant: "destructive",
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantText = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        assistantText += decoder.decode(value, { stream: true });
+
+        // Push incremental content into the last assistant bubble
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+          return updated;
         });
       }
     } catch (error) {
