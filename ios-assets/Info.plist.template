@@ -34,11 +34,26 @@
 	<string>Your location is used to find nearby ATMs and to detect unusual account activity for fraud prevention.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>We use your contacts to make it easier to send money to friends and family.</string>
-	<!-- App Transport Security Settings -->
+	<!-- App Transport Security Settings - Enhanced Security -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>vortexcore.app</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+			</dict>
+			<key>supabase.co</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+			</dict>
+		</dict>
 	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -47,6 +62,18 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
+		<string>arm64</string>
+	</array>
+	
+	<!-- Dark Mode Support -->
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
+	
+	<!-- Background Modes for Financial Updates -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
@@ -64,5 +91,19 @@
 	<!-- Required for iOS 14+ privacy features -->
 	<key>NSUserTrackingUsageDescription</key>
 	<string>We use tracking data to provide you with personalized financial insights and to improve our services.</string>
+	
+	<!-- Financial Features & Apple Pay Support -->
+	<key>com.apple.developer.in-app-payments</key>
+	<array>
+		<string>merchant.com.vortexcore.app</string>
+	</array>
+	
+	<!-- Secure Storage Access -->
+	<key>com.apple.developer.default-data-protection</key>
+	<string>NSFileProtectionComplete</string>
+	
+	<!-- Widgets Support for Account Balance & Recent Transactions -->
+	<key>NSExtensionPointIdentifier</key>
+	<string>com.apple.widgetkit-extension</string>
 </dict>
 </plist>

@@ -1,69 +1,125 @@
-# Welcome to your Lovable project
+# VortexCore Banking App
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/8c01f5d5-9c84-4d3d-abb1-2e89b11166e0
+VortexCore is a modern fintech platform offering comprehensive banking services, transaction management, and AI-powered financial insights. The application features a responsive dashboard, payment processing capabilities, and intelligent virtual assistants to enhance the user experience.
 
-## How can I edit this code?
+## 🚀 Key Features
 
-There are several ways of editing your application.
+### 💼 Core Banking Features
+- **Modern Dashboard**: Gradient card designs with responsive layouts
+- **Transaction Management**: Advanced filtering and categorization
+- **Account Management**: Multi-account support with balance visibility controls
+- **Beneficiary Management**: Add and manage payment recipients
+- **Bulk Payment Processing**: Efficiently manage multiple payments
 
-**Use Lovable**
+### 🤖 AI Integration
+- **OpenAI Assistant**: Integrated chat assistance for financial questions
+- **Gemini AI**: Alternative AI model for diverse insights
+- **AI-Powered Insights**: Smart analysis of spending patterns and financial health
+- **Personalized Recommendations**: Tailored financial advice and alerts
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8c01f5d5-9c84-4d3d-abb1-2e89b11166e0) and start prompting.
+### 🎨 User Experience
+- **Responsive Design**: Optimized for mobile and desktop
+- **Dark/Light Mode**: Theme customization
+- **Animated UI**: Smooth transitions and micro-interactions
+- **Quick Actions**: Fast access to common functions
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🧰 Development Setup
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js (v18+)
+- npm or bun package manager
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Local Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone https://github.com/thefixer3x/vortex-core-app.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd vortex-core-app
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Supabase Edge Functions
+To deploy the Supabase edge functions:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+# Deploy all edge functions
+./deploy-functions.sh
+```
 
-**Use GitHub Codespaces**
+## 🛠️ Technologies
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Frontend
+- **React 18**: Modern component-based UI library
+- **TypeScript**: Type-safe JavaScript
+- **Vite**: Fast build tool and development server
+- **Tailwind CSS**: Utility-first CSS framework
+- **shadcn/ui**: High-quality UI components
+- **React Router**: Client-side routing
+- **React Query**: Data fetching and caching
+- **React Hook Form**: Form validation and handling
 
-## What technologies are used for this project?
+### Backend
+- **Supabase**: Backend-as-a-Service platform
+- **Edge Functions**: Serverless functions for AI integrations and authentication
+- **PostgreSQL**: Database for user data and transactions
 
-This project is built with .
+### AI Integration
+- **OpenAI API**: Powers the AI assistant and financial insights
+- **Google Gemini API**: Alternative AI model for diverse capabilities
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Mobile
+- **Capacitor**: Native iOS application wrapper
 
-## How can I deploy this project?
+## 🚀 Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/8c01f5d5-9c84-4d3d-abb1-2e89b11166e0) and click on Share -> Publish.
+### Supabase Configuration
 
-## I want to use a custom domain - is that possible?
+This project relies on Supabase for backend services. Make sure to set up the following environment variables in your Supabase project:
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- `OPENAI_API_KEY`: Your OpenAI API key for the assistant feature
+- `GEMINI_API_KEY`: Your Google Gemini API key for the AI insights
+
+### Edge Functions
+
+The application uses Supabase Edge Functions for serverless computing. These can be deployed using the provided script:
+
+```sh
+./deploy-functions.sh
+```
+
+### Web Deployment
+
+For web deployment, you can use any static site hosting platform:
+
+1. Build the production version:
+   ```sh
+   npm run build
+   ```
+
+2. Deploy the generated `dist` folder to your preferred hosting service (Netlify, Vercel, etc.)
+
+### Custom Domain Setup
+
+To use a custom domain with your deployment:
+
+1. Configure your DNS settings to point to your hosting provider
+2. Update the CORS settings in your Supabase project to allow requests from your domain
+3. Update any callback URLs in your authentication settings
+
+## 📋 Recent Updates
+
+- Enhanced dashboard UI with modern fintech styling
+- Added AI-powered financial insights
+- Integrated OpenAI and Gemini AI assistants
+- Fixed Supabase edge function deployment issues
+- Upgraded esbuild to version 0.25.5
+- Improved mobile responsiveness

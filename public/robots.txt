@@ -1,14 +1,35 @@
+# VortexCore Banking App - Robots.txt
+# Updated: May 30, 2025
+
+# Allow all crawlers full access
+User-agent: *
+Allow: /
+
+# Specific search engine configurations
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Social media bots
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Sitemap location
+Sitemap: https://vortexcore.app/sitemap.xml
 
 User-agent: *
 Allow: /

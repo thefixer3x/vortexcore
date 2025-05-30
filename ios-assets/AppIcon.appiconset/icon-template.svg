@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <rect width="1024" height="1024" rx="225" fill="url(#background-gradient)" />
+  
+  <!-- V Logo -->
+  <path d="M512 170L712 625L812 375H904L612 854L320 170H512Z" fill="white"/>
+  
+  <!-- Orbital Circle Decoration -->
+  <circle cx="512" cy="512" r="280" stroke="rgba(255,255,255,0.15)" stroke-width="30" fill="none" />
+  <circle cx="512" cy="512" r="340" stroke="rgba(255,255,255,0.1)" stroke-width="20" fill="none" />
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="background-gradient" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4F46E5" />
+      <stop offset="1" stop-color="#0D0D4A" />
+    </linearGradient>
+  </defs>
+</svg>
