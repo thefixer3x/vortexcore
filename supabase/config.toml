@@ -9,7 +9,3 @@ verify_jwt = false
 
 [functions.openai-assistant]
 verify_jwt = false
-
-[[domains]]
-name = "auth.vortexcore.app"
-custom_domain = true

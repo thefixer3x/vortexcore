@@ -15,7 +15,8 @@ echo "📦 Deploying gemini-ai function..."
 npx supabase functions deploy gemini-ai --project-ref muyhurqfcsjqtnbozyir
 
 # Update JWT settings
-echo "🔒 Updating JWT settings in config.toml..."
-npx supabase functions config update --verify-jwt false --project-ref muyhurqfcsjqtnbozyir
+echo "🔒 Updating JWT settings for each function..."
+npx supabase functions deploy openai-assistant --no-verify-jwt --project-ref muyhurqfcsjqtnbozyir
+npx supabase functions deploy gemini-ai --no-verify-jwt --project-ref muyhurqfcsjqtnbozyir
 
 echo "✅ Deployment complete!"
