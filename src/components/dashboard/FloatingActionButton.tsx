@@ -9,9 +9,38 @@ import {
   Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
 export const FloatingActionButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  // Handle action button clicks
+  const handleActionClick = (actionType: string) => {
+    setIsOpen(false); // Close the menu
+    
+    // Execute the appropriate action based on type
+    switch(actionType) {
+      case "Send Money":
+        navigate("/dashboard/payments/send");
+        break;
+      case "Request":
+        navigate("/dashboard/payments/request");
+        break;
+      case "Pay Bills":
+        navigate("/dashboard/payments/bills");
+        break;
+      case "Top Up":
+        navigate("/dashboard/accounts/topup");
+        break;
+      default:
+        toast({
+          title: "Coming Soon",
+          description: `${actionType} functionality will be available soon.`,
+        });
+    }
+  };
 
   const quickActions = [
     {
@@ -62,7 +91,7 @@ export const FloatingActionButton = () => {
                 "w-12 h-12 rounded-full shadow-lg border-0 transition-all duration-300 hover:scale-110",
                 action.color
               )}
-              onClick={() => setIsOpen(false)}
+              onClick={() => handleActionClick(action.label)}
             >
               <action.icon className="h-5 w-5 text-white" />
             </Button>

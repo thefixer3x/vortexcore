@@ -76,7 +76,8 @@ export function OpenAIChat() {
         }
       }
       
-      // Call the Supabase Edge Function for OpenAI
+      // Call the openai-assistant function to maintain compatibility
+      // We'll temporarily revert back to using the direct endpoint until the router is fully tested
       const { data, error } = await supabase.functions.invoke("openai-assistant", {
         body: { 
           prompt: message, 

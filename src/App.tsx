@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
 import GeminiDemo from "./pages/GeminiDemo";
+import PerplexityDemo from "./pages/PerplexityDemo";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryManager";
 import BulkUpload from "./components/payments/beneficiaries/BulkUpload";
@@ -24,7 +25,6 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
 import { DebugComponent } from "./debug";
 import { Home } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Button } from "./components/ui/button";
 
 // Create a new page for User Management
@@ -94,6 +94,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/ecosystem/gemini" element={<GeminiDemo />} />
+            <Route path="/ecosystem/perplexity" element={<PerplexityDemo />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
             
             {/* Dashboard routes with layout */}
