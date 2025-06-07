@@ -1,3 +1,4 @@
+
 import LogRocket from 'logrocket';
 
 export const setupLogRocketErrorTracking = () => {
@@ -21,13 +22,16 @@ export const setupNetworkTracking = () => {
         const method = options.method || 'GET';
         const startTime = Date.now();
 
+        // Convert URL to string for LogRocket
+        const urlString = url instanceof Request ? url.url : String(url);
+
         try {
           const response = await originalFetch(...args);
           const endTime = Date.now();
           const duration = endTime - startTime;
 
           LogRocket.track('network.request', {
-            url,
+            url: urlString,
             method,
             status: response.status,
             duration,
@@ -39,9 +43,9 @@ export const setupNetworkTracking = () => {
           const duration = endTime - startTime;
 
           LogRocket.track('network.error', {
-            url,
+            url: urlString,
             method,
-            error: error.message,
+            error: error instanceof Error ? error.message : 'Unknown error',
             duration,
           });
 
@@ -60,9 +64,12 @@ export const setupPerformanceTracking = () => {
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
+          // Check if entry has value property (for some performance metrics)
+          const value = 'value' in entry ? entry.value : entry.duration;
+          
           LogRocket.track('performance_metric', {
             name: entry.name,
-            value: entry.duration || entry.value,
+            value: value,
             type: entry.entryType,
             startTime: entry.startTime,
           });
