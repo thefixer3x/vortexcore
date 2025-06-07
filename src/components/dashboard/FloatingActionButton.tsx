@@ -47,25 +47,25 @@ export const FloatingActionButton = () => {
       icon: Send,
       label: "Send Money",
       color: "bg-blue-500 hover:bg-blue-600",
-      delay: "0ms"
+      delayClass: "animation-delay-0"
     },
     {
       icon: ArrowDownRight,
       label: "Request",
       color: "bg-green-500 hover:bg-green-600", 
-      delay: "50ms"
+      delayClass: "animation-delay-50"
     },
     {
       icon: CreditCard,
       label: "Pay Bills",
       color: "bg-purple-500 hover:bg-purple-600",
-      delay: "100ms"
+      delayClass: "animation-delay-100"
     },
     {
       icon: Zap,
       label: "Top Up",
       color: "bg-orange-500 hover:bg-orange-600",
-      delay: "150ms"
+      delayClass: "animation-delay-150"
     }
   ];
 
@@ -79,8 +79,10 @@ export const FloatingActionButton = () => {
         {quickActions.map((action, index) => (
           <div
             key={action.label}
-            className="flex items-center gap-3 animate-slide-up"
-            style={{ animationDelay: isOpen ? action.delay : '0ms' }}
+            className={cn(
+              "flex items-center gap-3 animate-slide-up",
+              isOpen ? action.delayClass : "animation-delay-0"
+            )}
           >
             <div className="bg-white dark:bg-gray-800 rounded-full px-3 py-2 shadow-lg text-sm font-medium whitespace-nowrap">
               {action.label}
