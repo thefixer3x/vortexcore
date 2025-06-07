@@ -1,4 +1,5 @@
 
+
 import LogRocket from 'logrocket';
 
 export const setupLogRocketErrorTracking = () => {
@@ -64,12 +65,12 @@ export const setupPerformanceTracking = () => {
     if ('PerformanceObserver' in window) {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          // Check if entry has value property (for some performance metrics)
-          const value = 'value' in entry ? entry.value : entry.duration;
+          // Check if entry has value property and ensure it's a number
+          const value = 'value' in entry && typeof entry.value === 'number' ? entry.value : entry.duration;
           
           LogRocket.track('performance_metric', {
             name: entry.name,
-            value: value,
+            value: typeof value === 'number' ? value : 0,
             type: entry.entryType,
             startTime: entry.startTime,
           });
