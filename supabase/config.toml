@@ -1,11 +1,1 @@
-
-project_id = "muyhurqfcsjqtnbozyir"
-
-[functions.auth]
-verify_jwt = true
-
-[functions.gemini-ai]
-verify_jwt = false
-
-[functions.openai-assistant]
-verify_jwt = false
+project_id = "mxtsdgkwzjzlttpotole"
