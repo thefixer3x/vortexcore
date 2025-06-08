@@ -14,8 +14,6 @@ Forbidden:
  • generic suggestions to "check Google"
 `;
 
-// Log available env keys for debugging (this will be removed in production)
-console.log("Available env variables:", Object.keys(Deno.env.toObject()));
 
 // Initialize OpenAI with more robust API key handling
 const openai = new OpenAI({
