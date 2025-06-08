@@ -123,3 +123,7 @@ To use a custom domain with your deployment:
 - Fixed Supabase edge function deployment issues
 - Upgraded esbuild to version 0.25.5
 - Improved mobile responsiveness
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
