@@ -20,7 +20,7 @@ GRANT ALL PRIVILEGES ON DATABASE vortex_analytics TO vortex_user;
 GRANT ALL PRIVILEGES ON DATABASE vortex_notifications TO vortex_user;
 
 -- Create read-only user for analytics
-CREATE USER vortex_readonly WITH PASSWORD 'vortex_readonly_password';
+CREATE USER vortex_readonly WITH PASSWORD '${VORTEX_READONLY_PASSWORD}';
 GRANT CONNECT ON DATABASE vortex_auth TO vortex_readonly;
 GRANT CONNECT ON DATABASE vortex_accounts TO vortex_readonly;
 GRANT CONNECT ON DATABASE vortex_transactions TO vortex_readonly;
