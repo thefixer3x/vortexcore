@@ -39,6 +39,8 @@
   REDIS_URL=<production-redis>
   CORS_ORIGIN=<your-production-domain>
   FORCE_HTTPS=true
+  VITE_SUPABASE_URL=<your-supabase-url>
+  VITE_SUPABASE_ANON_KEY=<your-supabase-anon-key>
   ```
 
 - [ ] **SSL/TLS Configuration**
