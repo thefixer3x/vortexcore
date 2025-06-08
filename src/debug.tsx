@@ -2,7 +2,9 @@
 import React from 'react';
 
 export const DebugComponent = () => {
-  console.log('DebugComponent is rendering');
+  if (import.meta.env.DEV) {
+    console.log('DebugComponent is rendering');
+  }
   return (
     <div style={{ 
       position: 'fixed', 
