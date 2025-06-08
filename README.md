@@ -87,6 +87,8 @@ This project relies on Supabase for backend services. Make sure to set up the fo
 
 - `OPENAI_API_KEY`: Your OpenAI API key for the assistant feature
 - `GEMINI_API_KEY`: Your Google Gemini API key for the AI insights
+- `VITE_SUPABASE_URL`: URL of your Supabase project
+- `VITE_SUPABASE_ANON_KEY`: Supabase anonymous key used by the frontend
 
 ### Edge Functions
 
@@ -102,6 +104,8 @@ For web deployment, you can use any static site hosting platform:
 
 1. Build the production version:
    ```sh
+   # Ensure environment variables like VITE_SUPABASE_URL and
+   # VITE_SUPABASE_ANON_KEY are defined before building
    npm run build
    ```
 
