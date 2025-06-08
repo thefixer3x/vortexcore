@@ -2,7 +2,9 @@
 import React from 'react';
 
 export const DebugComponent = () => {
-  console.log('DebugComponent is rendering');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DebugComponent is rendering');
+  }
   return (
     <div style={{ 
       position: 'fixed', 

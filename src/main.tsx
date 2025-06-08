@@ -14,7 +14,9 @@ import { PaymentStatusProvider } from './providers/PaymentStatusProvider'
 import { AuthProvider } from './contexts/AuthContext'
 
 // Initialize LogRocket for application monitoring
-console.log('Skipping LogRocket for debugging...');
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Skipping LogRocket for debugging...');
+}
 // try {
 //   LogRocket.init('p1tmu1/vortexcore-app');
 //   console.log('LogRocket initialized successfully');
@@ -40,7 +42,9 @@ const queryClient = new QueryClient({
   }
 });
 
-console.log('About to render React app...');
+if (process.env.NODE_ENV !== 'production') {
+  console.log('About to render React app...');
+}
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -50,4 +54,6 @@ createRoot(document.getElementById("root")!).render(
     </AuthProvider>
   </QueryClientProvider>
 );
-console.log('React app render called');
+if (process.env.NODE_ENV !== 'production') {
+  console.log('React app render called');
+}
