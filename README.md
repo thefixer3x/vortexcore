@@ -85,6 +85,8 @@ To deploy the Supabase edge functions:
 
 This project relies on Supabase for backend services. Make sure to set up the following environment variables in your Supabase project:
 
+- `SUPABASE_URL`: The base URL of your Supabase instance
+- `SUPABASE_PUBLISHABLE_KEY`: Your Supabase publishable API key
 - `OPENAI_API_KEY`: Your OpenAI API key for the assistant feature
 - `GEMINI_API_KEY`: Your Google Gemini API key for the AI insights
 
