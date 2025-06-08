@@ -47,12 +47,25 @@ npm install
 npm run dev
 ```
 
+
 ### Supabase Edge Functions
 To deploy the Supabase edge functions:
 
 ```sh
 # Deploy all edge functions
 ./deploy-functions.sh
+```
+
+### Microservices Setup
+Use the provided script to spin up the full microservice stack with Docker Compose:
+
+```sh
+# Start all services and run migrations
+./setup-microservices.sh
+
+# Additional commands
+#   ./setup-microservices.sh start   # start services if already set up
+#   ./setup-microservices.sh stop    # stop all services
 ```
 
 ## 🛠️ Technologies
@@ -114,6 +127,18 @@ To use a custom domain with your deployment:
 1. Configure your DNS settings to point to your hosting provider
 2. Update the CORS settings in your Supabase project to allow requests from your domain
 3. Update any callback URLs in your authentication settings
+
+## 🧪 Testing
+
+Run the optional test scripts to verify AI functions and login behavior:
+
+```sh
+# Check edge function access
+node test-ai-functions.js
+
+# Verify authentication works (set TEST_EMAIL and TEST_PASSWORD as needed)
+node test-login.js
+```
 
 ## 📋 Recent Updates
 
