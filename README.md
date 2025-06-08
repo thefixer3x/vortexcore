@@ -123,3 +123,8 @@ To use a custom domain with your deployment:
 - Fixed Supabase edge function deployment issues
 - Upgraded esbuild to version 0.25.5
 - Improved mobile responsiveness
+
+## License
+
+VortexCore is released under the [MIT License](LICENSE).
+
