@@ -19,13 +19,12 @@ import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryM
 import BulkUpload from "./components/payments/beneficiaries/BulkUpload";
 import CategoryManager from "./components/payments/beneficiaries/CategoryManager";
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
-// import { LogRocketRouterTracker } from "./components/analytics/LogRocketRouterTracker";
-// import LogRocketErrorBoundary from "./components/error/LogRocketErrorBoundary";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
 import { DebugComponent } from "./debug";
 import { Home } from "lucide-react";
 import { Button } from "./components/ui/button";
+import VirtualCards from "./pages/VirtualCards";
 
 // Create a new page for User Management
 const Users = () => (
@@ -135,6 +134,14 @@ const App = () => {
               element={
                 <DashboardLayout>
                   <Users />
+                </DashboardLayout>
+              } 
+            />
+            <Route 
+              path="/virtual-cards" 
+              element={
+                <DashboardLayout>
+                  <VirtualCards />
                 </DashboardLayout>
               } 
             />
