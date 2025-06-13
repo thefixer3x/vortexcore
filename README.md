@@ -1,4 +1,4 @@
-# VortexCore Banking App
+# VortexCore App
 
 ## Project Overview
 
