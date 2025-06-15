@@ -50,82 +50,87 @@ export function OpenAIChat() {
     setMessages(prev => [...prev, userMessage]);
     setMessage("");
     setIsLoading(true);
-    
-    try {
-      // Track AI prompt sent event
-      try {
-        LogRocket.track('ai_prompt_sent', {
-          provider: 'vortex-ai',
-          promptLength: message.length,
-          historyLength: messages.length
-        });
-      } catch (logError) {
-        console.warn("LogRocket tracking failed:", logError);
-      }
-      
-      // Prepare conversation history for the API
-      const history = messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
 
+    // Track analytics
+    LogRocket.track('ai_prompt_sent', {
+      provider: 'vortex_router',
+      promptLength: userMessage.content.length,
+      historyLength: messages.length
+    });
+
+    try {
       // Get auth token if authenticated
+      // Heuristic to decide if the user is asking for live‑data answers
+      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
       let authHeaders = {};
       if (isAuthenticated) {
-        try {
-          const token = await getAccessToken();
-          if (token) {
-            authHeaders = {
-              Authorization: `Bearer ${token}`
-            };
-          }
-        } catch (authError) {
-          console.warn("Failed to get auth token:", authError);
+        const token = await getAccessToken();
+        if (token) {
+          authHeaders = {
+            Authorization: `Bearer ${token}`
+          };
         }
       }
-
-      // Determine if the user is asking for real-time data
-      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
       
       // Use the Supabase client's URL
-      const endpoint = `${import.meta.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co'}/functions/v1/ai-router`;
+      const endpoint = `${process.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co'}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-      // Make the API request with proper error handling
-      const res = await fetch(endpoint, {
+      // Make the request to the AI router
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...authHeaders
         },
         body: JSON.stringify({
-          messages: [...history, { role: 'user', content: message }],
+          messages: [...messages, { role: 'user', content: message }],
           model: 'gpt-4', // Default model
           wantRealtime
         })
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`API error (${res.status}): ${errorText}`);
+      if (!response.ok) {
+        throw new Error(`Failed to connect to VortexAI: ${response.status} ${response.statusText}`);
       }
 
-      if (!res.body) {
-        throw new Error("Response body is empty");
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let assistantText = '';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
+      // Check if the response is JSON or a stream
+      const contentType = response.headers.get('Content-Type') || '';
+      
+      if (contentType.includes('application/json')) {
+        // Handle JSON response (non-streaming)
+        const data = await response.json();
         
-        try {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        // Update the last assistant message with the complete response
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { 
+            role: 'assistant', 
+            content: data.response || 'I apologize, but I couldn\'t generate a response at this time.'
+          };
+          return updated;
+        });
+      } else if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Response body is not readable');
+        }
+        
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let assistantText = '';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          
           buffer += decoder.decode(value, { stream: true });
 
           // Split on newlines to get complete SSE frames
@@ -144,29 +149,72 @@ export function OpenAIChat() {
 
             try {
               const json = JSON.parse(payload);
-              const delta = json.choices?.[0]?.delta?.content ?? '';
-              if (delta) {
+              // Handle different streaming formats
+              if (json.choices?.[0]?.delta?.content) {
+                // OpenAI format
+                const delta = json.choices[0].delta.content;
                 assistantText += delta;
-                // Update the last assistant bubble incrementally
-                setMessages(prev => {
-                  const updated = [...prev];
-                  updated[updated.length - 1] = { role: 'assistant', content: assistantText };
-                  return updated;
-                });
+              } else if (json.response) {
+                // Direct response format
+                assistantText = json.response;
+              } else if (typeof json === 'string') {
+                // Plain text format
+                assistantText += json;
+              } else if (json.content) {
+                // Simple content format
+                assistantText += json.content;
               }
+              
+              // Update the last assistant bubble incrementally
+              setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { 
+                  role: 'assistant', 
+                  content: assistantText 
+                };
+                return updated;
+              });
             } catch (parseError) {
               // If it isn't valid JSON, just append raw text
               assistantText += payload;
               setMessages(prev => {
                 const updated = [...prev];
-                updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+                updated[updated.length - 1] = { 
+                  role: 'assistant', 
+                  content: assistantText 
+                };
                 return updated;
               });
             }
           }
-        } catch (streamError) {
-          console.error("Error processing stream:", streamError);
         }
+      } else {
+        // Unknown response format
+        const text = await response.text();
+        let assistantText = 'I received a response, but it was in an unexpected format.';
+        
+        try {
+          // Try to parse as JSON anyway
+          const data = JSON.parse(text);
+          if (data.response) {
+            assistantText = data.response;
+          }
+        } catch (e) {
+          // If not JSON, use the raw text if it's not too long
+          if (text && text.length < 1000) {
+            assistantText = text;
+          }
+        }
+        
+        // Update the last assistant message
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { 
+            role: 'assistant', 
+            content: assistantText
+          };
+          return updated;
+        });
       }
     } catch (error) {
       console.error("Error in OpenAI chat:", error);
