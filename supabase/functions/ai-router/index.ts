@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import OpenAI from 'npm:openai@4.11.0'
+import { askPerplexity } from './providers/perplexity.ts'
 
 // Define the VortexAI system contract
 export const VORTEX_SYSTEM_PROMPT = `
@@ -14,7 +15,6 @@ Forbidden:
  • generic suggestions to "check Google"
 `;
 
-
 // Initialize OpenAI with more robust API key handling
 const openai = new OpenAI({
   apiKey: Deno.env.get('OPENAI_API_KEY') || ''
@@ -25,7 +25,11 @@ if (!Deno.env.get('OPENAI_API_KEY')) {
   console.error("CRITICAL ERROR: Missing OPENAI_API_KEY environment variable");
 }
 
-// Removed Gemini integration temporarily for simplified testing
+// Check if Perplexity API key is available
+const hasPerplexityKey = !!Deno.env.get('PERPLEXITY_API_KEY');
+if (!hasPerplexityKey) {
+  console.warn("WARNING: Missing PERPLEXITY_API_KEY environment variable - fallback will not work");
+}
 
 // Detect if the response is a fallback ("I don't have real-time data")
 function isFallback(text: string) {
@@ -89,7 +93,7 @@ function stripPII(message: string) {
   return sanitized;
 }
 
-// Main router function with simplified implementation
+// Main router function with fallback implementation
 serve(async (req) => {
   try {
     // Log request headers for debugging
@@ -122,22 +126,81 @@ serve(async (req) => {
       ...sanitizedMessages
     ];
 
-    // For now, just use OpenAI directly while we debug the router
-    const result = await callOpenAI(conversation);
+    // First try OpenAI
+    const openaiResult = await callOpenAI(conversation);
     
-    if (!result.success) {
-      throw new Error(result.error || "Failed to get response from OpenAI");
+    // If OpenAI succeeds, return the response
+    if (openaiResult.success) {
+      // Check if the response is a fallback and we want realtime data
+      const response = openaiResult.response;
+      if (wantRealtime && isFallback(response) && hasPerplexityKey) {
+        console.log("OpenAI returned fallback response, trying Perplexity for real-time data");
+        
+        // Get the last user message for Perplexity
+        const lastUserMessage = sanitizedMessages
+          .filter(msg => msg.role === 'user')
+          .pop()?.content || '';
+        
+        try {
+          // Call Perplexity for real-time data
+          const perplexityStream = await askPerplexity(lastUserMessage);
+          
+          // Return the stream directly for streaming responses
+          return new Response(perplexityStream, {
+            headers: { 
+              "Content-Type": "text/event-stream",
+              "Cache-Control": "no-cache",
+              "Connection": "keep-alive"
+            }
+          });
+        } catch (perplexityError) {
+          console.error("Perplexity fallback failed:", perplexityError);
+          // Continue with OpenAI response if Perplexity fails
+        }
+      }
+      
+      // Format the OpenAI response to match VortexAI brand voice
+      const formattedResponse = formatResponse(response);
+      
+      return new Response(JSON.stringify({ 
+        response: formattedResponse,
+        provider: "openai"
+      }), {
+        headers: { "Content-Type": "application/json" },
+        status: 200
+      });
     }
     
-    // Format the response to match VortexAI brand voice
-    const formattedResponse = formatResponse(result.response);
+    // If OpenAI fails and we have Perplexity API key, try Perplexity as fallback
+    if (!openaiResult.success && hasPerplexityKey) {
+      console.log("OpenAI failed, trying Perplexity as fallback");
+      
+      // Get the last user message for Perplexity
+      const lastUserMessage = sanitizedMessages
+        .filter(msg => msg.role === 'user')
+        .pop()?.content || '';
+      
+      try {
+        // Call Perplexity
+        const perplexityStream = await askPerplexity(lastUserMessage);
+        
+        // Return the stream directly for streaming responses
+        return new Response(perplexityStream, {
+          headers: { 
+            "Content-Type": "text/event-stream",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive"
+          }
+        });
+      } catch (perplexityError) {
+        console.error("Perplexity fallback failed:", perplexityError);
+        throw new Error("All AI providers failed");
+      }
+    }
     
-    return new Response(JSON.stringify({ 
-      response: formattedResponse 
-    }), {
-      headers: { "Content-Type": "application/json" },
-      status: 200
-    });
+    // If we get here, both OpenAI and Perplexity (if available) have failed
+    throw new Error(openaiResult.error || "Failed to get response from AI providers");
+    
   } catch (error) {
     console.error("Router error:", error);
     return new Response(JSON.stringify({ 
