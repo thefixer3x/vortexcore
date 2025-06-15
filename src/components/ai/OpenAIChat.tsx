@@ -6,9 +6,9 @@ import {
   Send, 
   ChevronUp, 
   ChevronDown,
-  Sparkles,
   X,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,7 @@ export function OpenAIChat() {
     { role: "assistant", content: "Welcome to VortexCore! How can I assist you with your financial needs today?" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { getAccessToken, isAuthenticated } = useAuth();
@@ -50,15 +51,21 @@ export function OpenAIChat() {
     setMessages(prev => [...prev, userMessage]);
     setMessage("");
     setIsLoading(true);
-
-    // Track analytics
-    LogRocket.track('ai_prompt_sent', {
-      provider: 'vortex_router',
-      promptLength: userMessage.content.length,
-      historyLength: messages.length
-    });
-
+    
     try {
+      // Track AI prompt sent event
+      LogRocket.track('ai_prompt_sent', {
+        provider: 'vortex_router',
+        promptLength: userMessage.content.length,
+        historyLength: messages.length
+      });
+      
+      // Prepare conversation history for the API
+      const history = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
       // Get auth token if authenticated
       // Heuristic to decide if the user is asking for live‑data answers
       const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
@@ -86,7 +93,7 @@ export function OpenAIChat() {
           ...authHeaders
         },
         body: JSON.stringify({
-          messages: [...messages, { role: 'user', content: message }],
+          messages: [...history, { role: 'user', content: message }],
           model: 'gpt-4', // Default model
           wantRealtime
         })
@@ -176,15 +183,17 @@ export function OpenAIChat() {
               });
             } catch (parseError) {
               // If it isn't valid JSON, just append raw text
-              assistantText += payload;
-              setMessages(prev => {
-                const updated = [...prev];
-                updated[updated.length - 1] = { 
-                  role: 'assistant', 
-                  content: assistantText 
-                };
-                return updated;
-              });
+              if (payload !== '[DONE]') {
+                assistantText += payload;
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { 
+                    role: 'assistant', 
+                    content: assistantText 
+                  };
+                  return updated;
+                });
+              }
             }
           }
         }
@@ -216,6 +225,9 @@ export function OpenAIChat() {
           return updated;
         });
       }
+      
+      // Reset retry count on success
+      setRetryCount(0);
     } catch (error) {
       console.error("Error in OpenAI chat:", error);
       
@@ -242,8 +254,23 @@ export function OpenAIChat() {
         description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
+      
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRetry = () => {
+    // Get the last user message
+    const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
+    if (lastUserMessage) {
+      // Remove the error message
+      setMessages(prev => prev.slice(0, -1));
+      // Retry with the last user message
+      setMessage(lastUserMessage.content);
+      handleSendMessage(new Event('submit') as React.FormEvent);
     }
   };
 
@@ -255,6 +282,7 @@ export function OpenAIChat() {
     setMessages([
       { role: "assistant", content: "Welcome to VortexCore! How can I assist you with your financial needs today?" }
     ]);
+    setRetryCount(0);
     toast({
       title: "Chat cleared",
       description: "All messages have been cleared",
@@ -333,11 +361,31 @@ export function OpenAIChat() {
                     : "bg-muted"
                 }`}
               >
-                {msg.content}
+                {msg.content || (isLoading && index === messages.length - 1 ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Thinking...</span>
+                  </div>
+                ) : 'No response')}
               </div>
             </div>
           ))}
           <div ref={messagesEndRef} />
+          
+          {/* Show retry button if there was an error */}
+          {retryCount > 0 && !isLoading && (
+            <div className="flex justify-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRetry}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Retry
+              </Button>
+            </div>
+          )}
         </div>
         
         <form onSubmit={handleSendMessage} className="p-3 border-t">
