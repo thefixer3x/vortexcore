@@ -53,11 +53,15 @@ export function OpenAIChat() {
     
     try {
       // Track AI prompt sent event
-      LogRocket.track('ai_prompt_sent', {
-        provider: 'vortex-ai',
-        promptLength: message.length,
-        historyLength: messages.length
-      });
+      try {
+        LogRocket.track('ai_prompt_sent', {
+          provider: 'vortex-ai',
+          promptLength: message.length,
+          historyLength: messages.length
+        });
+      } catch (logError) {
+        console.warn("LogRocket tracking failed:", logError);
+      }
       
       // Prepare conversation history for the API
       const history = messages.map(msg => ({
@@ -66,27 +70,30 @@ export function OpenAIChat() {
       }));
 
       // Get auth token if authenticated
-      // Heuristic to decide if the user is asking for live‑data answers
-      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
       let authHeaders = {};
       if (isAuthenticated) {
-        const token = await getAccessToken();
-        if (token) {
-          authHeaders = {
-            Authorization: `Bearer ${token}`
-          };
+        try {
+          const token = await getAccessToken();
+          if (token) {
+            authHeaders = {
+              Authorization: `Bearer ${token}`
+            };
+          }
+        } catch (authError) {
+          console.warn("Failed to get auth token:", authError);
         }
       }
 
-      // Get location if needed (removed for now to prevent errors)
-      // const location = await getLocation();
+      // Determine if the user is asking for real-time data
+      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(message);
       
       // Use the Supabase client's URL
-      const endpoint = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-router`;
+      const endpoint = `${import.meta.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co'}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
+      // Make the API request with proper error handling
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -95,19 +102,18 @@ export function OpenAIChat() {
         },
         body: JSON.stringify({
           messages: [...history, { role: 'user', content: message }],
-          // location: location, // Removed for now
           model: 'gpt-4', // Default model
           wantRealtime
         })
       });
 
-      if (!res.ok || !res.body) {
-        toast({
-          title: 'VortexAI Error',
-          description: 'Failed to connect to VortexAI',
-          variant: 'destructive'
-        });
-        return;
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`API error (${res.status}): ${errorText}`);
+      }
+
+      if (!res.body) {
+        throw new Error("Response body is empty");
       }
 
       const reader = res.body.getReader();
@@ -118,43 +124,48 @@ export function OpenAIChat() {
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        buffer += decoder.decode(value, { stream: true });
+        
+        try {
+          buffer += decoder.decode(value, { stream: true });
 
-        // Split on newlines to get complete SSE frames
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // keep incomplete line in buffer
+          // Split on newlines to get complete SSE frames
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // keep incomplete line in buffer
 
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed || !trimmed.startsWith('data:')) continue;
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data:')) continue;
 
-          const payload = trimmed.replace(/^data:\s*/, '');
-          if (payload === '[DONE]') {
-            buffer = '';
-            break;
-          }
+            const payload = trimmed.replace(/^data:\s*/, '');
+            if (payload === '[DONE]') {
+              buffer = '';
+              break;
+            }
 
-          try {
-            const json = JSON.parse(payload);
-            const delta = json.choices?.[0]?.delta?.content ?? '';
-            if (delta) {
-              assistantText += delta;
-              // Update the last assistant bubble incrementally
+            try {
+              const json = JSON.parse(payload);
+              const delta = json.choices?.[0]?.delta?.content ?? '';
+              if (delta) {
+                assistantText += delta;
+                // Update the last assistant bubble incrementally
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+                  return updated;
+                });
+              }
+            } catch (parseError) {
+              // If it isn't valid JSON, just append raw text
+              assistantText += payload;
               setMessages(prev => {
                 const updated = [...prev];
                 updated[updated.length - 1] = { role: 'assistant', content: assistantText };
                 return updated;
               });
             }
-          } catch {
-            // If it isn't valid JSON, just append raw text
-            assistantText += payload;
-            setMessages(prev => {
-              const updated = [...prev];
-              updated[updated.length - 1] = { role: 'assistant', content: assistantText };
-              return updated;
-            });
           }
+        } catch (streamError) {
+          console.error("Error processing stream:", streamError);
         }
       }
     } catch (error) {
