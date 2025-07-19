@@ -10,7 +10,11 @@
     "lint": "bun eslint .",
     "preview": "bun vite preview",
     "test:ai": "tsx src/test-ai.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "i18n:validate": "cd ../.. && bun run i18n:validate",
+    "i18n:translate": "cd ../.. && bun run i18n:translate",
+    "i18n:coverage": "cd ../.. && bun run i18n:coverage",
+    "i18n:quality": "cd ../.. && bun run i18n:quality"
   },
   "dependencies": {
     "@capacitor/cli": "^7.4.2",
