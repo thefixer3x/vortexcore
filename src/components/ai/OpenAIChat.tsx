@@ -82,7 +82,7 @@ export function OpenAIChat() {
       // const location = await getLocation();
       
       // Use the Supabase client's URL
-      const endpoint = `${process.env.VITE_SUPABASE_URL || 'https://muyhurqfcsjqtnbozyir.supabase.co'}/functions/v1/ai-router`;
+      const endpoint = `${import.meta.env.VITE_SUPABASE_URL || 'https://muyhurqfcsjqtnbozyir.supabase.co'}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
