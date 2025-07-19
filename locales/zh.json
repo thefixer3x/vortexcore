@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "让个人理财更简单"
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "welcome": "欢迎回来，{{name}}！",
+    "total_balance": "总余额",
+    "monthly_income": "月收入",
+    "monthly_expenses": "月支出",
+    "recent_transactions": "最近交易",
+    "quick_actions": "快捷操作"
+  },
+  "transactions": {
+    "title": "交易",
+    "add_transaction": "添加交易",
+    "amount": "金额",
+    "description": "描述",
+    "category": "类别",
+    "date": "日期",
+    "no_transactions": "未找到交易"
+  },
+  "insights": {
+    "title": "财务洞察",
+    "spending_trends": "支出趋势",
+    "category_breakdown": "类别分布",
+    "cash_flow": "现金流分析",
+    "recommendations": "AI 推荐"
+  },
+  "virtual_cards": {
+    "title": "虚拟卡",
+    "create_card": "创建虚拟卡",
+    "card_number": "卡号",
+    "expiry_date": "到期日期",
+    "cvv": "CVV",
+    "spending_limit": "消费限额"
+  },
+  "settings": {
+    "title": "设置",
+    "account": "账户设置",
+    "security": "安全",
+    "notifications": "通知",
+    "preferences": "偏好设置",
+    "two_factor": "双重身份验证"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "Finanza personale semplificata"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bentornato, {{name}}!",
+    "total_balance": "Saldo totale",
+    "monthly_income": "Entrate mensili",
+    "monthly_expenses": "Spese mensili",
+    "recent_transactions": "Transazioni recenti",
+    "quick_actions": "Azioni rapide"
+  },
+  "transactions": {
+    "title": "Transazioni",
+    "add_transaction": "Aggiungi transazione",
+    "amount": "Importo",
+    "description": "Descrizione",
+    "category": "Categoria",
+    "date": "Data",
+    "no_transactions": "Nessuna transazione trovata"
+  },
+  "insights": {
+    "title": "Analisi finanziarie",
+    "spending_trends": "Tendenze di spesa",
+    "category_breakdown": "Suddivisione per categoria",
+    "cash_flow": "Analisi del flusso di cassa",
+    "recommendations": "Raccomandazioni IA"
+  },
+  "virtual_cards": {
+    "title": "Carte virtuali",
+    "create_card": "Crea carta virtuale",
+    "card_number": "Numero carta",
+    "expiry_date": "Data di scadenza",
+    "cvv": "CVV",
+    "spending_limit": "Limite di spesa"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "account": "Impostazioni account",
+    "security": "Sicurezza",
+    "notifications": "Notifiche",
+    "preferences": "Preferenze",
+    "two_factor": "Autenticazione a due fattori"
+  }
+}

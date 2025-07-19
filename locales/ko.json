@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "간편한 개인 재무 관리"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "welcome": "다시 오셨군요, {{name}}님!",
+    "total_balance": "총 잔액",
+    "monthly_income": "월 수입",
+    "monthly_expenses": "월 지출",
+    "recent_transactions": "최근 거래",
+    "quick_actions": "빠른 작업"
+  },
+  "transactions": {
+    "title": "거래 내역",
+    "add_transaction": "거래 추가",
+    "amount": "금액",
+    "description": "설명",
+    "category": "카테고리",
+    "date": "날짜",
+    "no_transactions": "거래 내역이 없습니다"
+  },
+  "insights": {
+    "title": "재무 인사이트",
+    "spending_trends": "지출 트렌드",
+    "category_breakdown": "카테고리별 분석",
+    "cash_flow": "현금 흐름 분석",
+    "recommendations": "AI 추천"
+  },
+  "virtual_cards": {
+    "title": "가상 카드",
+    "create_card": "가상 카드 생성",
+    "card_number": "카드 번호",
+    "expiry_date": "만료일",
+    "cvv": "CVV",
+    "spending_limit": "지출 한도"
+  },
+  "settings": {
+    "title": "설정",
+    "account": "계정 설정",
+    "security": "보안",
+    "notifications": "알림",
+    "preferences": "환경설정",
+    "two_factor": "이중 인증"
+  }
+}

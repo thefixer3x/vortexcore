@@ -1,0 +1,36 @@
+version: 1
+checksums:
+  55dc377b5e931bfc64e4add83e35d9ea:
+    app/name: ed6ac43f66402e898f54fb50a11046c1
+    app/tagline: 505b10634f32dc7580172e70b35629d7
+    dashboard/title: c9380ea68c8c76ea451bd9613329a07c
+    dashboard/welcome: 73a14dec47209de4d591969af14f83d7
+    dashboard/total_balance: fd1144e816cfaf16c396da0540d57f8c
+    dashboard/monthly_income: 03a2f587aa8e91a7e36730e819c2dc6a
+    dashboard/monthly_expenses: 268ffd7afe08c213263548a04a30ab61
+    dashboard/recent_transactions: c1adc026ca419c2e105271ce9155f17a
+    dashboard/quick_actions: 157a51ac3ffbc527a52379a547499fe2
+    transactions/title: 59973447457c6bd57c161d594f551651
+    transactions/add_transaction: 2cf15d46ebe843aa7f9667ca6560a406
+    transactions/amount: a0ae9c6ff98b57475cdce56f66066aa4
+    transactions/description: e17686a22ffad04cc7bb70524ed4478b
+    transactions/category: 1b0340cd175aa5a2be745a0d54908466
+    transactions/date: 56f41c5d30a76295bb087b20b7bee4c3
+    transactions/no_transactions: 15f5fee32cbd24775ccda66e8ca83132
+    insights/title: fb364a078567917519385d38695f3241
+    insights/spending_trends: cb84b69193880619a69acf98f0ed6f97
+    insights/category_breakdown: 0133a10f11eec562a550d0bf9b07c982
+    insights/cash_flow: e578fd1fac064f3db44a4647f959e186
+    insights/recommendations: 9634bd285dda393e0ed059ee69a9ef3e
+    virtual_cards/title: 509514057695735e6bfe26b81eed8e70
+    virtual_cards/create_card: f8af7a05717bcc98dfa3a0720ef1efd0
+    virtual_cards/card_number: 67227b10d7b0dafdb8762054876c96db
+    virtual_cards/expiry_date: aeb87e6edea250c21c47173b090ab38c
+    virtual_cards/cvv: f98dfe908dec1a8e6eacac195a2db29b
+    virtual_cards/spending_limit: d8164600e943d07a5f034ef130457ce4
+    settings/title: 8df6777277469c1fd88cc18dde2f1cc3
+    settings/account: 90c84d04385b6a85b13a37a4d5357a2c
+    settings/security: 4b34923fef858a2b9a4a914c3e822889
+    settings/notifications: c52df856139b50dbb1cae7bfb1cf73bb
+    settings/preferences: e3f4cfb8373d2b888a0c38e743de0e19
+    settings/two_factor: 8bc1572b5995cc2b222f381d0f75d873
