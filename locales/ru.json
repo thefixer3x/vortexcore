@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "Управление личными финансами стало проще"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "welcome": "С возвращением, {{name}}!",
+    "total_balance": "Общий баланс",
+    "monthly_income": "Ежемесячный доход",
+    "monthly_expenses": "Ежемесячные расходы",
+    "recent_transactions": "Последние транзакции",
+    "quick_actions": "Быстрые действия"
+  },
+  "transactions": {
+    "title": "Транзакции",
+    "add_transaction": "Добавить транзакцию",
+    "amount": "Сумма",
+    "description": "Описание",
+    "category": "Категория",
+    "date": "Дата",
+    "no_transactions": "Транзакции не найдены"
+  },
+  "insights": {
+    "title": "Финансовая аналитика",
+    "spending_trends": "Тренды расходов",
+    "category_breakdown": "Разбивка по категориям",
+    "cash_flow": "Анализ денежного потока",
+    "recommendations": "Рекомендации ИИ"
+  },
+  "virtual_cards": {
+    "title": "Виртуальные карты",
+    "create_card": "Создать виртуальную карту",
+    "card_number": "Номер карты",
+    "expiry_date": "Срок действия",
+    "cvv": "CVV",
+    "spending_limit": "Лимит расходов"
+  },
+  "settings": {
+    "title": "Настройки",
+    "account": "Настройки аккаунта",
+    "security": "Безопасность",
+    "notifications": "Уведомления",
+    "preferences": "Предпочтения",
+    "two_factor": "Двухфакторная аутентификация"
+  }
+}

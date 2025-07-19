@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "La finance personnelle simplifiée"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {{name}} !",
+    "total_balance": "Solde total",
+    "monthly_income": "Revenus mensuels",
+    "monthly_expenses": "Dépenses mensuelles",
+    "recent_transactions": "Transactions récentes",
+    "quick_actions": "Actions rapides"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add_transaction": "Ajouter une transaction",
+    "amount": "Montant",
+    "description": "Description",
+    "category": "Catégorie",
+    "date": "Date",
+    "no_transactions": "Aucune transaction trouvée"
+  },
+  "insights": {
+    "title": "Aperçus financiers",
+    "spending_trends": "Tendances de dépenses",
+    "category_breakdown": "Répartition par catégorie",
+    "cash_flow": "Analyse des flux de trésorerie",
+    "recommendations": "Recommandations IA"
+  },
+  "virtual_cards": {
+    "title": "Cartes virtuelles",
+    "create_card": "Créer une carte virtuelle",
+    "card_number": "Numéro de carte",
+    "expiry_date": "Date d'expiration",
+    "cvv": "CVV",
+    "spending_limit": "Limite de dépenses"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "account": "Paramètres du compte",
+    "security": "Sécurité",
+    "notifications": "Notifications",
+    "preferences": "Préférences",
+    "two_factor": "Authentification à deux facteurs"
+  }
+}

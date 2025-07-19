@@ -6,6 +6,7 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import { NavBarBrand } from "./NavBarBrand";
 import { NavBarMobileMenu } from "./NavBarMobileMenu";
 import { VortexAISearch } from "@/components/ai/VortexAISearch"; // Directly import search
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +40,8 @@ export function NavBar() {
 
         {/* On mobile dashboard: only show search; On desktop: regular nav */}
         {isDashboardRoute && isMobile ? (
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <VortexAISearch />
           </div>
         ) : (
@@ -48,8 +50,16 @@ export function NavBar() {
             {isDashboardRoute && !isMobile && (
               <>
                 {/* Desktop: no navBarLinks, only search as agreed */}
-                <div className="ml-4"><VortexAISearch /></div>
+                <div className="flex items-center gap-4">
+                  <LanguageSwitcher />
+                  <VortexAISearch />
+                </div>
               </>
+            )}
+            {!isDashboardRoute && (
+              <div className="flex items-center gap-4">
+                <LanguageSwitcher />
+              </div>
             )}
           </>
         )}

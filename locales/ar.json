@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "إدارة الأموال الشخصية ببساطة"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحبًا بعودتك، {{name}}!",
+    "total_balance": "الرصيد الإجمالي",
+    "monthly_income": "الدخل الشهري",
+    "monthly_expenses": "المصروفات الشهرية",
+    "recent_transactions": "المعاملات الأخيرة",
+    "quick_actions": "إجراءات سريعة"
+  },
+  "transactions": {
+    "title": "المعاملات",
+    "add_transaction": "إضافة معاملة",
+    "amount": "المبلغ",
+    "description": "الوصف",
+    "category": "الفئة",
+    "date": "التاريخ",
+    "no_transactions": "لم يتم العثور على معاملات"
+  },
+  "insights": {
+    "title": "رؤى مالية",
+    "spending_trends": "اتجاهات الإنفاق",
+    "category_breakdown": "تفصيل الفئات",
+    "cash_flow": "تحليل التدفق النقدي",
+    "recommendations": "توصيات الذكاء الاصطناعي"
+  },
+  "virtual_cards": {
+    "title": "البطاقات الافتراضية",
+    "create_card": "إنشاء بطاقة افتراضية",
+    "card_number": "رقم البطاقة",
+    "expiry_date": "تاريخ انتهاء الصلاحية",
+    "cvv": "رمز التحقق من البطاقة",
+    "spending_limit": "حد الإنفاق"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "account": "إعدادات الحساب",
+    "security": "الأمان",
+    "notifications": "الإشعارات",
+    "preferences": "التفضيلات",
+    "two_factor": "المصادقة الثنائية"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "シンプルな個人資産管理"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "welcome": "お帰りなさい、{{name}}さん！",
+    "total_balance": "合計残高",
+    "monthly_income": "月間収入",
+    "monthly_expenses": "月間支出",
+    "recent_transactions": "最近の取引",
+    "quick_actions": "クイックアクション"
+  },
+  "transactions": {
+    "title": "取引履歴",
+    "add_transaction": "取引を追加",
+    "amount": "金額",
+    "description": "説明",
+    "category": "カテゴリー",
+    "date": "日付",
+    "no_transactions": "取引が見つかりません"
+  },
+  "insights": {
+    "title": "資産分析",
+    "spending_trends": "支出傾向",
+    "category_breakdown": "カテゴリー別内訳",
+    "cash_flow": "キャッシュフロー分析",
+    "recommendations": "AI推奨"
+  },
+  "virtual_cards": {
+    "title": "バーチャルカード",
+    "create_card": "バーチャルカードを作成",
+    "card_number": "カード番号",
+    "expiry_date": "有効期限",
+    "cvv": "CVV",
+    "spending_limit": "利用限度額"
+  },
+  "settings": {
+    "title": "設定",
+    "account": "アカウント設定",
+    "security": "セキュリティ",
+    "notifications": "通知",
+    "preferences": "環境設定",
+    "two_factor": "二要素認証"
+  }
+}

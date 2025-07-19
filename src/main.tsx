@@ -7,6 +7,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import './i18n'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PaymentStatusProvider } from './providers/PaymentStatusProvider'
 // import LogRocket from 'logrocket'
