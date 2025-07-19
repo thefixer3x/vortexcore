@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "VortexCore",
+    "tagline": "Personal Finance Made Simple"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{name}}!",
+    "total_balance": "Total Balance",
+    "monthly_income": "Monthly Income",
+    "monthly_expenses": "Monthly Expenses",
+    "recent_transactions": "Recent Transactions",
+    "quick_actions": "Quick Actions"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add_transaction": "Add Transaction",
+    "amount": "Amount",
+    "description": "Description",
+    "category": "Category",
+    "date": "Date",
+    "no_transactions": "No transactions found"
+  },
+  "insights": {
+    "title": "Financial Insights",
+    "spending_trends": "Spending Trends",
+    "category_breakdown": "Category Breakdown",
+    "cash_flow": "Cash Flow Analysis",
+    "recommendations": "AI Recommendations"
+  },
+  "virtual_cards": {
+    "title": "Virtual Cards",
+    "create_card": "Create Virtual Card",
+    "card_number": "Card Number",
+    "expiry_date": "Expiry Date",
+    "cvv": "CVV",
+    "spending_limit": "Spending Limit"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account Settings",
+    "security": "Security",
+    "notifications": "Notifications",
+    "preferences": "Preferences",
+    "two_factor": "Two-Factor Authentication"
+  }
+}
