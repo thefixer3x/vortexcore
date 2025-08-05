@@ -55,14 +55,14 @@ services:
       PORT: 3001
       DATABASE_URL: postgresql://vortex_user:${POSTGRES_PASSWORD}@postgres:5432/vortex_auth
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production-32-chars-min
-      JWT_REFRESH_SECRET: your-super-secret-refresh-key-change-in-production-32-chars-min
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       JWT_EXPIRES_IN: 15m
       JWT_REFRESH_EXPIRES_IN: 7d
       BCRYPT_SALT_ROUNDS: 12
       SMTP_HOST: smtp.gmail.com
       SMTP_PORT: 587
-      SMTP_USER: your-email@gmail.com
+      SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
       CORS_ORIGIN: http://localhost:8083
       LOG_LEVEL: info
