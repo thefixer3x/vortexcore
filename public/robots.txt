@@ -1,35 +1,33 @@
-# VortexCore Banking App - Robots.txt
-# Updated: May 30, 2025
+# Robots.txt for Lan Onasis
+# https://lanonasis.com
 
-# Allow all crawlers full access
+# Allow all robots
 User-agent: *
 Allow: /
 
-# Specific search engine configurations
-User-agent: Googlebot
+# Disallow admin or private areas (if any)
+# Disallow: /admin/
+# Disallow: /api/
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://lanonasis.com/sitemap.xml
+
+# Allow social media crawlers for better social sharing
+User-agent: facebookexternalhit/*
 Allow: /
 
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-# Social media bots
 User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
 Allow: /
 
 User-agent: LinkedInBot
 Allow: /
 
-# Sitemap location
-Sitemap: https://vortexcore.app/sitemap.xml
+# Block bad bots (optional)
+User-agent: AhrefsBot
+Disallow: /
 
-User-agent: *
-Allow: /
+User-agent: SemrushBot
+Crawl-delay: 10
