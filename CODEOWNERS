@@ -1,0 +1,40 @@
+# 🛡️ CODE OWNERS - VORTEX-CORE-APP
+# This file ensures critical changes require your approval
+
+# You are the owner of everything
+* @thefixer3x
+
+# Critical directories require your explicit approval
+/src/ @thefixer3x
+/supabase/ @thefixer3x
+/package.json @thefixer3x
+/bun.lockb @thefixer3x
+/tsconfig.json @thefixer3x
+/vite.config.ts @thefixer3x
+/.env* @thefixer3x
+/README.md @thefixer3x
+
+# Workflows and protection files
+/.github/ @thefixer3x
+/scripts/ @thefixer3x
+/BRANCH_PROTECTION_RULES.md @thefixer3x
+
+# Database and configuration
+/supabase/config.toml @thefixer3x
+/supabase/migrations/ @thefixer3x
+
+# Dependencies and build files
+/package-lock.json @thefixer3x
+/node_modules/ @thefixer3x
+
+# Documentation
+/*.md @thefixer3x
+/docs/ @thefixer3x
+
+# Security and environment
+/.env* @thefixer3x
+/.env.example @thefixer3x
+/.env.template @thefixer3x
+
+# NEVER AGAIN should this project be wiped out!
+# All critical changes require your approval.
