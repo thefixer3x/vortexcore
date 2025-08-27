@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard } from "@/components/dashboard/ModernAccountCard";
@@ -91,17 +90,14 @@ const Dashboard = () => {
         <QuickActionsGrid />
       </div>
 
-      {/* Main Content Grid with Responsive Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Transactions List - Takes more space on larger screens */}
-        <div className="xl:col-span-8 animate-fade-in [animation-delay:0.2s]">
-          <ModernTransactionList />
-        </div>
-        
-        {/* AI Insights - Stacks below on mobile, sidebar on desktop */}
-        <div className="xl:col-span-4 animate-fade-in [animation-delay:0.3s]">
-          <AIInsightsDashboard />
-        </div>
+      {/* Transactions List */}
+      <div className="animate-fade-in [animation-delay:0.2s]">
+        <ModernTransactionList />
+      </div>
+      
+      {/* AI Insights - Now placed below transactions */}
+      <div className="animate-fade-in [animation-delay:0.3s]">
+        <AIInsightsDashboard />
       </div>
 
       {/* Floating Action Button for Quick Access */}
