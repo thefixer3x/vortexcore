@@ -2,24 +2,27 @@
 
 # 🛡️ VORTEX-CORE-APP BACKUP AND PROTECTION SCRIPT
 # This script helps prevent your project from being wiped out again!
+# Now configured for CLOUD STORAGE instead of desktop clutter
 
 set -e
 
 PROJECT_NAME="vortex-core-app"
 PROJECT_DIR="/Users/seyederick/Documents/vortex-core-app"
-BACKUP_DIR="/Users/seyederick/Documents/vortex-core-app-backups"
+CLOUD_BACKUP_DIR="/Users/seyederick/CloudStorage/vortex-core-app-backups"
 DATE=$(date +"%Y%m%d_%H%M%S")
 
 echo "🛡️ Starting backup and protection for $PROJECT_NAME..."
+echo "☁️  Using CLOUD STORAGE for backups (no desktop clutter!)"
 
-# Create backup directory if it doesn't exist
-mkdir -p "$BACKUP_DIR"
+# Create cloud backup directory if it doesn't exist
+mkdir -p "$CLOUD_BACKUP_DIR"
 
 # Create timestamped backup
 BACKUP_NAME="${PROJECT_NAME}_backup_${DATE}"
-BACKUP_PATH="$BACKUP_DIR/$BACKUP_NAME"
+BACKUP_PATH="$CLOUD_BACKUP_DIR/$BACKUP_NAME"
 
 echo "📦 Creating backup: $BACKUP_NAME"
+echo "☁️  Cloud backup location: $BACKUP_PATH"
 
 # Copy project files (excluding node_modules and .git)
 rsync -av --exclude='node_modules' --exclude='.git' --exclude='.DS_Store' \
@@ -29,7 +32,7 @@ rsync -av --exclude='node_modules' --exclude='.git' --exclude='.DS_Store' \
 cd "$PROJECT_DIR"
 git archive --format=tar --output="$BACKUP_PATH.tar" HEAD
 
-echo "✅ Backup created at: $BACKUP_PATH"
+echo "✅ Cloud backup created at: $BACKUP_PATH"
 
 # Create critical files manifest
 echo "📋 Creating critical files manifest..."
@@ -79,7 +82,7 @@ cat > "$BACKUP_PATH/PROTECTION_CHECKLIST.md" << 'EOF'
 
 ### **Recovery Instructions:**
 If project is wiped out again:
-1. Restore from this backup: `$BACKUP_PATH`
+1. Restore from this cloud backup: `$BACKUP_PATH`
 2. Reinitialize git repository
 3. Restore dependencies: `bun install`
 4. Verify all files are intact
@@ -92,11 +95,12 @@ echo "🛡️ Protection checklist created"
 # Create automated backup reminder
 echo "⏰ Setting up automated backup reminder..."
 cat > "$BACKUP_PATH/README.md" << 'EOF'
-# VORTEX-CORE-APP BACKUP
+# VORTEX-CORE-APP CLOUD BACKUP
 
 **Backup Date**: $(date)
 **Project**: vortex-core-app
 **Location**: $PROJECT_DIR
+**Cloud Storage**: $CLOUD_BACKUP_DIR
 
 ## **What's Backed Up:**
 - Complete source code
@@ -107,20 +111,27 @@ cat > "$BACKUP_PATH/README.md" << 'EOF'
 - Environment variables
 
 ## **Recovery:**
-Use this backup to restore your project if it gets wiped out again.
+Use this cloud backup to restore your project if it gets wiped out again.
 
 ## **Next Backup:**
 Schedule regular backups to prevent data loss.
+
+## **Cloud Storage Benefits:**
+- ☁️ No desktop clutter
+- 🔒 Secure cloud storage
+- 💾 Unlimited backup space
+- 🌐 Access from anywhere
 EOF
 
-echo "✅ Backup and protection complete!"
-echo "📁 Backup location: $BACKUP_PATH"
+echo "✅ Cloud backup and protection complete!"
+echo "☁️  Cloud backup location: $BACKUP_PATH"
 echo "🛡️ Protection checklist: $BACKUP_PATH/PROTECTION_CHECKLIST.md"
 echo ""
 echo "🚨 NEXT STEPS:"
-echo "1. Go to: https://github.com/thefixer3x/vortex-core-app/settings/branches"
+echo "1. Go to: https://github.com/thefixer3x/vortexcore/settings/branches"
 echo "2. Set up branch protection rules"
 echo "3. Enable required reviews"
 echo "4. Set up automated backups"
 echo ""
-echo "💡 Run this script regularly to maintain backups!"
+echo "💡 Run this script regularly to maintain cloud backups!"
+echo "☁️  Your backups are now safely stored in the cloud, not cluttering your desktop!"

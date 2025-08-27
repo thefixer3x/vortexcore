@@ -6,9 +6,9 @@ import {
   Send, 
   ChevronUp, 
   ChevronDown,
-  Sparkles,
   X,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,7 @@ export function OpenAIChat() {
     { role: "assistant", content: "Welcome to VortexCore! How can I assist you with your financial needs today?" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { getAccessToken, isAuthenticated } = useAuth();
@@ -54,8 +55,8 @@ export function OpenAIChat() {
     try {
       // Track AI prompt sent event
       LogRocket.track('ai_prompt_sent', {
-        provider: 'vortex-ai',
-        promptLength: message.length,
+        provider: 'vortex_router',
+        promptLength: userMessage.content.length,
         historyLength: messages.length
       });
       
@@ -77,17 +78,15 @@ export function OpenAIChat() {
           };
         }
       }
-
-      // Get location if needed (removed for now to prevent errors)
-      // const location = await getLocation();
       
       // Use the Supabase client's URL
-      const endpoint = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-router`;
+      const endpoint = `${process.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co'}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-      const res = await fetch(endpoint, {
+      // Make the request to the AI router
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,68 +94,140 @@ export function OpenAIChat() {
         },
         body: JSON.stringify({
           messages: [...history, { role: 'user', content: message }],
-          // location: location, // Removed for now
           model: 'gpt-4', // Default model
           wantRealtime
         })
       });
 
-      if (!res.ok || !res.body) {
-        toast({
-          title: 'VortexAI Error',
-          description: 'Failed to connect to VortexAI',
-          variant: 'destructive'
-        });
-        return;
+      if (!response.ok) {
+        throw new Error(`Failed to connect to VortexAI: ${response.status} ${response.statusText}`);
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let assistantText = '';
+      // Check if the response is JSON or a stream
+      const contentType = response.headers.get('Content-Type') || '';
+      
+      if (contentType.includes('application/json')) {
+        // Handle JSON response (non-streaming)
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        // Update the last assistant message with the complete response
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { 
+            role: 'assistant', 
+            content: data.response || 'I apologize, but I couldn\'t generate a response at this time.'
+          };
+          return updated;
+        });
+      } else if (contentType.includes('text/event-stream')) {
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Response body is not readable');
+        }
+        
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let assistantText = '';
 
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
 
-        // Split on newlines to get complete SSE frames
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // keep incomplete line in buffer
+          // Split on newlines to get complete SSE frames
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // keep incomplete line in buffer
 
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed || !trimmed.startsWith('data:')) continue;
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data:')) continue;
 
-          const payload = trimmed.replace(/^data:\s*/, '');
-          if (payload === '[DONE]') {
-            buffer = '';
-            break;
-          }
+            const payload = trimmed.replace(/^data:\s*/, '');
+            if (payload === '[DONE]') {
+              buffer = '';
+              break;
+            }
 
-          try {
-            const json = JSON.parse(payload);
-            const delta = json.choices?.[0]?.delta?.content ?? '';
-            if (delta) {
-              assistantText += delta;
+            try {
+              const json = JSON.parse(payload);
+              // Handle different streaming formats
+              if (json.choices?.[0]?.delta?.content) {
+                // OpenAI format
+                const delta = json.choices[0].delta.content;
+                assistantText += delta;
+              } else if (json.response) {
+                // Direct response format
+                assistantText = json.response;
+              } else if (typeof json === 'string') {
+                // Plain text format
+                assistantText += json;
+              } else if (json.content) {
+                // Simple content format
+                assistantText += json.content;
+              }
+              
               // Update the last assistant bubble incrementally
               setMessages(prev => {
                 const updated = [...prev];
-                updated[updated.length - 1] = { role: 'assistant', content: assistantText };
+                updated[updated.length - 1] = { 
+                  role: 'assistant', 
+                  content: assistantText 
+                };
                 return updated;
               });
+            } catch (parseError) {
+              // If it isn't valid JSON, just append raw text
+              if (payload !== '[DONE]') {
+                assistantText += payload;
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { 
+                    role: 'assistant', 
+                    content: assistantText 
+                  };
+                  return updated;
+                });
+              }
             }
-          } catch {
-            // If it isn't valid JSON, just append raw text
-            assistantText += payload;
-            setMessages(prev => {
-              const updated = [...prev];
-              updated[updated.length - 1] = { role: 'assistant', content: assistantText };
-              return updated;
-            });
           }
         }
+      } else {
+        // Unknown response format
+        const text = await response.text();
+        let assistantText = 'I received a response, but it was in an unexpected format.';
+        
+        try {
+          // Try to parse as JSON anyway
+          const data = JSON.parse(text);
+          if (data.response) {
+            assistantText = data.response;
+          }
+        } catch (e) {
+          // If not JSON, use the raw text if it's not too long
+          if (text && text.length < 1000) {
+            assistantText = text;
+          }
+        }
+        
+        // Update the last assistant message
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { 
+            role: 'assistant', 
+            content: assistantText
+          };
+          return updated;
+        });
       }
+      
+      // Reset retry count on success
+      setRetryCount(0);
     } catch (error) {
       console.error("Error in OpenAI chat:", error);
       
@@ -183,8 +254,23 @@ export function OpenAIChat() {
         description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
+      
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRetry = () => {
+    // Get the last user message
+    const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
+    if (lastUserMessage) {
+      // Remove the error message
+      setMessages(prev => prev.slice(0, -1));
+      // Retry with the last user message
+      setMessage(lastUserMessage.content);
+      handleSendMessage(new Event('submit') as React.FormEvent);
     }
   };
 
@@ -196,6 +282,7 @@ export function OpenAIChat() {
     setMessages([
       { role: "assistant", content: "Welcome to VortexCore! How can I assist you with your financial needs today?" }
     ]);
+    setRetryCount(0);
     toast({
       title: "Chat cleared",
       description: "All messages have been cleared",
@@ -274,11 +361,31 @@ export function OpenAIChat() {
                     : "bg-muted"
                 }`}
               >
-                {msg.content}
+                {msg.content || (isLoading && index === messages.length - 1 ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Thinking...</span>
+                  </div>
+                ) : 'No response')}
               </div>
             </div>
           ))}
           <div ref={messagesEndRef} />
+          
+          {/* Show retry button if there was an error */}
+          {retryCount > 0 && !isLoading && (
+            <div className="flex justify-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRetry}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Retry
+              </Button>
+            </div>
+          )}
         </div>
         
         <form onSubmit={handleSendMessage} className="p-3 border-t">
