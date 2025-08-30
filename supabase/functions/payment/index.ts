@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.39.3";
 import { createHash } from "node:crypto";
 // Constants and configurations
@@ -68,12 +69,7 @@ function generateSignature(payload) {
   }, {});
   return createHash('sha512').update(JSON.stringify(sortedPayload)).update(SAYSWITCH_PUBLIC_KEY).digest('hex');
 }
-serve(async (req)=>{
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: corsHeaders
-    });
-  }
+serve(withAuthMiddleware(async (req)=>{
   try {
     if (req.method !== 'POST') {
       throw new Error('Method not allowed');
@@ -179,4 +175,4 @@ serve(async (req)=>{
       }
     });
   }
-});
+}, ['POST'])));
