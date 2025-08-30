@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "npm:stripe@14.18.0";
+import { withAuthMiddleware } from "../_shared/middleware.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // Initialize Stripe with the secret key from environment variables
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -12,15 +14,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
+serve(withAuthMiddleware(async (req, { auth, admin }) => {
+  // Handle within middleware (OPTIONS handled, CORS added)
   try {
-    // Parse the request body
     const { action, data } = await req.json();
+    const idempotencyKey = req.headers.get('x-idempotency-key') || undefined;
 
     // Handle different actions
     switch (action) {
@@ -35,13 +33,17 @@ serve(async (req) => {
 
       case "create_cardholder":
         // Create a new cardholder in Stripe
-        const { name, email, metadata } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { name, email, metadata } = data || {};
+        const safeMetadata = { ...(metadata || {}), user_id: auth.userId };
         const cardholder = await stripe.issuing.cardholders.create({
           type: "individual",
           name,
           email,
-          metadata,
-        });
+          metadata: safeMetadata,
+        }, idempotencyKey ? { idempotencyKey } : undefined);
         return new Response(
           JSON.stringify({ cardholder }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -49,7 +51,10 @@ serve(async (req) => {
 
       case "create_card":
         // Create a new virtual card
-        const { cardholder_id, currency, spending_limits } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { cardholder_id, currency, spending_limits } = data || {};
         const cardData: any = {
           cardholder: cardholder_id,
           currency: currency || "usd",
@@ -64,7 +69,7 @@ serve(async (req) => {
           };
         }
 
-        const card = await stripe.issuing.cards.create(cardData);
+        const card = await stripe.issuing.cards.create(cardData, idempotencyKey ? { idempotencyKey } : undefined);
         return new Response(
           JSON.stringify({ card }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -72,7 +77,17 @@ serve(async (req) => {
 
       case "get_card":
         // Get card details
-        const { card_id } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { card_id } = data || {};
+        // Ownership check via DB (virtual_cards)
+        if (admin) {
+          const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', card_id).single();
+          if (vc && vc.user_id !== auth.userId) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
+        }
         const cardDetails = await stripe.issuing.cards.retrieve(card_id);
         return new Response(
           JSON.stringify({ card: cardDetails }),
@@ -81,10 +96,19 @@ serve(async (req) => {
 
       case "update_card":
         // Update card status
-        const { card_id: updateCardId, status } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { card_id: updateCardId, status } = data || {};
+        if (admin) {
+          const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', updateCardId).single();
+          if (vc && vc.user_id !== auth.userId) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
+        }
         const updatedCard = await stripe.issuing.cards.update(updateCardId, {
           status,
-        });
+        }, idempotencyKey ? { idempotencyKey } : undefined);
         return new Response(
           JSON.stringify({ card: updatedCard }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -92,7 +116,20 @@ serve(async (req) => {
 
       case "get_card_details":
         // Get sensitive card details (number, CVC, expiry)
-        const { card_id: detailsCardId } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { card_id: detailsCardId } = data || {};
+        const privileged = (auth.roles || []).some((r) => r === 'admin' || r === 'compliance');
+        if (!privileged) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        if (admin) {
+          const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', detailsCardId).single();
+          if (vc && vc.user_id !== auth.userId) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
+        }
         const sensitiveDetails = await stripe.issuing.cards.retrieveDetails(detailsCardId);
         return new Response(
           JSON.stringify({ details: sensitiveDetails }),
@@ -101,7 +138,16 @@ serve(async (req) => {
 
       case "get_transactions":
         // Get card transactions
-        const { card_id: transactionsCardId, limit } = data;
+        if (!auth.userId) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const { card_id: transactionsCardId, limit } = data || {};
+        if (admin) {
+          const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', transactionsCardId).single();
+          if (vc && vc.user_id !== auth.userId) {
+            return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
+        }
         const transactions = await stripe.issuing.transactions.list({
           card: transactionsCardId,
           limit: limit || 10,
@@ -134,4 +180,4 @@ serve(async (req) => {
       }
     );
   }
-});
+}, ['POST']));

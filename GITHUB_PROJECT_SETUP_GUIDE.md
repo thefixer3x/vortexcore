@@ -1,4 +1,19 @@
-# GitHub Project Setup Guide for VortexCore Launch Readiness
+# GitHub Project Setup Guide for VortexCore (Updated)
+
+## What Changed Recently
+
+- Added dynamic Edge middleware (CORS + security headers + JWT) and applied to Stripe, OpenAI functions, and ai-router.
+- Enforced JWT + RBAC on Stripe Edge Function with ownership checks; added idempotency key handling.
+- Tightened database privileges: revoked ALL from `anon` on key RLS tables; granted minimal privileges to `authenticated` (RLS still enforced).
+- Fixed SSE headers and preflight handling for ai-router; unified CORS across functions.
+- CI: Playwright OS deps installed; launch readiness computes PASS/FAIL from job results and fails on failures.
+
+## Roadmap (Now → Next)
+
+- RBAC: Extend per-action roles on Stripe (admin/compliance for sensitive PAN access; self-service for user-owned resources). Add rate limiting and idempotency usage across mutations.
+- CORS: Adopt middleware across all functions for consistent Origin reflection and `Vary: Origin`.
+- RLS: Seed test users and add a deny-by-default validation matrix with executable SQL and/or API tests.
+- Observability: Expand audit logs for AI and payments without PII.
 
 ## Quick Setup Steps
 
@@ -141,6 +156,58 @@ Track these metrics in your project:
 - **Timeline Adherence**: On-time vs delayed tasks
 - **Quality Gates**: Pass/fail status of validation tests  
 - **Risk Items**: High-priority issues and blockers
+
+## Supabase and Vercel Setup
+
+### Supabase
+- Apply new migrations and deploy functions:
+```bash
+supabase link --project-ref <PROJECT_REF>
+supabase db push
+supabase functions deploy stripe ai-router openai-chat openai-assistant
+```
+- Ensure secrets are set: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`.
+
+### Vercel
+- Add `.vercel` to `.gitignore` (already updated here) and link locally:
+```bash
+vercel link   # select existing org/project
+vercel env pull .env  # optional: sync envs locally
+```
+- Build and preview to verify nothing breaks:
+```bash
+bun install
+bun run build
+vercel deploy --prebuilt
+```
+
+## RBAC, CORS, and RLS: Next Steps
+
+### RBAC (Stripe)
+- Enforce privileged roles for `get_card_details` (admin/compliance only) [done].
+- Add rate limiting and require `x-idempotency-key` for all mutations.
+- Consider an `issuer` role for card creation; otherwise restrict to self-service with ownership checks [done for reads/updates].
+
+### CORS
+- Middleware adopted for `stripe`, `ai-router`, `openai-chat`, `openai-assistant` [done].
+- Adopt for any remaining functions to ensure dynamic Origin reflection and `Vary: Origin`.
+
+### RLS
+- Migration tightened privileges [done].
+- Add seed data and validation scripts to prove deny-by-default across users/tenants.
+
+## Testing Infrastructure
+
+- E2E: Playwright configured with OS deps in CI; run locally with:
+```bash
+bunx playwright install-deps
+bunx playwright install
+bun run test:e2e
+```
+- New API tests:
+  - `src/test/e2e/api-stripe.spec.ts` (401 without Authorization)
+  - `src/test/e2e/api-cors.spec.ts` (OPTIONS preflight with Origin + Vary)
+- Add protected-route and error-page tests as routes stabilize.
 
 ## Quick Commands Reference
 

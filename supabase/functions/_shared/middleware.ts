@@ -1,192 +1,117 @@
-/**
- * Supabase Edge Function middleware for vortexcore
- * 
- * This middleware enforces JWT validation and project scope checking
- * for all Edge Functions in the vortexcore project.
- */
+// Lightweight, self-contained middleware for Supabase Edge Functions
+// Provides: dynamic CORS, security headers, optional JWT verification and simple RBAC hook
 
-import { createAuditLogger, createJWTMiddleware, createErrorResponse } from '../../../../packages/onasis-core/src/security/index.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Configuration from environment
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || 'https://mxtsdgkwzjzlttpotole.supabase.co';
-const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_KEY')!;
-const PROJECT_NAME = 'vortexcore';
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') || '').split(',').map(s => s.trim()).filter(Boolean);
 
-// Initialize audit logger
-const auditLogger = createAuditLogger({
-  supabaseUrl: SUPABASE_URL,
-  supabaseServiceKey: SUPABASE_SERVICE_KEY,
-  projectName: PROJECT_NAME
-});
+const publicSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const adminSupabase = SUPABASE_SERVICE_ROLE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY) : null;
 
-// Initialize JWT middleware
-const jwtMiddleware = createJWTMiddleware(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY,
-  auditLogger,
-  {
-    allowedProjects: ['vortexcore', 'vortex'], // Allow both project names
-    requireProjectScope: false // Start with false, can be enabled later
-  }
-);
+export interface AuthContext {
+  userId?: string;
+  roles: string[];
+}
 
 export interface MiddlewareOptions {
   requireAuth?: boolean;
   allowedMethods?: string[];
-  publicPath?: boolean;
+  allowedRoles?: string[]; // if provided, user must have at least one
 }
 
-/**
- * Middleware wrapper for Edge Functions
- */
+function resolveOrigin(origin?: string | null) {
+  if (!origin) return '*';
+  if (!ALLOWED_ORIGINS.length) return origin; // reflect by default
+  return ALLOWED_ORIGINS.includes(origin) ? origin : '*';
+}
+
+function corsHeadersFromRequest(req: Request) {
+  const origin = req.headers.get('Origin');
+  const allowOrigin = resolveOrigin(origin);
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey, x-client-info, x-idempotency-key',
+    'Access-Control-Allow-Credentials': 'true',
+    'Vary': 'Origin',
+  } as Record<string, string>;
+}
+
+async function getAuthContext(req: Request): Promise<AuthContext> {
+  const auth = req.headers.get('Authorization') || '';
+  const token = auth.startsWith('Bearer ') ? auth.substring(7) : '';
+  if (!token) return { roles: [] };
+  const { data, error } = await publicSupabase.auth.getUser(token);
+  if (error || !data?.user) return { roles: [] };
+  const roles = (data.user.app_metadata?.roles as string[]) || (data.user.app_metadata?.role ? [data.user.app_metadata.role] : []);
+  return { userId: data.user.id, roles };
+}
+
 export function withMiddleware(
-  handler: (request: Request, context: any) => Promise<Response>,
+  handler: (request: Request, context: { auth: AuthContext; admin: typeof adminSupabase }) => Promise<Response>,
   options: MiddlewareOptions = {}
 ) {
-  return async function(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-    const pathname = url.pathname;
-    const method = request.method;
+  return async (req: Request) => {
+    const method = req.method.toUpperCase();
+    const cors = corsHeadersFromRequest(req);
+
+    // OPTIONS preflight
+    if (method === 'OPTIONS') {
+      return new Response(null, { headers: cors });
+    }
+
+    if (options.allowedMethods && !options.allowedMethods.includes(method)) {
+      return new Response(JSON.stringify({ error: `Method ${method} not allowed` }), {
+        status: 405,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const auth = await getAuthContext(req);
+    if (options.requireAuth && !auth.userId) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+    if (options.allowedRoles && options.allowedRoles.length) {
+      const hasRole = auth.roles.some(r => options.allowedRoles!.includes(r));
+      if (!hasRole) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     try {
-      // Handle CORS preflight
-      if (method === 'OPTIONS') {
-        return new Response(null, {
-          status: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400',
-          }
-        });
-      }
-
-      // Check allowed methods
-      if (options.allowedMethods && !options.allowedMethods.includes(method)) {
-        await auditLogger.log({
-          action: 'method_not_allowed',
-          target: pathname,
-          status: 'denied',
-          meta: { 
-            method, 
-            allowedMethods: options.allowedMethods 
-          },
-          ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-          userAgent: request.headers.get('user-agent') || 'unknown'
-        });
-
-        return createErrorResponse(`Method ${method} not allowed`, 405);
-      }
-
-      let userId: string | undefined;
-      let projectScope: string | undefined;
-
-      // Validate authentication if required
-      if (options.requireAuth !== false && !options.publicPath) {
-        const validation = await jwtMiddleware(request);
-
-        if (!validation.isValid) {
-          await auditLogger.log({
-            action: 'auth_failure',
-            target: pathname,
-            status: 'denied',
-            meta: { 
-              reason: validation.error,
-              method,
-              path: pathname
-            },
-            ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-            userAgent: request.headers.get('user-agent') || 'unknown'
-          });
-
-          return createErrorResponse(validation.error || 'Authentication required', 401);
-        }
-
-        userId = validation.userId;
-        projectScope = validation.projectScope;
-
-        // Log successful authentication
-        await auditLogger.logFunctionCall(
-          pathname,
-          userId,
-          'allowed',
-          {
-            method,
-            projectScope
-          }
-        );
-      }
-
-      // Create enhanced context for the handler
-      const context = {
-        userId,
-        projectScope,
-        auditLogger,
-        request: {
-          ...request,
-          userId,
-          projectScope
-        }
-      };
-
-      // Call the actual handler
-      const response = await handler(request, context);
-
-      // Add security headers to response
-      const headers = new Headers(response.headers);
-      headers.set('X-Content-Type-Options', 'nosniff');
-      headers.set('X-Frame-Options', 'DENY');
-      headers.set('X-XSS-Protection', '1; mode=block');
-      headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      
-      // Add CORS headers
-      headers.set('Access-Control-Allow-Origin', '*');
-      headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers
+      const res = await handler(req, { auth, admin: adminSupabase });
+      const secure = new Headers(res.headers);
+      secure.set('X-Content-Type-Options', 'nosniff');
+      secure.set('X-Frame-Options', 'DENY');
+      secure.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      secure.set('X-XSS-Protection', '1; mode=block');
+      Object.entries(cors).forEach(([k, v]) => secure.set(k, v));
+      return new Response(res.body, { status: res.status, headers: secure });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+        status: 500,
+        headers: { ...cors, 'Content-Type': 'application/json' },
       });
-
-    } catch (error) {
-      // Log middleware errors
-      await auditLogger.log({
-        action: 'middleware_error',
-        target: pathname,
-        status: 'error',
-        meta: {
-          error: error instanceof Error ? error.message : 'Unknown middleware error',
-          method,
-          path: pathname
-        },
-        ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-        userAgent: request.headers.get('user-agent') || 'unknown'
-      });
-
-      return createErrorResponse('Internal server error', 500);
     }
   };
 }
 
-/**
- * Helper for public endpoints that don't require authentication
- */
-export function withPublicMiddleware(handler: (request: Request) => Promise<Response>) {
-  return withMiddleware(handler, { publicPath: true });
-}
+export const withPublicMiddleware = (handler: (req: Request) => Promise<Response>) =>
+  withMiddleware((req) => handler(req), { requireAuth: false });
 
-/**
- * Helper for protected endpoints that require authentication
- */
-export function withAuthMiddleware(
-  handler: (request: Request, context: any) => Promise<Response>,
-  allowedMethods: string[] = ['GET', 'POST']
-) {
-  return withMiddleware(handler, { 
-    requireAuth: true, 
-    allowedMethods 
-  });
-}
+export const withAuthMiddleware = (
+  handler: (req: Request, ctx: { auth: AuthContext; admin: typeof adminSupabase }) => Promise<Response>,
+  allowedMethods: string[] = ['GET', 'POST'],
+  allowedRoles?: string[]
+) => withMiddleware(handler, { requireAuth: true, allowedMethods, allowedRoles });
+
+export { adminSupabase };
