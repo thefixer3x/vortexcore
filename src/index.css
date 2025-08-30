@@ -103,11 +103,15 @@
 
 @layer utilities {
   .glass {
-    @apply backdrop-blur-md bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    @apply bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10;
   }
   
   .glass-card {
-    @apply backdrop-blur-md bg-white/50 dark:bg-black/40 border border-white/30 dark:border-white/5 shadow-sm;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    @apply bg-white/50 dark:bg-black/40 border border-white/30 dark:border-white/5 shadow-sm;
   }
   
   .card-hover {
@@ -115,6 +119,9 @@
   }
   
   .text-balance {
+    /* Fallback for older browsers */
+    text-align: center;
+    /* Modern browsers that support text-wrap */
     text-wrap: balance;
   }
   
@@ -131,12 +138,16 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  /* Enhanced sidebar styles */
+  /* Enhanced sidebar styles with fallbacks */
   .scrollbar-thin {
+    /* Fallback for unsupported browsers */
+    overflow: auto;
+    /* Modern browsers that support scrollbar-width */
     scrollbar-width: thin;
   }
   
   .scrollbar-thumb-muted {
+    /* Modern browsers that support scrollbar-color */
     scrollbar-color: hsl(var(--muted)) transparent;
   }
   
@@ -144,7 +155,7 @@
     scrollbar-track-color: transparent;
   }
 
-  /* Webkit scrollbar styles for enhanced sidebar */
+  /* Webkit scrollbar styles (Chrome, Safari, Edge) */
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
   }
@@ -160,6 +171,14 @@
   
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground));
+  }
+
+  /* Fallback for browsers that don't support custom scrollbars */
+  @supports not (scrollbar-width: thin) and not (-webkit-appearance: none) {
+    .scrollbar-thin {
+      /* Use default scrollbar with subtle styling */
+      border-right: 1px solid hsl(var(--border));
+    }
   }
 
   /* Smooth theme transitions */
@@ -193,11 +212,25 @@
 
   /* Subtle backdrop blur variations */
   .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
   }
 
   /* Enhanced glass effect for sidebar */
   .glass-sidebar {
-    @apply backdrop-blur-xl bg-background/80 dark:bg-background/90 border border-border/30 shadow-xl;
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    @apply bg-background/80 dark:bg-background/90 border border-border/30 shadow-xl;
+  }
+
+  /* Debug component styles */
+  .debug-component {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: red;
+    color: white;
+    padding: 10px;
+    z-index: 9999;
   }
 }

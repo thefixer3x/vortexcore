@@ -21,7 +21,6 @@ import CategoryManager from "./components/payments/beneficiaries/CategoryManager
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
-import { DebugComponent } from "./debug";
 import { Home } from "lucide-react";
 import { Button } from "./components/ui/button";
 import VirtualCards from "./pages/VirtualCards";
