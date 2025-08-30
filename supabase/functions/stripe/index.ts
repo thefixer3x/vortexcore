@@ -20,6 +20,28 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
     const { action, data } = await req.json();
     const idempotencyKey = req.headers.get('x-idempotency-key') || undefined;
 
+    // Helper: enforce idempotency for mutating actions
+    const requireIdempotency = (name: string) => {
+      if (!idempotencyKey) {
+        throw new Response(JSON.stringify({ error: `Missing x-idempotency-key for ${name}` }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }) as unknown as Error;
+      }
+    };
+
+    // Helper: rate limit per user+action (best effort)
+    const rateLimit = async (name: string, perWindow: number = 30, windowSeconds = 60) => {
+      if (!admin || !auth.userId) return; // skip if admin client not available
+      const { data: r, error: re } = await admin.rpc('increment_edge_rate', { p_user_id: auth.userId, p_action: name, p_window_seconds: windowSeconds });
+      if (!re && typeof r === 'number' && r > perWindow) {
+        throw new Response(JSON.stringify({ error: 'Too Many Requests' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': `${windowSeconds}` },
+        }) as unknown as Error;
+      }
+    };
+
     // Handle different actions
     switch (action) {
       case "get_api_key":
@@ -36,6 +58,12 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         if (!auth.userId) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
+        // RBAC: restrict to issuer/admin roles
+        if (!(auth.roles || []).some(r => ['issuer', 'admin'].includes(r))) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        await rateLimit('create_cardholder');
+        requireIdempotency('create_cardholder');
         const { name, email, metadata } = data || {};
         const safeMetadata = { ...(metadata || {}), user_id: auth.userId };
         const cardholder = await stripe.issuing.cardholders.create({
@@ -54,6 +82,12 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         if (!auth.userId) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
+        // RBAC: issuer/admin can create; optionally allow self-service under constraints
+        if (!(auth.roles || []).some(r => ['issuer', 'admin'].includes(r))) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        await rateLimit('create_card');
+        requireIdempotency('create_card');
         const { cardholder_id, currency, spending_limits } = data || {};
         const cardData: any = {
           cardholder: cardholder_id,
@@ -106,6 +140,8 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
             return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         }
+        await rateLimit('update_card', 60);
+        requireIdempotency('update_card');
         const updatedCard = await stripe.issuing.cards.update(updateCardId, {
           status,
         }, idempotencyKey ? { idempotencyKey } : undefined);
