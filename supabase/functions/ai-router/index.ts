@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { withPublicMiddleware } from "../_shared/middleware.ts";
 import OpenAI from 'npm:openai@4.11.0'
 import { askPerplexity } from './providers/perplexity.ts'
 
@@ -16,14 +17,16 @@ Forbidden:
 `;
 
 // Initialize OpenAI with more robust API key handling
-const openai = new OpenAI({
-  apiKey: Deno.env.get('OPENAI_API_KEY') || ''
-});
-
-// Validate that we have a valid API key
-if (!Deno.env.get('OPENAI_API_KEY')) {
-  console.error("CRITICAL ERROR: Missing OPENAI_API_KEY environment variable");
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+if (!OPENAI_API_KEY) {
+  // Fail cold-start instead of allowing runtime surprises
+  throw new Error('Missing OPENAI_API_KEY');
 }
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+  // Guard against slow upstreams
+  timeout: 15000,
+});
 
 // Check if Perplexity API key is available
 const hasPerplexityKey = !!Deno.env.get('PERPLEXITY_API_KEY');
@@ -39,7 +42,7 @@ function isFallback(text: string) {
 // Helper to try OpenAI as primary provider
 async function callOpenAI(messages: any[]) {
   try {
-    console.log("Calling OpenAI with messages:", JSON.stringify(messages).slice(0, 100) + "...");
+    console.log("Calling OpenAI (message_count)", messages.length);
     
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini', 
@@ -94,31 +97,40 @@ function stripPII(message: string) {
 }
 
 // Main router function with fallback implementation
-serve(async (req) => {
+serve(withPublicMiddleware(async (req) => {
   try {
-    // Log request headers for debugging
-    console.log("Request headers:", JSON.stringify(Object.fromEntries(req.headers.entries())));
-    
     // Extract request data
     const body = await req.json();
-    console.log("Request body:", JSON.stringify(body).slice(0, 200) + "...");
-    
+    console.log("Request received", {
+      wantRealtime: !!body?.wantRealtime,
+      msgCount: Array.isArray(body?.messages) ? body.messages.length : 0,
+    });
     // Extract messages and options
     const { messages, wantRealtime } = body;
-    
     if (!messages || !Array.isArray(messages)) {
       throw new Error("Missing or invalid 'messages' array in request body");
     }
-    
+    const allowedRoles = new Set(['system', 'user', 'assistant', 'tool']);
+    for (const m of messages) {
+      if (!m || !allowedRoles.has(m.role)) {
+        throw new Error("Invalid message role");
+      }
+      if (typeof m.content !== 'string') {
+        throw new Error("Only string message.content is supported");
+      }
+    }
+
     // Trim chat history to stay within token limits
     const recentMessages = messages.slice(-5);
-    
+
     // Sanitize user messages
-    const sanitizedMessages = recentMessages.map(msg => 
-      msg.role === 'user' 
-        ? { ...msg, content: stripPII(msg.content) }
-        : msg
-    );
+    const sanitizedMessages = recentMessages.map(msg => {
+      if (msg.role === 'user' && typeof msg.content === 'string') {
+        return { ...msg, content: stripPII(msg.content) };
+      }
+      return msg;
+    });
+    
     
     // Add system prompt to conversation
     const conversation = [
@@ -147,10 +159,11 @@ serve(async (req) => {
           
           // Return the stream directly for streaming responses
           return new Response(perplexityStream, {
-            headers: { 
+            headers: {
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
-              "Connection": "keep-alive"
+              "Connection": "keep-alive",
+              "X-Accel-Buffering": "no"
             }
           });
         } catch (perplexityError) {
@@ -162,14 +175,17 @@ serve(async (req) => {
       // Format the OpenAI response to match VortexAI brand voice
       const formattedResponse = formatResponse(response);
       
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         response: formattedResponse,
         provider: "openai"
       }), {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+          "Access-Control-Allow-Origin": "*"
+        },
         status: 200
       });
-    }
     
     // If OpenAI fails and we have Perplexity API key, try Perplexity as fallback
     if (!openaiResult.success && hasPerplexityKey) {
@@ -186,10 +202,11 @@ serve(async (req) => {
         
         // Return the stream directly for streaming responses
         return new Response(perplexityStream, {
-          headers: { 
+          headers: {
             "Content-Type": "text/event-stream",
             "Cache-Control": "no-cache",
-            "Connection": "keep-alive"
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
           }
         });
       } catch (perplexityError) {
@@ -197,18 +214,24 @@ serve(async (req) => {
         throw new Error("All AI providers failed");
       }
     }
-    
-    // If we get here, both OpenAI and Perplexity (if available) have failed
-    throw new Error(openaiResult.error || "Failed to get response from AI providers");
-    
+
+    // If OpenAI failed and Perplexity is unavailable or failed above
+    return new Response(JSON.stringify({
+      error: openaiResult.error || "All AI providers failed"
+    }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      status: 502
+    });
   } catch (error) {
     console.error("Router error:", error);
-    return new Response(JSON.stringify({ 
-      error: error.message || "Processing error",
-      stack: error.stack
+    return new Response(JSON.stringify({
+      error: error?.message || "Processing error"
     }), {
       headers: { "Content-Type": "application/json" },
       status: 500
     });
   }
-});
+}));

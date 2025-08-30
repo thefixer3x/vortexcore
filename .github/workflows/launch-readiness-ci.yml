@@ -1,14 +1,13 @@
-name: Launch Readiness CI Pipeline
+name: Launch Readiness CI
 
 on:
   push:
-    branches: [ main, dev-cleanup ]
+    branches:
+      - main
+      - dev-cleanup
   pull_request:
-    branches: [ main ]
-
-env:
-  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-  VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    branches:
+      - main
 
 jobs:
   # Phase 1: Foundation Testing
@@ -49,6 +48,11 @@ jobs:
     - name: Install dependencies
       run: bun install --frozen-lockfile
     
+    - name: Setup Playwright dependencies
+      uses: microsoft/playwright-github-action@v1
+      with:
+        install-dependencies: true
+    
     - name: Install Playwright
       run: bunx playwright install
     
@@ -64,6 +68,7 @@ jobs:
       with:
         name: e2e-test-results
         path: test-results/
+        if-no-files-found: ignore
 
   # Phase 2: Build and Feature Validation
   feature-validation:
@@ -150,21 +155,49 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Launch readiness validation
+    - name: Compute readiness and generate report
+      env:
+        E2E_RESULT: ${{ needs.e2e-testing.result }}
+        SECURITY_RESULT: ${{ needs.security-testing.result }}
+        PERFORMANCE_RESULT: ${{ needs.performance-testing.result }}
+        GIT_SHA: ${{ github.sha }}
       run: |
         echo "🚀 Validating launch readiness..."
-        echo "✅ Foundation testing: Complete"
-        echo "✅ Feature validation: Complete"  
-        echo "✅ Security testing: Complete"
-        echo "✅ Performance testing: Complete"
-        echo "🎉 Ready for consumer launch!"
-        
-    - name: Generate launch readiness report
-      run: |
-        echo "# Launch Readiness Report" > launch-report.md
-        echo "Generated: $(date)" >> launch-report.md
-        echo "Commit: ${{ github.sha }}" >> launch-report.md
-        echo "All validation phases completed successfully!" >> launch-report.md
+        echo "- e2e-testing result: ${E2E_RESULT}"
+        echo "- security-testing result: ${SECURITY_RESULT}"
+        echo "- performance-testing result: ${PERFORMANCE_RESULT}"
+
+        pass_icon() { [ "$1" = "success" ] && echo "✅" || echo "❌"; }
+
+        E2E_ICON=$(pass_icon "$E2E_RESULT")
+        SEC_ICON=$(pass_icon "$SECURITY_RESULT")
+        PERF_ICON=$(pass_icon "$PERFORMANCE_RESULT")
+
+        OVERALL="PASS"
+        if [ "$E2E_RESULT" != "success" ] || [ "$SECURITY_RESULT" != "success" ] || [ "$PERFORMANCE_RESULT" != "success" ]; then
+          OVERALL="FAIL"
+        fi
+
+        {
+          echo "# Launch Readiness Report"
+          echo "Generated: $(date)"
+          echo "Commit: ${GIT_SHA}"
+          echo ""
+          echo "## Phase Results"
+          echo "- E2E Testing: ${E2E_ICON} (${E2E_RESULT})"
+          echo "- Security Testing: ${SEC_ICON} (${SECURITY_RESULT})"
+          echo "- Performance Testing: ${PERF_ICON} (${PERFORMANCE_RESULT})"
+          echo ""
+          echo "## Overall Status"
+          echo "${OVERALL}"
+        } > launch-report.md
+
+        if [ "$OVERALL" = "FAIL" ]; then
+          echo "❌ Launch readiness failed — see report." >&2
+          exit 1
+        else
+          echo "🎉 Ready for consumer launch!"
+        fi
         
     - name: Upload launch readiness report
       uses: actions/upload-artifact@v4
