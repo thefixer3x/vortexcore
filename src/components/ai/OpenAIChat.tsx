@@ -79,8 +79,18 @@ export function OpenAIChat() {
         }
       }
       
-      // Use the Supabase client's URL
-      const endpoint = `${process.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co'}/functions/v1/ai-router`;
+      // Always add the Supabase anon key for public functions
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      if (supabaseAnonKey) {
+        authHeaders = {
+          ...authHeaders,
+          'apikey': supabaseAnonKey
+        };
+      }
+      
+      // Use the Supabase client's URL (using import.meta.env for Vite)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co';
+      const endpoint = `${supabaseUrl}/functions/v1/ai-router`;
 
       // Add a placeholder assistant bubble so the UI can live‑update
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
@@ -100,7 +110,20 @@ export function OpenAIChat() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to connect to VortexAI: ${response.status} ${response.statusText}`);
+        // Provide more user-friendly error messages based on status code
+        let errorMessage = 'Failed to connect to VortexAI';
+        
+        if (response.status === 404) {
+          errorMessage = 'AI assistant is temporarily unavailable. Our team is working to restore service.';
+        } else if (response.status === 500) {
+          errorMessage = 'AI assistant is experiencing technical difficulties. Please try again in a few moments.';
+        } else if (response.status === 403) {
+          errorMessage = 'AI assistant access is currently restricted. Please check your account status.';
+        } else {
+          errorMessage = `AI assistant is temporarily unavailable (Error ${response.status}). Please try again later.`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       // Check if the response is JSON or a stream
