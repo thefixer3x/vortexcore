@@ -1,5 +1,6 @@
 [build]
-  command = "bun run build"
+  # Install Bun and build using Bun to avoid npm/yarn
+  command = "curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL=\"$HOME/.bun\" && export PATH=\"$BUN_INSTALL/bin:$PATH\" && bun --version && bun install --frozen-lockfile && bun run build"
   publish = "dist"
 
 [dev]
@@ -8,6 +9,13 @@
   targetPort = 3000
 
 env = { }
+
+# Single-page app rewrite so deep links resolve to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
 
 # Edge Functions (if any) can be mapped here
 # [[edge_functions]]
