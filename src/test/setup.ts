@@ -10,19 +10,21 @@ afterEach(() => {
 })
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
+if (typeof global !== 'undefined') {
+  global.IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
 
-// Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  // Mock ResizeObserver
+  global.ResizeObserver = class ResizeObserver {
+    constructor() {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
 }
 
 // Mock matchMedia
@@ -45,6 +47,11 @@ if (typeof window !== 'undefined') {
 // Mock fetch for API testing
 if (typeof global !== 'undefined') {
   global.fetch = vi.fn()
+}
+
+// Mock scrollIntoView
+if (typeof window !== 'undefined') {
+  Element.prototype.scrollIntoView = vi.fn()
 }
 
 // Mock environment variables for testing
