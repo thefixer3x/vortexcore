@@ -48,12 +48,5 @@ export const testUtils = {
   }
 }
 
-// Mock functions that might not be available in all vitest versions
-export const mockModule = (modulePath: string, mockImplementation: any) => {
-  // For now, we'll use a simple approach without vi.mock
-  // This can be enhanced later when we figure out the mocking strategy
-  return mockImplementation
-}
-
 // Export the test wrapper
 export { TestWrapper } from './test-wrapper'
