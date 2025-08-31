@@ -3,26 +3,14 @@
 ## GitHub Repository Secrets (Recommended)
 
 ### Why This is Safer:
-- ✅ **No secrets in codebase** - Never risk accidental commits
-- ✅ **Team access control** - Only admins can view/edit secrets
-- ✅ **Audit logging** - GitHub tracks who accessed what
-- ✅ **Environment isolation** - Different secrets for dev/staging/prod
-- ✅ **Automatic injection** - CI/CD gets secrets securely
-
+- ✅ **No secrets in codebase** — avoid accidental commits
+- ✅ **Scoped management** — admins can manage (not view) secrets; values are write-only
+- ✅ **Governance** — use Environments with required reviewers and protected branches
+- ✅ **Environment isolation** — separate secrets for dev/preview/prod
+- ✅ **Automatic injection** — CI/CD receives masked env vars; logs redact values
 ### Required Repository Secrets:
 
 Go to: `https://github.com/thefixer3x/vortex-core-app/settings/secrets/actions`
-
-Add these secrets:
-
-```
-VITE_SUPABASE_URL=https://mxtsdgkwzjzlttpotole.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VERCEL_TOKEN=your_vercel_token
-VERCEL_ORG_ID=your_org_id
-VERCEL_PROJECT_ID=your_project_id
-```
 
 ## Local Development
 
@@ -42,4 +30,5 @@ The GitHub Actions workflow will:
 
 - **Repository secrets**: Only admins can view
 - **Local .env**: Each developer manages their own
-- **Archive files**: Accessible via git history (see below)
+- Enable repository-level secret scanning and push protection: Turn on GitHub secret scanning (or integrate an equivalent third‑party scanner) and enforce push protection/pre‑receive hooks to block commits containing secrets.
+- Archived history is not a safe place for secrets: Any detected secrets must be rotated immediately and an incident noted; do not rely on archives or git history for access or distribution.

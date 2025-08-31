@@ -10,6 +10,9 @@ PROJECT_TARGET="mxtsdgkwzjzlttpotole"
 echo "🧪 VortexCore.app Migration Validation & Testing"
 echo "Target Project: $PROJECT_TARGET"
 
+# Require ANON_JWT to avoid committing tokens in this script
+: "${ANON_JWT:?Environment variable ANON_JWT must be set (Supabase anon key/JWT).}" 
+
 # Ensure we're linked to target project
 supabase link --project-ref $PROJECT_TARGET
 
@@ -95,7 +98,7 @@ EOF
 # Test auth function
 echo "Testing auth function..."
 curl -X POST "https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/auth" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dHNkZ2t3emp6bHR0cG90b2xlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0NDE2MDUsImV4cCI6MjA0OTAxNzYwNX0.CsHcw8_2fJrAGILCJjpA_5LnbPJuLfJi3vNRZQLMlJA" \
+  -H "Authorization: Bearer ${ANON_JWT}" \
   -H "Content-Type: application/json" \
   -d '{"action": "health_check"}' \
   --max-time 10 || echo "⚠️ Auth function test failed or timed out"
@@ -115,7 +118,7 @@ echo "=========================================="
 # Test 7: Check Stripe integration
 echo "🧪 Test 7: Testing Stripe webhook function..."
 curl -X POST "https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/stripe-webhook" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dHNkZ2t3emp6bHR0cG90b2xlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0NDE2MDUsImV4cCI6MjA0OTAxNzYwNX0.CsHcw8_2fJrAGILCJjpA_5LnbPJuLfJi3vNRZQLMlJA" \
+  -H "Authorization: Bearer ${ANON_JWT}" \
   -H "Content-Type: application/json" \
   -H "Stripe-Signature: test" \
   -d '{"type": "customer.created", "data": {"object": {"id": "cus_test"}}}' \
@@ -128,7 +131,7 @@ echo "==================================="
 # Test 8: Test AI functions
 echo "🧪 Test 8: Testing AI chat functions..."
 curl -X POST "https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/openai-chat" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dHNkZ2t3emp6bHR0cG90b2xlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0NDE2MDUsImV4cCI6MjA0OTAxNzYwNX0.CsHcw8_2fJrAGILCJjpA_5LnbPJuLfJi3vNRZQLMlJA" \
+  -H "Authorization: Bearer ${ANON_JWT}" \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, this is a test message", "conversation_id": "test"}' \
   --max-time 15 || echo "⚠️ OpenAI chat function test failed or timed out"

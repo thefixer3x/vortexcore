@@ -1,1 +1,17 @@
 project_id = "mxtsdgkwzjzlttpotole"
+
+[functions]
+  # Default; set per-function below if needed
+  # verify_jwt = false
+
+[functions.stripe]
+  verify_jwt = true
+
+[functions.ai-router]
+  verify_jwt = false
+
+[functions.openai-assistant]
+  verify_jwt = false
+
+[functions.openai-chat]
+  verify_jwt = false
