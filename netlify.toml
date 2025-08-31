@@ -1,6 +1,6 @@
 [build]
   # Install Bun and build using Bun to avoid npm/yarn
-  command = "curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL=\"$HOME/.bun\" && export PATH=\"$BUN_INSTALL/bin:$PATH\" && bun --version && bun install --frozen-lockfile && bun run build"
+  command = "bun install --frozen-lockfile && bun run build"
   publish = "dist"
 
 [dev]
