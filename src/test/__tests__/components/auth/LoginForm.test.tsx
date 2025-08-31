@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { LoginForm } from '../../../../components/auth/LoginForm'
+import { LoginForm } from '@/components/auth/LoginForm'
 import { testUtils, TestWrapper } from '../../../setup'
 
 // Mock the auth context
