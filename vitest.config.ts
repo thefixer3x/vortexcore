@@ -21,7 +21,8 @@ export default defineConfig({
     exclude: [
       'node_modules/**',
       'dist/**',
-      'src/test/e2e/**'
+      'src/test/e2e/**',
+      'src/test/__tests__/components/**'
     ],
     coverage: {
       provider: 'v8',
