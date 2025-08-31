@@ -1,16 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-// CORS headers for browser requests
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
-};
-serve(async (req)=>{
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: corsHeaders
-    });
-  }
+import { withPublicMiddleware } from "../_shared/middleware.ts";
+serve(withPublicMiddleware(async (req)=>{
   try {
     // Get the OpenAI API key from environment variables
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
@@ -22,13 +12,7 @@ serve(async (req)=>{
     if (!prompt) {
       return new Response(JSON.stringify({
         error: "Prompt is required"
-      }), {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json"
-        }
-      });
+      }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     console.log(`Processing request to OpenAI with prompt: ${prompt}`);
     // Format messages for OpenAI API
@@ -82,25 +66,9 @@ serve(async (req)=>{
     }
     const text = data.choices[0].message.content;
     console.log("Successfully processed OpenAI response");
-    return new Response(JSON.stringify({
-      response: text
-    }), {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json"
-      }
-    });
+    return new Response(JSON.stringify({ response: text }), { headers: { "Content-Type": "application/json" } });
   } catch (error) {
     console.error("Error in openai-chat function:", error);
-    return new Response(JSON.stringify({
-      error: error.message || "An error occurred while processing your request",
-      details: error.toString()
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json"
-      }
-    });
+    return new Response(JSON.stringify({ error: error.message || "An error occurred while processing your request", details: error.toString() }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
-});
+}));

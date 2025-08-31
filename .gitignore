@@ -33,3 +33,6 @@ archive/**/*.temp
 archive/**/*.cache
 
 supabase/.temp/
+.vercel
+.cache_ggshield
+.vercel

@@ -1,14 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { withPublicMiddleware } from "../_shared/middleware.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+serve(withPublicMiddleware(async (req) => {
 
   try {
     // Check for auth header if JWT verification is enabled
@@ -66,20 +59,9 @@ serve(async (req) => {
 
     const text = data.choices?.[0]?.message?.content || "";
 
-    return new Response(
-      JSON.stringify({ response: text }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ response: text }), { headers: { "Content-Type": "application/json" } });
   } catch (error) {
     console.error("Error in openai-assistant function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message || "An error occurred while processing your request" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message || "An error occurred while processing your request" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
-});
+}));
