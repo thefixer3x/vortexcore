@@ -16,7 +16,9 @@ export default defineConfig({
     },
     include: [
       'src/lib/__tests__/**/*.test.{js,ts,tsx}',
-      'src/hooks/__tests__/**/*.test.{js,ts,tsx}'
+      'src/hooks/__tests__/**/*.test.{js,ts,tsx}',
+      'src/test/__tests__/routing/**/*.test.{js,ts,tsx}',
+      'src/test/__tests__/auth/**/*.test.{js,ts,tsx}'
     ],
     exclude: [
       'node_modules/**',
