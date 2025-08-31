@@ -1,17 +1,12 @@
 import { renderHook, act } from '@testing-library/react'
 import { useIsMobile } from '../use-mobile'
-import { vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { testUtils } from '../../test/test-utils'
 
 describe('useIsMobile', () => {
   beforeEach(() => {
-    vi.stubGlobal('matchMedia', (query: string) => ({
-      matches: query.includes('max-width: 767px'),
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }))
+    // Mock matchMedia for mobile detection
+    testUtils.mockMatchMedia(true)
   })
 
   it('detects mobile viewport', () => {
