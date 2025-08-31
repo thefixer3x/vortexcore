@@ -64,26 +64,11 @@ dist/assets/index-Cb-dW3Bw.js   1,225.67 kB │ gzip: 341.24 kB
 ## Configuration Files Updated
 
 ### `.env.example`
-```bash
-# Supabase Configuration (Control Room/Fixer Initiative Project)
-VITE_SUPABASE_URL=https://mxtsdgkwzjzlttpotole.supabase.co
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-
-# AI Service API Keys
-OPENAI_API_KEY=your_openai_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-PERPLEXITY_API_KEY=your_perplexity_api_key_here
-
-# Payment Processing (Stripe)
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_here
-STRIPE_SECRET_KEY=your_stripe_secret_key_here
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_here
-```
 
 ## Edge Functions Status
 All functions successfully migrated and active:
 
-### VortexCore Functions (14)
+### VortexCore Functions (13)
 - ✅ ai-router
 - ✅ gemini-ai  
 - ✅ callback-handler
@@ -98,7 +83,7 @@ All functions successfully migrated and active:
 - ✅ openai-chat
 - ✅ auth
 
-### Control Room Functions (15)
+### Control Room Functions (16)
 - ✅ openai
 - ✅ openai-assistant
 - ✅ etl-daily-edoc
@@ -109,7 +94,6 @@ All functions successfully migrated and active:
 - ✅ flutterwave
 - ✅ sayswitch
 - ✅ edoc
-- ✅ edocWebhook
 - ✅ consent-status
 - ✅ delete-consent
 - ✅ edoc-dashboard
