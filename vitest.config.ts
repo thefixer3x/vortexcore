@@ -8,15 +8,20 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+        pretendToBeVisual: true,
+      },
+    },
     include: [
-      'src/lib/__tests__/**/*.test.{js,ts,tsx}'
+      'src/lib/__tests__/**/*.test.{js,ts,tsx}',
+      'src/hooks/__tests__/**/*.test.{js,ts,tsx}'
     ],
     exclude: [
       'node_modules/**',
       'dist/**',
-      'src/test/e2e/**',
-      'src/test/__tests__/components/**',
-      'src/hooks/__tests__/**'
+      'src/test/e2e/**'
     ],
     coverage: {
       provider: 'v8',

@@ -7,6 +7,12 @@ describe('useIsMobile', () => {
   beforeEach(() => {
     // Mock matchMedia for mobile detection
     testUtils.mockMatchMedia(true)
+    
+    // Mock window.innerWidth to be mobile size
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      value: 375, // Mobile width
+    })
   })
 
   it('detects mobile viewport', () => {

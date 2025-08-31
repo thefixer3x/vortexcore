@@ -33,19 +33,18 @@ export const testUtils = {
 
   // Mock matchMedia
   mockMatchMedia: (matches: boolean = false) => {
-    if (typeof window !== 'undefined') {
-      Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: (query: string) => ({
-          matches,
-          media: query,
-          onchange: null,
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-        }),
-      })
-    }
+    // This will be called after jsdom is initialized
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }),
+    })
   }
 }
 
@@ -55,3 +54,6 @@ export const mockModule = (modulePath: string, mockImplementation: any) => {
   // This can be enhanced later when we figure out the mocking strategy
   return mockImplementation
 }
+
+// Export the test wrapper
+export { TestWrapper } from './test-wrapper'
