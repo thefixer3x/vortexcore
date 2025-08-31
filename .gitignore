@@ -27,4 +27,12 @@ dist-ssr
 .env
 .env.*
 
+# Archive directory - keep files accessible but ignore specific patterns
+archive/**/*.log
+archive/**/*.temp
+archive/**/*.cache
+
 supabase/.temp/
+.vercel
+.cache_ggshield
+.vercel

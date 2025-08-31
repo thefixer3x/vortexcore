@@ -4,23 +4,56 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Fingerprint } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function BiometricAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signIn } = useAuth();
+  
+  // Check if we're in development mode
+  const isDevelopment = window.location.hostname === 'localhost' || 
+                       window.location.hostname.includes('localhost') ||
+                       process.env.NODE_ENV === 'development';
+  
+  // Hide biometric button in production until proper implementation
+  if (!isDevelopment) {
+    return null;
+  }
   
   const handleBiometricLogin = async () => {
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // In development, use test credentials for biometric simulation
+      if (isDevelopment) {
+        // Simulate biometric verification delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Use actual auth system with dev test credentials
+        await signIn('dev-test@vortexcore.app', 'dev-test-password');
+        
+        toast({
+          title: "Biometric Authentication",
+          description: "Successfully authenticated with biometrics (dev mode)"
+        });
+        
+        // Navigation will be handled by auth context
+      } else {
+        // Production biometric implementation would go here
+        // For now, show error since we're hiding the button anyway
+        throw new Error('Biometric authentication not yet implemented for production');
+      }
+    } catch (error) {
+      console.error('Biometric authentication error:', error);
       toast({
-        title: "Biometric Authentication",
-        description: "Successfully authenticated with biometrics"
+        title: "Authentication Failed",
+        description: "Biometric authentication is not available. Please use email and password.",
+        variant: "destructive"
       });
-      navigate("/dashboard");
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
