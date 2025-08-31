@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.39.3";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { withPublicMiddleware } from "../_shared/middleware.ts";
 import { createHash, timingSafeEqual } from "node:crypto";
 // Constants
 const MAX_REQUEST_SIZE = 102400; // 100KB in bytes
@@ -97,13 +98,7 @@ async function verifyTransaction(reference) {
   }
 }
 // Main handler
-serve(async (req)=>{
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: corsHeaders
-    });
-  }
+serve(withPublicMiddleware(async (req)=>{
   try {
     // Validate request method
     if (req.method !== 'POST') {
@@ -254,4 +249,4 @@ serve(async (req)=>{
       }
     });
   }
-});
+}));

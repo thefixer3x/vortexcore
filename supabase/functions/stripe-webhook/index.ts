@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { withPublicMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 import Stripe from "npm:stripe@14.18.0";
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -6,7 +7,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
 });
 const supabase = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "");
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") || "";
-serve(async (req)=>{
+serve(withPublicMiddleware(async (req)=>{
   try {
     const signature = req.headers.get("stripe-signature");
     if (!signature) {
@@ -45,7 +46,7 @@ serve(async (req)=>{
       }
     });
   }
-});
+}));
 async function handleSubscriptionChange(subscription) {
   const { error } = await supabase.from("stripe_subscriptions").upsert({
     stripe_subscription_id: subscription.id,
