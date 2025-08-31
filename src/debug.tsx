@@ -6,15 +6,7 @@ export const DebugComponent = () => {
     console.log('DebugComponent is rendering');
   }
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: 0, 
-      left: 0, 
-      backgroundColor: 'red', 
-      color: 'white', 
-      padding: '10px', 
-      zIndex: 9999 
-    }}>
+    <div className="debug-component">
       DEBUG: React is working!
     </div>
   );

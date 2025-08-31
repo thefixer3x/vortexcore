@@ -21,7 +21,6 @@ import CategoryManager from "./components/payments/beneficiaries/CategoryManager
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
-import { DebugComponent } from "./debug";
 import { Home } from "lucide-react";
 import { Button } from "./components/ui/button";
 import VirtualCards from "./pages/VirtualCards";
@@ -96,87 +95,25 @@ const App = () => {
             <Route path="/ecosystem/perplexity" element={<PerplexityDemo />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
             
-            {/* Dashboard routes with layout */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <DashboardLayout>
-                  <Dashboard />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/transactions" 
-              element={
-                <DashboardLayout>
-                  <Transactions />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/insights" 
-              element={
-                <DashboardLayout>
-                  <Insights />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/settings" 
-              element={
-                <DashboardLayout>
-                  <Settings />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/users" 
-              element={
-                <DashboardLayout>
-                  <Users />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/virtual-cards" 
-              element={
-                <DashboardLayout>
-                  <VirtualCards />
-                </DashboardLayout>
-              } 
-            />
+            {/* Protected app routes */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/insights" element={<Insights />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/virtual-cards" element={<VirtualCards />} />
+            </Route>
             
             {/* Add temporary routes for missing pages */}
-            <Route 
-              path="/notifications" 
-              element={
-                <DashboardLayout>
-                  <ComingSoon title="Notifications" />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/security" 
-              element={
-                <DashboardLayout>
-                  <ComingSoon title="Security" />
-                </DashboardLayout>
-              } 
-            />
-            <Route 
-              path="/help" 
-              element={
-                <DashboardLayout>
-                  <ComingSoon title="Help & Support" />
-                </DashboardLayout>
-              } 
-            />
+            <Route element={<ProtectedLayout />}>
+              <Route path="/notifications" element={<ComingSoon title="Notifications" />} />
+              <Route path="/security" element={<ComingSoon title="Security" />} />
+              <Route path="/help" element={<ComingSoon title="Help & Support" />} />
+            </Route>
 
             {/* Payment-related routes */}
-            <Route 
-              path="/profile/payments" 
-              element={<ProtectedLayout />}
-            >
+            <Route path="/profile/payments" element={<ProtectedLayout />}>
               <Route 
                 path="beneficiaries" 
                 element={<BeneficiaryManager />}
