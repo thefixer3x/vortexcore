@@ -73,7 +73,6 @@ describe('LoginForm', () => {
     )
     
     const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
     
     fireEvent.change(emailInput, { target: { value: 'test@vortexcore.app' } })
