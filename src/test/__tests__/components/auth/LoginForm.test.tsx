@@ -1,22 +1,58 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { LoginForm } from '../../../../components/auth/LoginForm'
-import { testUtils, TestWrapper } from '../../../setup'
+import { testUtils } from '../../../setup'
+import { TestWrapper } from '../../../test-wrapper'
 
-// Mock the auth context
-const mockAuthContext = {
-  signIn: vi.fn(),
-  user: null,
-  isLoading: false,
-  isAuthenticated: false,
+// Mock the supabase client
+const mockSupabase = {
+  auth: {
+    signInWithPassword: vi.fn(),
+    getSession: vi.fn(),
+    onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } }))
+  }
 }
 
-// Mock the auth context manually since vi.mock is not available
-// We'll use a different approach for now
+// Mock the supabase client import
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: mockSupabase
+}))
+
+// Mock LogRocket
+vi.mock('logrocket', () => ({
+  default: {
+    track: vi.fn(),
+    identify: vi.fn()
+  }
+}))
+
+// Mock the toast hook
+const mockToast = vi.fn()
+vi.mock('@/hooks/use-toast', () => ({
+  toast: mockToast
+}))
+
+// Mock the location hook
+vi.mock('@/hooks/use-location', () => ({
+  useLocation: () => ({ country: 'US', city: 'Test City' })
+}))
+
+// Mock router
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  }
+})
 
 describe('LoginForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock implementations
+    mockSupabase.auth.signInWithPassword.mockResolvedValue({ data: {}, error: null })
+    mockSupabase.auth.getSession.mockResolvedValue({ data: { session: null }, error: null })
   })
 
   it('renders login form correctly', () => {
@@ -65,7 +101,12 @@ describe('LoginForm', () => {
     })
   })
 
-  it('calls signIn with correct credentials on form submission', async () => {
+  it('calls signInWithPassword with correct credentials on form submission', async () => {
+    mockSupabase.auth.signInWithPassword.mockResolvedValueOnce({
+      data: { user: { id: 'test-id', email: 'test@vortexcore.app' }, session: { access_token: 'token' } },
+      error: null
+    })
+    
     render(
       <TestWrapper>
         <LoginForm />
@@ -81,24 +122,19 @@ describe('LoginForm', () => {
     fireEvent.click(submitButton)
     
     await waitFor(() => {
-      expect(mockAuthContext.signIn).toHaveBeenCalledWith('test@vortexcore.app', 'password123')
+      expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
+        email: 'test@vortexcore.app',
+        password: 'password123',
+        options: { captchaToken: undefined }
+      })
     })
   })
 
   it('shows loading state during authentication', async () => {
-    mockAuthContext.isLoading = true
-    
-    render(
-      <TestWrapper>
-        <LoginForm />
-      </TestWrapper>
+    // Mock a delayed response
+    mockSupabase.auth.signInWithPassword.mockImplementationOnce(
+      () => new Promise(resolve => setTimeout(() => resolve({ data: {}, error: null }), 100))
     )
-    
-    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled()
-  })
-
-  it('handles authentication error gracefully', async () => {
-    mockAuthContext.signIn.mockRejectedValueOnce(new Error('Invalid credentials'))
     
     render(
       <TestWrapper>
@@ -107,13 +143,43 @@ describe('LoginForm', () => {
     )
     
     const emailInput = screen.getByLabelText(/email/i)
+    const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
     
     fireEvent.change(emailInput, { target: { value: 'test@vortexcore.app' } })
+    fireEvent.change(passwordInput, { target: { value: 'password123' } })
+    fireEvent.click(submitButton)
+    
+    // Check loading state immediately after click
+    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled()
+  })
+
+  it('handles authentication error gracefully', async () => {
+    mockSupabase.auth.signInWithPassword.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'Invalid login credentials' }
+    })
+    
+    render(
+      <TestWrapper>
+        <LoginForm />
+      </TestWrapper>
+    )
+    
+    const emailInput = screen.getByLabelText(/email/i)
+    const passwordInput = screen.getByLabelText(/password/i)
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    
+    fireEvent.change(emailInput, { target: { value: 'test@vortexcore.app' } })
+    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } })
     fireEvent.click(submitButton)
     
     await waitFor(() => {
-      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument()
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Invalid Credentials',
+        description: 'Please check your email and password and try again',
+        variant: 'destructive'
+      })
     })
   })
 

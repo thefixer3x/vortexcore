@@ -15,7 +15,10 @@ export function useAuthProviders() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: "https://auth.vortexcore.app/auth/callback",
+          redirectTo: "https://api.lanonasis.com/auth/callback?return_to=vortexcore",
+          queryParams: {
+            redirect_to: 'https://auth.vortexcore.app'
+          }
         }
       });
       
