@@ -57,16 +57,41 @@ describe('LoginForm', () => {
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
 
-  it('handles form submission with valid credentials', async () => {
-    // Mock successful login
-    mockSupabase.auth.signInWithPassword.mockResolvedValueOnce({
-      data: { 
-        user: { id: 'test-user', email: 'test@example.com' },
-        session: { access_token: 'mock-token' }
-      },
-      error: null,
+  it('displays validation errors for empty fields', async () => {
+    render(
+      <TestWrapper>
+        <LoginForm />
+      </TestWrapper>
+    )
+    
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    fireEvent.click(submitButton)
+    
+    await waitFor(() => {
+      expect(screen.getByText(/email is required/i)).toBeInTheDocument()
+      expect(screen.getByText(/password is required/i)).toBeInTheDocument()
+    })
     })
 
+  it('displays validation error for invalid email format', async () => {
+    render(
+      <TestWrapper>
+        <LoginForm />
+      </TestWrapper>
+    )
+    
+    const emailInput = screen.getByLabelText(/email/i)
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    
+    fireEvent.change(emailInput, { target: { value: 'invalid-email' } })
+    fireEvent.click(submitButton)
+    
+    await waitFor(() => {
+      expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument()
+    })
+  })
+
+  it('calls signIn with correct credentials on form submission', async () => {
     render(
       <TestWrapper>
         <LoginForm />
@@ -122,6 +147,7 @@ describe('LoginForm', () => {
       error: { message: 'Invalid credentials' },
     })
 
+
     render(
       <TestWrapper>
         <LoginForm />
@@ -129,8 +155,9 @@ describe('LoginForm', () => {
     )
     
     const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
+    
+    const passwordInput = screen.getByLabelText(/password/i)
     
     // Fill out and submit the form
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
