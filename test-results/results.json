@@ -1,0 +1,3504 @@
+{
+  "config": {
+    "configFile": "/Users/seyederick/Documents/vortex-core-app/playwright.config.ts",
+    "rootDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/results.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/seyederick/Documents/vortex-core-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/seyederick/Documents/vortex-core-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/seyederick/Documents/vortex-core-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/seyederick/Documents/vortex-core-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/seyederick/Documents/vortex-core-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 4,
+    "webServer": {
+      "command": "bun run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "ai-chat-errors.spec.ts",
+      "file": "ai-chat-errors.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "AI Chat error handling",
+          "file": "ai-chat-errors.spec.ts",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows friendly message on 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-9d14992b49ec6a103fbc",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 500",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-b6674832adc840506b07",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-50d6d359d955202152dc",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-269ab6500d05dfaed390",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 500",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-9f84677fc90643364f6b",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-dcb5dc272af88ecc58b5",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-a28d3b150c3e0cc5d4b1",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 500",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-6e043ce45f34f5efcf6b",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-29aaf8e17752ea15d27e",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-0a7b9f3beff12f7c7563",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 500",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-168ff0feb6b6e4c8b307",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-9b6e4ac047a53c4b46dc",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 403",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-c6054c05db0657cba9d1",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 500",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-16e95de25797eb62f482",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "shows friendly message on 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9e1f935e5ddfe0fbf427-f0bf7d52514d272e77d1",
+              "file": "ai-chat-errors.spec.ts",
+              "line": 34,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ai-chat.spec.ts",
+      "file": "ai-chat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "AI Chat Widget",
+          "file": "ai-chat.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display chat button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-74e598994e9bf2235267",
+              "file": "ai-chat.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should open chat widget when button is clicked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-992513e6ab6860b77e4c",
+              "file": "ai-chat.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should display welcome message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-7c2093b4d373ad69e446",
+              "file": "ai-chat.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "should allow typing in message input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-2a17e4e08b68470621ad",
+              "file": "ai-chat.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should enable send button when message is typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-1a006a489f5135ad9125",
+              "file": "ai-chat.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should handle Enter key to send message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-b6e6de485b13c70e9b6d",
+              "file": "ai-chat.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "should handle Shift+Enter for new line",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-5ed99824f8bafecf1906",
+              "file": "ai-chat.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "should minimize and restore chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c5fc31978a5df9673311",
+              "file": "ai-chat.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should close chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-654d14e1a7131f449872",
+              "file": "ai-chat.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "should clear chat history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-e7336b765d1c26959a37",
+              "file": "ai-chat.spec.ts",
+              "line": 140,
+              "column": 3
+            },
+            {
+              "title": "should show loading state while processing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c222cefae2bc06e6c618",
+              "file": "ai-chat.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "should receive AI response",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/ai-chat.spec.ts",
+                        "line": 173,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-ddb60bb4abf80c9d98f8",
+              "file": "ai-chat.spec.ts",
+              "line": 173,
+              "column": 8
+            },
+            {
+              "title": "should display chat button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-1b34bb913087d7c243c2",
+              "file": "ai-chat.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should open chat widget when button is clicked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-1a94dd45542a69f8194b",
+              "file": "ai-chat.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should display welcome message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-75cf05fb10edc67cd665",
+              "file": "ai-chat.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "should allow typing in message input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-d165dce22b61670e8d7b",
+              "file": "ai-chat.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should enable send button when message is typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-9436803802d97a835edb",
+              "file": "ai-chat.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should handle Enter key to send message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-70ac490bcea924dfdb03",
+              "file": "ai-chat.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "should handle Shift+Enter for new line",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-b53568627d48100aa07a",
+              "file": "ai-chat.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "should minimize and restore chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-e72aeb56cb5ea256e7c3",
+              "file": "ai-chat.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should close chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-35a6ed9e6ec8edc7ac92",
+              "file": "ai-chat.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "should clear chat history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c339e88ddce44c5d3d31",
+              "file": "ai-chat.spec.ts",
+              "line": 140,
+              "column": 3
+            },
+            {
+              "title": "should show loading state while processing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-4eda5d0d7e5b0bdcf863",
+              "file": "ai-chat.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "should receive AI response",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/ai-chat.spec.ts",
+                        "line": 173,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-005c3caedfe34fd86ea9",
+              "file": "ai-chat.spec.ts",
+              "line": 173,
+              "column": 8
+            },
+            {
+              "title": "should display chat button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-2b7f559cf0dce98860ec",
+              "file": "ai-chat.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should open chat widget when button is clicked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-82190a0bd1f191b38910",
+              "file": "ai-chat.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should display welcome message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-5439e800ccc486909d35",
+              "file": "ai-chat.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "should allow typing in message input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-9932e4828a6564e3d416",
+              "file": "ai-chat.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should enable send button when message is typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-d67fe95afd09fb529a50",
+              "file": "ai-chat.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should handle Enter key to send message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c000e21f2d1d7750040d",
+              "file": "ai-chat.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "should handle Shift+Enter for new line",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-bd7e3a2576a773b339b3",
+              "file": "ai-chat.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "should minimize and restore chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-7b76b450b4ad93206797",
+              "file": "ai-chat.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should close chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-5da4e60d6567fb7c5bc4",
+              "file": "ai-chat.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "should clear chat history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c5b41d3673c16a0e5f74",
+              "file": "ai-chat.spec.ts",
+              "line": 140,
+              "column": 3
+            },
+            {
+              "title": "should show loading state while processing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-abedb1d00611b59dd42e",
+              "file": "ai-chat.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "should receive AI response",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/ai-chat.spec.ts",
+                        "line": 173,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-36a350d812e557de34ae",
+              "file": "ai-chat.spec.ts",
+              "line": 173,
+              "column": 8
+            },
+            {
+              "title": "should display chat button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-18727dcb85c63e752e70",
+              "file": "ai-chat.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should open chat widget when button is clicked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-8cb1dc5671a99ca0453c",
+              "file": "ai-chat.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should display welcome message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-8da92707d110dab10541",
+              "file": "ai-chat.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "should allow typing in message input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-f5a2733c67e5f5a51949",
+              "file": "ai-chat.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should enable send button when message is typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-81f290dbedff77497c4a",
+              "file": "ai-chat.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should handle Enter key to send message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-c492049947ac3dca0026",
+              "file": "ai-chat.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "should handle Shift+Enter for new line",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-07f88fb5c254b37d1d4e",
+              "file": "ai-chat.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "should minimize and restore chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-3e5873370d128fc9cfc8",
+              "file": "ai-chat.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should close chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-6bf8ffddf9e368dae084",
+              "file": "ai-chat.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "should clear chat history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-3be69186f078647fd77b",
+              "file": "ai-chat.spec.ts",
+              "line": 140,
+              "column": 3
+            },
+            {
+              "title": "should show loading state while processing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-fd3ab34187db707876bb",
+              "file": "ai-chat.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "should receive AI response",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/ai-chat.spec.ts",
+                        "line": 173,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-3289f2d5396b8b4b162b",
+              "file": "ai-chat.spec.ts",
+              "line": 173,
+              "column": 8
+            },
+            {
+              "title": "should display chat button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-959b55f9594097f188f4",
+              "file": "ai-chat.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should open chat widget when button is clicked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-26da757dbf8d16a23947",
+              "file": "ai-chat.spec.ts",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "should display welcome message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-37597aae3781e6bc7970",
+              "file": "ai-chat.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "should allow typing in message input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-5bcf452c98c37940d4fb",
+              "file": "ai-chat.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "should enable send button when message is typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-cdac365d9829cf868a73",
+              "file": "ai-chat.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should handle Enter key to send message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-a7b796e3d73765f6cb17",
+              "file": "ai-chat.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "should handle Shift+Enter for new line",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-5d72691ed3cdb2e4268a",
+              "file": "ai-chat.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "should minimize and restore chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-a54095a840527234d078",
+              "file": "ai-chat.spec.ts",
+              "line": 104,
+              "column": 3
+            },
+            {
+              "title": "should close chat",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-11783f895911bf5a73ff",
+              "file": "ai-chat.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "should clear chat history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-db1e3aeb53a3cf04397c",
+              "file": "ai-chat.spec.ts",
+              "line": 140,
+              "column": 3
+            },
+            {
+              "title": "should show loading state while processing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-a8da72410586500252d5",
+              "file": "ai-chat.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "should receive AI response",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/ai-chat.spec.ts",
+                        "line": 173,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1f1ef7bcd9eb87d7ff46-70635b9bbcee9cdfbea8",
+              "file": "ai-chat.spec.ts",
+              "line": 173,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "api-cors.spec.ts",
+      "file": "api-cors.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "CORS for ai-router",
+          "file": "api-cors.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "OPTIONS preflight reflects Origin and sets Vary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-cors.spec.ts",
+                        "line": 6,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a754633586be99afab7-76fa61746eb864ae7a57",
+              "file": "api-cors.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "OPTIONS preflight reflects Origin and sets Vary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-cors.spec.ts",
+                        "line": 6,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a754633586be99afab7-1bfdaa350fe11820e2ac",
+              "file": "api-cors.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "OPTIONS preflight reflects Origin and sets Vary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-cors.spec.ts",
+                        "line": 6,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a754633586be99afab7-0542ad20b68d118ad9cb",
+              "file": "api-cors.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "OPTIONS preflight reflects Origin and sets Vary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-cors.spec.ts",
+                        "line": 6,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a754633586be99afab7-1d069e2a07cd2848a1de",
+              "file": "api-cors.spec.ts",
+              "line": 8,
+              "column": 3
+            },
+            {
+              "title": "OPTIONS preflight reflects Origin and sets Vary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-cors.spec.ts",
+                        "line": 6,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4a754633586be99afab7-66aba9caf105a035dc29",
+              "file": "api-cors.spec.ts",
+              "line": 8,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "api-stripe.spec.ts",
+      "file": "api-stripe.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Stripe Edge Function Auth",
+          "file": "api-stripe.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should return 401 without Authorization for sensitive action",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-stripe.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a09af34aac892fbc5334-63290543713c6d9914d0",
+              "file": "api-stripe.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should return 401 without Authorization for sensitive action",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-stripe.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a09af34aac892fbc5334-4490a945cf0cb553c96d",
+              "file": "api-stripe.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should return 401 without Authorization for sensitive action",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-stripe.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a09af34aac892fbc5334-2328feed0948c79dd342",
+              "file": "api-stripe.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should return 401 without Authorization for sensitive action",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-stripe.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a09af34aac892fbc5334-3d2f8c489b2e0d16c0a6",
+              "file": "api-stripe.spec.ts",
+              "line": 9,
+              "column": 3
+            },
+            {
+              "title": "should return 401 without Authorization for sensitive action",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "SUPABASE_URL is not configured",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/api-stripe.spec.ts",
+                        "line": 7,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a09af34aac892fbc5334-80dccb4952f77713d931",
+              "file": "api-stripe.spec.ts",
+              "line": 9,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication Flow",
+          "file": "auth.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display login form on home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-0d588943ebee69956e17",
+              "file": "auth.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should redirect unauthenticated users to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-690e091e2a4ae2daa31f",
+              "file": "auth.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should show validation errors for empty fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-4941fe4fbd10571c546d",
+              "file": "auth.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should show validation error for invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-c7641d043073672386fa",
+              "file": "auth.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should handle login with invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b2357261459030fcf67e",
+              "file": "auth.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-65ff9e84f60c34ec8642",
+              "file": "auth.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "should show forgot password option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b4039f79891ef868acc4",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should login with valid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 69,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-9aa3fd5f971f9fd61180",
+              "file": "auth.spec.ts",
+              "line": 69,
+              "column": 8
+            },
+            {
+              "title": "should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 82,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-c0ce6ccc7b7e02794edb",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 8
+            },
+            {
+              "title": "should display login form on home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-ae4a7cd42354a86d3e73",
+              "file": "auth.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should redirect unauthenticated users to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-86e76e9dc8b8c77ed293",
+              "file": "auth.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should show validation errors for empty fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-1762f7762d555d489d0c",
+              "file": "auth.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should show validation error for invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-4be6a14e5caab051a11a",
+              "file": "auth.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should handle login with invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-113815ccf386111c710c",
+              "file": "auth.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-7ee27947b8c73aeea066",
+              "file": "auth.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "should show forgot password option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-05b76d32e3359781d981",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should login with valid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 69,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-c4a1c1e29e29e59ced9a",
+              "file": "auth.spec.ts",
+              "line": 69,
+              "column": 8
+            },
+            {
+              "title": "should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 82,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-4410c42745b7a4d89d03",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 8
+            },
+            {
+              "title": "should display login form on home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-592ffdbf837d062ffb5b",
+              "file": "auth.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should redirect unauthenticated users to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b136d81bfc469c043953",
+              "file": "auth.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should show validation errors for empty fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-fe7e9d36ba113ee8be56",
+              "file": "auth.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should show validation error for invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-e0d51c676fffac3e1b76",
+              "file": "auth.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should handle login with invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-ff006c75ec2572e1e9f5",
+              "file": "auth.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-7ae4b83163846dc22d36",
+              "file": "auth.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "should show forgot password option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-3c77cd5b5eada72c3463",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should login with valid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 69,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b3a8c8ef2adbfe7de537",
+              "file": "auth.spec.ts",
+              "line": 69,
+              "column": 8
+            },
+            {
+              "title": "should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 82,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-1f08bff9df919d288ae6",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 8
+            },
+            {
+              "title": "should display login form on home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b3510bb2dcd0965af2e2",
+              "file": "auth.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should redirect unauthenticated users to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-e4704f8c5fd72a87c8bb",
+              "file": "auth.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should show validation errors for empty fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-8e6e52c6fea8e054cfbe",
+              "file": "auth.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should show validation error for invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-a67fd2fb4913ea26d5e7",
+              "file": "auth.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should handle login with invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-4a516c626ef656876f2f",
+              "file": "auth.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-e03296ef478f943b8fcb",
+              "file": "auth.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "should show forgot password option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-9742effbd4df1646d796",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should login with valid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 69,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-a4da94ddcfa795bb02c4",
+              "file": "auth.spec.ts",
+              "line": 69,
+              "column": 8
+            },
+            {
+              "title": "should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 82,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-8a3b860ad917d672a1c0",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 8
+            },
+            {
+              "title": "should display login form on home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-da8c14110acaf280d40b",
+              "file": "auth.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "should redirect unauthenticated users to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b023061a176acce09f47",
+              "file": "auth.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "should show validation errors for empty fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-60e26da5a07483db87a7",
+              "file": "auth.spec.ts",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "should show validation error for invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-34080fcdb534e131ba64",
+              "file": "auth.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "should handle login with invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-115e928cd5234c48cf64",
+              "file": "auth.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "should navigate to sign up page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-2550a27e50e55a000a4d",
+              "file": "auth.spec.ts",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "title": "should show forgot password option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-f472fbb6b4d1d8139c6c",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            },
+            {
+              "title": "should login with valid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 69,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-44e0a45c85d58f3c043b",
+              "file": "auth.spec.ts",
+              "line": 69,
+              "column": 8
+            },
+            {
+              "title": "should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/seyederick/Documents/vortex-core-app/src/test/e2e/auth.spec.ts",
+                        "line": 82,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-5e89033e25aea64867f4",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "deeplink-after-login.spec.ts",
+      "file": "deeplink-after-login.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Deep link after login",
+          "file": "deeplink-after-login.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "redirects unauthenticated and (optionally) returns to deep link after setting session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc492b5d3d8ba8241100-75f5d11abe749cc596c1",
+              "file": "deeplink-after-login.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "redirects unauthenticated and (optionally) returns to deep link after setting session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc492b5d3d8ba8241100-37fc822dda773faa3be1",
+              "file": "deeplink-after-login.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "redirects unauthenticated and (optionally) returns to deep link after setting session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc492b5d3d8ba8241100-2db4866eaa88e82103cf",
+              "file": "deeplink-after-login.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "redirects unauthenticated and (optionally) returns to deep link after setting session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc492b5d3d8ba8241100-0e5d9b4ea7992ac2e8a8",
+              "file": "deeplink-after-login.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "redirects unauthenticated and (optionally) returns to deep link after setting session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fc492b5d3d8ba8241100-43f26de81b0587d7e196",
+              "file": "deeplink-after-login.spec.ts",
+              "line": 7,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "error-pages.spec.ts",
+      "file": "error-pages.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Error and 404 Pages",
+          "file": "error-pages.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "navigating to an unknown route shows 404 page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "912a4336af57e1210f39-91168340b03550549c6e",
+              "file": "error-pages.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "navigating to an unknown route shows 404 page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "912a4336af57e1210f39-4b136b96bf003a9f94d6",
+              "file": "error-pages.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "navigating to an unknown route shows 404 page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "912a4336af57e1210f39-4b9259fc9e7a08a7c090",
+              "file": "error-pages.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "navigating to an unknown route shows 404 page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "912a4336af57e1210f39-b427c93b5ab23eb9fe9d",
+              "file": "error-pages.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "navigating to an unknown route shows 404 page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "912a4336af57e1210f39-8e60c907fc9ab8fcd181",
+              "file": "error-pages.spec.ts",
+              "line": 4,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "protected-routes.spec.ts",
+      "file": "protected-routes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Protected Routes",
+          "file": "protected-routes.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "unauthenticated user is redirected from /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-5283b39565506f58ee06",
+              "file": "protected-routes.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-f8e21f3f1d6db245c9b4",
+              "file": "protected-routes.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-cf003c7ce10e5a90cbb0",
+              "file": "protected-routes.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-64618143b87d7b504f7d",
+              "file": "protected-routes.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-95563e659124bd0e92da",
+              "file": "protected-routes.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-094ebeff3ad7b55a9548",
+              "file": "protected-routes.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-410ed3573c68f416fc8e",
+              "file": "protected-routes.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-7a1ae71d66fb39550ed7",
+              "file": "protected-routes.spec.ts",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-9134073d249b00904dc1",
+              "file": "protected-routes.spec.ts",
+              "line": 4,
+              "column": 3
+            },
+            {
+              "title": "unauthenticated user is redirected from /settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6f94529db8185b11ad0c-c73d77e05c9006c1fb3f",
+              "file": "protected-routes.spec.ts",
+              "line": 10,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-04T03:31:12.142Z",
+    "duration": 146.24400000000014,
+    "expected": 0,
+    "skipped": 150,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

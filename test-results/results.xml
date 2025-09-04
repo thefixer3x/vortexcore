@@ -1,0 +1,782 @@
+<testsuites id="" name="" tests="150" failures="0" skipped="150" errors="0" time="0.14624400000000015">
+<testsuite name="ai-chat-errors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="AI Chat error handling › shows friendly message on 403" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 500" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 404" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="AI Chat Widget › should display chat button" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should open chat widget when button is clicked" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should display welcome message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should allow typing in message input" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should enable send button when message is typed" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Enter key to send message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Shift+Enter for new line" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should minimize and restore chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should close chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should clear chat history" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should show loading state while processing" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should receive AI response" classname="ai-chat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-cors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="CORS for ai-router › OPTIONS preflight reflects Origin and sets Vary" classname="api-cors.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-stripe.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Stripe Edge Function Auth › should return 401 without Authorization for sensitive action" classname="api-stripe.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Authentication Flow › should display login form on home page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should redirect unauthenticated users to login" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty fields" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation error for invalid email format" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should handle login with invalid credentials" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show forgot password option" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should login with valid credentials" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should logout successfully" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="deeplink-after-login.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Deep link after login › redirects unauthenticated and (optionally) returns to deep link after setting session" classname="deeplink-after-login.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="error-pages.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Error and 404 Pages › navigating to an unknown route shows 404 page" classname="error-pages.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="protected-routes.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="chromium" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Protected Routes › unauthenticated user is redirected from /dashboard" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Protected Routes › unauthenticated user is redirected from /settings" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat-errors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="AI Chat error handling › shows friendly message on 403" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 500" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 404" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="AI Chat Widget › should display chat button" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should open chat widget when button is clicked" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should display welcome message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should allow typing in message input" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should enable send button when message is typed" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Enter key to send message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Shift+Enter for new line" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should minimize and restore chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should close chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should clear chat history" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should show loading state while processing" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should receive AI response" classname="ai-chat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-cors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="CORS for ai-router › OPTIONS preflight reflects Origin and sets Vary" classname="api-cors.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-stripe.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Stripe Edge Function Auth › should return 401 without Authorization for sensitive action" classname="api-stripe.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Authentication Flow › should display login form on home page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should redirect unauthenticated users to login" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty fields" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation error for invalid email format" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should handle login with invalid credentials" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show forgot password option" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should login with valid credentials" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should logout successfully" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="deeplink-after-login.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Deep link after login › redirects unauthenticated and (optionally) returns to deep link after setting session" classname="deeplink-after-login.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="error-pages.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Error and 404 Pages › navigating to an unknown route shows 404 page" classname="error-pages.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="protected-routes.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="firefox" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Protected Routes › unauthenticated user is redirected from /dashboard" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Protected Routes › unauthenticated user is redirected from /settings" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat-errors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="AI Chat error handling › shows friendly message on 403" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 500" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 404" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="AI Chat Widget › should display chat button" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should open chat widget when button is clicked" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should display welcome message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should allow typing in message input" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should enable send button when message is typed" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Enter key to send message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Shift+Enter for new line" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should minimize and restore chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should close chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should clear chat history" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should show loading state while processing" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should receive AI response" classname="ai-chat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-cors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="CORS for ai-router › OPTIONS preflight reflects Origin and sets Vary" classname="api-cors.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-stripe.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Stripe Edge Function Auth › should return 401 without Authorization for sensitive action" classname="api-stripe.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Authentication Flow › should display login form on home page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should redirect unauthenticated users to login" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty fields" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation error for invalid email format" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should handle login with invalid credentials" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show forgot password option" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should login with valid credentials" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should logout successfully" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="deeplink-after-login.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Deep link after login › redirects unauthenticated and (optionally) returns to deep link after setting session" classname="deeplink-after-login.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="error-pages.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Error and 404 Pages › navigating to an unknown route shows 404 page" classname="error-pages.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="protected-routes.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="webkit" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Protected Routes › unauthenticated user is redirected from /dashboard" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Protected Routes › unauthenticated user is redirected from /settings" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat-errors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="AI Chat error handling › shows friendly message on 403" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 500" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 404" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="AI Chat Widget › should display chat button" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should open chat widget when button is clicked" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should display welcome message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should allow typing in message input" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should enable send button when message is typed" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Enter key to send message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Shift+Enter for new line" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should minimize and restore chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should close chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should clear chat history" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should show loading state while processing" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should receive AI response" classname="ai-chat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-cors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="CORS for ai-router › OPTIONS preflight reflects Origin and sets Vary" classname="api-cors.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-stripe.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Stripe Edge Function Auth › should return 401 without Authorization for sensitive action" classname="api-stripe.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Authentication Flow › should display login form on home page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should redirect unauthenticated users to login" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty fields" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation error for invalid email format" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should handle login with invalid credentials" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show forgot password option" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should login with valid credentials" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should logout successfully" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="deeplink-after-login.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Deep link after login › redirects unauthenticated and (optionally) returns to deep link after setting session" classname="deeplink-after-login.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="error-pages.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Error and 404 Pages › navigating to an unknown route shows 404 page" classname="error-pages.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="protected-routes.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Chrome" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Protected Routes › unauthenticated user is redirected from /dashboard" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Protected Routes › unauthenticated user is redirected from /settings" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat-errors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="AI Chat error handling › shows friendly message on 403" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 500" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat error handling › shows friendly message on 404" classname="ai-chat-errors.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="ai-chat.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="AI Chat Widget › should display chat button" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should open chat widget when button is clicked" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should display welcome message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should allow typing in message input" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should enable send button when message is typed" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Enter key to send message" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should handle Shift+Enter for new line" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should minimize and restore chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should close chat" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should clear chat history" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should show loading state while processing" classname="ai-chat.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="AI Chat Widget › should receive AI response" classname="ai-chat.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-cors.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="CORS for ai-router › OPTIONS preflight reflects Origin and sets Vary" classname="api-cors.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="api-stripe.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Stripe Edge Function Auth › should return 401 without Authorization for sensitive action" classname="api-stripe.spec.ts" time="0">
+<properties>
+<property name="skip" value="SUPABASE_URL is not configured">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="Authentication Flow › should display login form on home page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should redirect unauthenticated users to login" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty fields" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show validation error for invalid email format" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should handle login with invalid credentials" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should show forgot password option" classname="auth.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should login with valid credentials" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication Flow › should logout successfully" classname="auth.spec.ts" time="0">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="deeplink-after-login.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Deep link after login › redirects unauthenticated and (optionally) returns to deep link after setting session" classname="deeplink-after-login.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="error-pages.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Error and 404 Pages › navigating to an unknown route shows 404 page" classname="error-pages.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="protected-routes.spec.ts" timestamp="2025-09-04T03:31:12.287Z" hostname="Mobile Safari" tests="2" failures="0" skipped="2" time="0" errors="0">
+<testcase name="Protected Routes › unauthenticated user is redirected from /dashboard" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Protected Routes › unauthenticated user is redirected from /settings" classname="protected-routes.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>
