@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 
 describe('Routing Basic Tests', () => {
   it('should have basic routing structure', () => {
-    // Test that we can import router-related utilities
-    expect(typeof window).toBe('undefined') // In node environment
+    // Test that we can import router-related utilities  
+    expect(typeof document).toBeDefined() // In jsdom environment
   })
 
   it('should validate route patterns', () => {

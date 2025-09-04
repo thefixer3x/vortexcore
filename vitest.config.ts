@@ -17,14 +17,12 @@ export default defineConfig({
     include: [
       'src/lib/__tests__/**/*.test.{js,ts,tsx}',
       'src/hooks/__tests__/**/*.test.{js,ts,tsx}',
-      'src/test/__tests__/routing/**/*.test.{js,ts,tsx}',
-      'src/test/__tests__/auth/**/*.test.{js,ts,tsx}'
+      'src/test/__tests__/**/*.test.{js,ts,tsx}'
     ],
     exclude: [
       'node_modules/**',
       'dist/**',
-      'src/test/e2e/**',
-      'src/test/__tests__/components/**'
+      'src/test/e2e/**'
     ],
     coverage: {
       provider: 'v8',
