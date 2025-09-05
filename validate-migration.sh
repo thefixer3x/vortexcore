@@ -11,7 +11,12 @@ echo "🧪 VortexCore.app Migration Validation & Testing"
 echo "Target Project: $PROJECT_TARGET"
 
 # Require SUPABASE_ANON_KEY to avoid committing tokens in this script
-: "${SUPABASE_ANON_KEY:?Environment variable SUPABASE_ANON_KEY must be set (Supabase anon key, not a user JWT).}" 
+: "${SUPABASE_ANON_KEY:?SUPABASE_ANON_KEY not set}"
+# Provide a more detailed error message if the variable is missing
+if [ -z "$SUPABASE_ANON_KEY" ]; then
+  echo "Error: Environment variable SUPABASE_ANON_KEY must be set (Supabase anon key, not a user JWT)."
+  exit 1
+fi
 
 # Ensure we're linked to target project
 supabase link --project-ref $PROJECT_TARGET
