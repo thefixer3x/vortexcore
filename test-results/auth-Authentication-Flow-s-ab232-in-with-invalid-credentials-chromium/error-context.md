@@ -1,0 +1,135 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]: Invalid Credentials
+          - generic [ref=e8]: Please check your email and password and try again
+        - button [ref=e9] [cursor=pointer]:
+          - img [ref=e10] [cursor=pointer]
+  - region "Notifications alt+T"
+  - generic [ref=e14]:
+    - banner [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: VC
+          - generic [ref=e19]: VortexCore
+        - generic [ref=e20]:
+          - link "Ecosystem" [ref=e21] [cursor=pointer]:
+            - /url: /ecosystem
+          - link "Features" [ref=e22] [cursor=pointer]:
+            - /url: "#"
+          - link "Pricing" [ref=e23] [cursor=pointer]:
+            - /url: "#"
+          - link "Support" [ref=e24] [cursor=pointer]:
+            - /url: "#"
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Take control of your financial ecosystem" [level=1] [ref=e28]
+          - paragraph [ref=e29]: Link all your accounts, manage transactions, and get AI-powered financial insights with our secure and intelligent banking aggregation platform.
+        - generic [ref=e30]:
+          - heading "Enterprise-Grade Security" [level=3] [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - img [ref=e34]
+              - generic [ref=e36]: GDPR Compliant
+            - generic [ref=e37]:
+              - img [ref=e38]
+              - generic [ref=e41]: NDPR Certified
+            - generic [ref=e42]:
+              - img [ref=e43]
+              - generic [ref=e47]: ISO 27001
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - generic [ref=e52]: PCI DSS
+          - paragraph [ref=e53]: Your data is encrypted end-to-end with advanced security protocols. We maintain the highest standards of security and privacy protection.
+        - generic [ref=e54]:
+          - heading "Value-Added Services" [level=3] [ref=e55]
+          - generic [ref=e56]:
+            - generic [ref=e57] [cursor=pointer]:
+              - generic [ref=e58] [cursor=pointer]:
+                - img [ref=e59] [cursor=pointer]
+                - heading "Send Money" [level=4] [ref=e62] [cursor=pointer]
+              - paragraph [ref=e63] [cursor=pointer]: Fast transfers to local and international accounts
+            - generic [ref=e64] [cursor=pointer]:
+              - generic [ref=e65] [cursor=pointer]:
+                - img [ref=e66] [cursor=pointer]
+                - heading "Receive Payments" [level=4] [ref=e68] [cursor=pointer]
+              - paragraph [ref=e69] [cursor=pointer]: Get paid easily with multiple options
+            - generic [ref=e70] [cursor=pointer]:
+              - generic [ref=e71] [cursor=pointer]:
+                - img [ref=e72] [cursor=pointer]
+                - heading "Virtual Card" [level=4] [ref=e74] [cursor=pointer]
+              - paragraph [ref=e75] [cursor=pointer]: Create virtual cards for secure online shopping
+            - generic [ref=e76] [cursor=pointer]:
+              - generic [ref=e77] [cursor=pointer]:
+                - img [ref=e78] [cursor=pointer]
+                - heading "Personal Credit" [level=4] [ref=e80] [cursor=pointer]
+              - paragraph [ref=e81] [cursor=pointer]: Access instant financing when you need it
+            - generic [ref=e82] [cursor=pointer]:
+              - generic [ref=e83] [cursor=pointer]:
+                - img [ref=e84] [cursor=pointer]
+                - heading "Business Financing" [level=4] [ref=e88] [cursor=pointer]
+              - paragraph [ref=e89] [cursor=pointer]: Capital solutions for your growing business
+            - generic [ref=e90] [cursor=pointer]:
+              - generic [ref=e91] [cursor=pointer]:
+                - img [ref=e92] [cursor=pointer]
+                - heading "Multi-Currency" [level=4] [ref=e95] [cursor=pointer]
+              - paragraph [ref=e96] [cursor=pointer]: Manage accounts in different currencies
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - heading "Welcome to VortexCore" [level=2] [ref=e101]
+          - paragraph [ref=e102]: Sign in to manage your financial ecosystem
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - generic [ref=e105]: Email
+            - generic [ref=e106]:
+              - generic:
+                - img
+              - textbox "Email" [ref=e107]: test@invalid.com
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - generic [ref=e110]: Password
+              - button "Forgot password?" [ref=e111] [cursor=pointer]
+            - generic [ref=e112]:
+              - generic:
+                - img
+              - textbox "Password" [ref=e113]: wrongpassword
+              - button [ref=e114] [cursor=pointer]:
+                - img
+          - generic [ref=e116]:
+            - checkbox "Remember me" [ref=e117] [cursor=pointer]
+            - checkbox
+            - generic [ref=e118]: Remember me
+          - generic [ref=e119]:
+            - button "Sign in" [ref=e120] [cursor=pointer]
+            - button "Enable 2FA" [ref=e121] [cursor=pointer]:
+              - img
+        - generic [ref=e126]: Or continue with
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - button "Google" [ref=e129] [cursor=pointer]:
+              - img
+              - generic [ref=e130] [cursor=pointer]: Google
+            - button "X (Twitter)" [ref=e131] [cursor=pointer]:
+              - img
+              - generic [ref=e132] [cursor=pointer]: X (Twitter)
+            - button "LinkedIn" [ref=e133] [cursor=pointer]:
+              - img
+              - generic [ref=e134] [cursor=pointer]: LinkedIn
+            - button "Instagram" [ref=e135] [cursor=pointer]:
+              - img
+              - generic [ref=e136] [cursor=pointer]: Instagram
+          - button "Continue with Biometrics" [ref=e137] [cursor=pointer]:
+            - img
+            - generic [ref=e138] [cursor=pointer]: Continue with Biometrics
+          - generic [ref=e139]:
+            - text: Don't have an account?
+            - button "Create account" [ref=e140] [cursor=pointer]
+  - button [ref=e142] [cursor=pointer]:
+    - img
+```

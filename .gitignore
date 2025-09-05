@@ -32,7 +32,9 @@ archive/**/*.log
 archive/**/*.temp
 archive/**/*.cache
 
+# IDE-specific settings
+.claude/
+
 supabase/.temp/
 .vercel
 .cache_ggshield
-.vercel
