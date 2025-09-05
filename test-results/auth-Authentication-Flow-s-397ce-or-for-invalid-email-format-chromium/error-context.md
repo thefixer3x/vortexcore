@@ -1,0 +1,129 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]: VC
+          - generic [ref=e8]: VortexCore
+        - generic [ref=e9]:
+          - link "Ecosystem" [ref=e10] [cursor=pointer]:
+            - /url: /ecosystem
+          - link "Features" [ref=e11] [cursor=pointer]:
+            - /url: "#"
+          - link "Pricing" [ref=e12] [cursor=pointer]:
+            - /url: "#"
+          - link "Support" [ref=e13] [cursor=pointer]:
+            - /url: "#"
+    - main [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - heading "Take control of your financial ecosystem" [level=1] [ref=e17]
+          - paragraph [ref=e18]: Link all your accounts, manage transactions, and get AI-powered financial insights with our secure and intelligent banking aggregation platform.
+        - generic [ref=e19]:
+          - heading "Enterprise-Grade Security" [level=3] [ref=e20]
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - img [ref=e23]
+              - generic [ref=e25]: GDPR Compliant
+            - generic [ref=e26]:
+              - img [ref=e27]
+              - generic [ref=e30]: NDPR Certified
+            - generic [ref=e31]:
+              - img [ref=e32]
+              - generic [ref=e36]: ISO 27001
+            - generic [ref=e37]:
+              - img [ref=e38]
+              - generic [ref=e41]: PCI DSS
+          - paragraph [ref=e42]: Your data is encrypted end-to-end with advanced security protocols. We maintain the highest standards of security and privacy protection.
+        - generic [ref=e43]:
+          - heading "Value-Added Services" [level=3] [ref=e44]
+          - generic [ref=e45]:
+            - generic [ref=e46] [cursor=pointer]:
+              - generic [ref=e47] [cursor=pointer]:
+                - img [ref=e48] [cursor=pointer]
+                - heading "Send Money" [level=4] [ref=e51] [cursor=pointer]
+              - paragraph [ref=e52] [cursor=pointer]: Fast transfers to local and international accounts
+            - generic [ref=e53] [cursor=pointer]:
+              - generic [ref=e54] [cursor=pointer]:
+                - img [ref=e55] [cursor=pointer]
+                - heading "Receive Payments" [level=4] [ref=e57] [cursor=pointer]
+              - paragraph [ref=e58] [cursor=pointer]: Get paid easily with multiple options
+            - generic [ref=e59] [cursor=pointer]:
+              - generic [ref=e60] [cursor=pointer]:
+                - img [ref=e61] [cursor=pointer]
+                - heading "Virtual Card" [level=4] [ref=e63] [cursor=pointer]
+              - paragraph [ref=e64] [cursor=pointer]: Create virtual cards for secure online shopping
+            - generic [ref=e65] [cursor=pointer]:
+              - generic [ref=e66] [cursor=pointer]:
+                - img [ref=e67] [cursor=pointer]
+                - heading "Personal Credit" [level=4] [ref=e69] [cursor=pointer]
+              - paragraph [ref=e70] [cursor=pointer]: Access instant financing when you need it
+            - generic [ref=e71] [cursor=pointer]:
+              - generic [ref=e72] [cursor=pointer]:
+                - img [ref=e73] [cursor=pointer]
+                - heading "Business Financing" [level=4] [ref=e77] [cursor=pointer]
+              - paragraph [ref=e78] [cursor=pointer]: Capital solutions for your growing business
+            - generic [ref=e79] [cursor=pointer]:
+              - generic [ref=e80] [cursor=pointer]:
+                - img [ref=e81] [cursor=pointer]
+                - heading "Multi-Currency" [level=4] [ref=e84] [cursor=pointer]
+              - paragraph [ref=e85] [cursor=pointer]: Manage accounts in different currencies
+      - generic [ref=e88]:
+        - generic [ref=e89]:
+          - heading "Welcome to VortexCore" [level=2] [ref=e90]
+          - paragraph [ref=e91]: Sign in to manage your financial ecosystem
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: Email
+            - generic [ref=e95]:
+              - generic:
+                - img
+              - textbox "Email" [active] [ref=e96]: invalid-email
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e99]: Password
+              - button "Forgot password?" [ref=e100] [cursor=pointer]
+            - generic [ref=e101]:
+              - generic:
+                - img
+              - textbox "Password" [ref=e102]
+              - button [ref=e103] [cursor=pointer]:
+                - img
+          - generic [ref=e105]:
+            - checkbox "Remember me" [ref=e106] [cursor=pointer]
+            - checkbox
+            - generic [ref=e107]: Remember me
+          - generic [ref=e108]:
+            - button "Sign in" [ref=e109] [cursor=pointer]
+            - button "Enable 2FA" [ref=e110] [cursor=pointer]:
+              - img
+        - generic [ref=e115]: Or continue with
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - button "Google" [ref=e118] [cursor=pointer]:
+              - img
+              - generic [ref=e119] [cursor=pointer]: Google
+            - button "X (Twitter)" [ref=e120] [cursor=pointer]:
+              - img
+              - generic [ref=e121] [cursor=pointer]: X (Twitter)
+            - button "LinkedIn" [ref=e122] [cursor=pointer]:
+              - img
+              - generic [ref=e123] [cursor=pointer]: LinkedIn
+            - button "Instagram" [ref=e124] [cursor=pointer]:
+              - img
+              - generic [ref=e125] [cursor=pointer]: Instagram
+          - button "Continue with Biometrics" [ref=e126] [cursor=pointer]:
+            - img
+            - generic [ref=e127] [cursor=pointer]: Continue with Biometrics
+          - generic [ref=e128]:
+            - text: Don't have an account?
+            - button "Create account" [ref=e129] [cursor=pointer]
+  - button [ref=e131] [cursor=pointer]:
+    - img
+```
