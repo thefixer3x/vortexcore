@@ -69,7 +69,8 @@ describe('OpenAIChat', () => {
     fireEvent.click(screen.getByRole('button'))
     
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    const sendButton = screen.getByRole('button', { name: /send/i })
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
     
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
     expect(messageInput).toHaveValue('Hello AI')
@@ -92,7 +93,9 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    fireEvent.click(sendButton!)
     
     // Check user message is displayed
     await waitFor(() => {
@@ -124,7 +127,9 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    fireEvent.click(sendButton!)
     
     await waitFor(() => {
       expect(screen.getByText(/I'm sorry, I encountered an error/i)).toBeInTheDocument()
@@ -149,7 +154,9 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    fireEvent.click(sendButton!)
     
     // Check loading state
     expect(screen.getByText('Thinking...')).toBeInTheDocument()
@@ -224,7 +231,9 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Stream test' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    fireEvent.click(sendButton!)
     
     await waitFor(() => {
       expect(screen.getByText('Hello there!')).toBeInTheDocument()

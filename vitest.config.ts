@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['./src/test/setup.ts', './src/test/mocks/auth-setup.ts'],
     environmentOptions: {
       jsdom: {
         resources: 'usable',
@@ -16,7 +16,8 @@ export default defineConfig({
     },
     include: [
       'src/lib/__tests__/**/*.test.{js,ts,tsx}',
-      'src/hooks/__tests__/**/*.test.{js,ts,tsx}'
+      'src/hooks/__tests__/**/*.test.{js,ts,tsx}',
+      'src/test/__tests__/**/*.test.{js,ts,tsx}'
     ],
     exclude: [
       'node_modules/**',
