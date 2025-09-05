@@ -3,11 +3,11 @@ name: Launch Readiness CI
 on:
   push:
     branches:
-      - main
+      - main-protected
       - dev-cleanup
   pull_request:
     branches:
-      - main
+      - main-protected
 
 jobs:
   # Phase 1: Foundation Testing
