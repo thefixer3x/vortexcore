@@ -6,7 +6,7 @@
 [dev]
   command = "bun run dev"
   port = 8888
-  targetPort = 5173
+  targetPort = 8080
 
 env = { }
 
