@@ -2,10 +2,10 @@
 
 This guide is intended to help you perform effective and constructive PR reviews.
 
-1. Prepare for the Review
-Ensure you have pulled the latest changes from the branch.
-Familiarise yourself with the purpose of the PR by reading its description and linked issues.
-Skim through the commit messages for context.
+## 1. Prepare for the Review
+- Ensure you have pulled the latest changes from the branch.
+- Familiarize yourself with the purpose of the PR by reading its description and linked issues.
+- Skim through the commit messages for context.
 
 2. Use Copilot to Assist in Understanding
 Allow Copilot to summarise or explain complex sections of code.
