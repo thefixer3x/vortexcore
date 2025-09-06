@@ -55,5 +55,5 @@ export { TestWrapper } from './test-wrapper'
 
 // Export all mocks
 export * from './mocks/auth-context'
-export * from './mocks/supabase'  
+export * from './mocks/supabase'
 export * from './mocks/external-libs'
