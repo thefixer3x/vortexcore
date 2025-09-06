@@ -234,7 +234,8 @@ describe('OpenAIChat', () => {
     fireEvent.change(messageInput, { target: { value: 'Stream test' } })
     const allButtons = screen.getAllByRole('button')
     const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     await waitFor(() => {
       expect(screen.getByText('Hello there!')).toBeInTheDocument()
