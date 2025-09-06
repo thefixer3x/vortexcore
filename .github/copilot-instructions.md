@@ -7,10 +7,10 @@ This guide is intended to help you perform effective and constructive PR reviews
 - Familiarize yourself with the purpose of the PR by reading its description and linked issues.
 - Skim through the commit messages for context.
 
-2. Use Copilot to Assist in Understanding
-Allow Copilot to summarise or explain complex sections of code.
-Ask Copilot for potential edge cases or scenarios the code might miss.
-Request test suggestions from Copilot for untested logic.
+## 2. Use Copilot to Assist in Understanding
+- Allow Copilot to summarize or explain complex sections of code.
+- Ask Copilot for potential edge cases or scenarios the code might miss.
+- Request test suggestions from Copilot for untested logic.
 
 3. Review Code Quality
 Check for adherence to coding standards and style guidelines.
