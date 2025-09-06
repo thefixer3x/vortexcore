@@ -94,7 +94,8 @@ describe('OpenAIChat', () => {
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
     const allButtons = screen.getAllByRole('button')
     const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     // Check user message is displayed
     await waitFor(() => {
