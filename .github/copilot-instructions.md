@@ -17,6 +17,12 @@ Check for adherence to coding standards and style guidelines.
 Look for potential bugs, security risks, or performance issues.
 Confirm that code is modular, readable, and maintainable.
 
+Also verify:
+- No secrets, tokens, or credentials are committed (env files, logs, debug dumps).
+- Input validation and output encoding cover common threats (OWASP Top 10).
+- AuthZ/AuthN changes include negative tests and least-privilege roles.
+- PII/PHI handling follows org policy (redaction, logging filters, data retention).
+- Dependency changes (lockfiles/manifests) are reviewed for licenses and CVEs.
 4. Evaluate Tests and Documentation
 Ensure the PR includes sufficient test coverage.
 Review documentation updates for clarity and completeness.
