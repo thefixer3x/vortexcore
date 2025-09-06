@@ -1,5 +1,8 @@
 project_id = "mxtsdgkwzjzlttpotole"
 
+[db]
+major_version = 15
+
 [functions]
   # Default; set per-function below if needed
   # verify_jwt = false
