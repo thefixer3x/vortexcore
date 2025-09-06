@@ -69,8 +69,7 @@ describe('OpenAIChat', () => {
     fireEvent.click(screen.getByRole('button'))
     
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
+    const sendButton = screen.getByRole('button', { name: /send/i });
     
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
     expect(messageInput).toHaveValue('Hello AI')
