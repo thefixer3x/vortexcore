@@ -156,7 +156,8 @@ describe('OpenAIChat', () => {
     fireEvent.change(messageInput, { target: { value: 'Test message' } })
     const allButtons = screen.getAllByRole('button')
     const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     // Check loading state
     expect(screen.getByText('Thinking...')).toBeInTheDocument()
