@@ -135,7 +135,7 @@ export const DashboardActionDialog = ({
         status: actionConfig.defaultStatus,
         amount: numericAmount,
         currency: wallet?.currency ?? "USD",
-        reference: `VC-${Date.now()}`,
+        reference: `VC-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         description: notes ? `${actionConfig.label}: ${notes}` : actionConfig.label,
         metadata
       });
