@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
-      - develop
+      - main-protected
+      - dev-cleanup
       - feat/*
     paths:
       - 'locales/en.json'
@@ -13,8 +13,7 @@ on:
       - 'src/**'
   pull_request:
     branches:
-      - main
-      - develop
+      - main-protected
     paths:
       - 'locales/en.json'
       - 'i18n.json'

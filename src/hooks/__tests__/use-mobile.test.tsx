@@ -7,7 +7,7 @@ describe('useIsMobile', () => {
   beforeEach(() => {
     // Mock matchMedia for mobile detection
     testUtils.mockMatchMedia(true)
-
+    
     // Mock window.innerWidth to be mobile size
     if (typeof window !== 'undefined') {
       Object.defineProperty(window, 'innerWidth', {
