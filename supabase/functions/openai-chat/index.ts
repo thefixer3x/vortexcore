@@ -5,13 +5,20 @@ serve(withPublicMiddleware(async (req)=>{
     // Get the OpenAI API key from environment variables
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) {
-      throw new Error("OpenAI API Key not configured in Supabase Secrets");
+      console.error("OPENAI_API_KEY not configured");
+      return new Response(JSON.stringify({
+        error: "OpenAI service is not configured. Please contact support."
+      }), { 
+        status: 503, 
+        headers: { "Content-Type": "application/json" } 
+      });
     }
     // Parse the request body
-    const { prompt, systemPrompt, history } = await req.json();
-    if (!prompt) {
+    const body = await req.json().catch(() => ({}));
+    const { prompt, systemPrompt, history } = body;
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return new Response(JSON.stringify({
-        error: "Prompt is required"
+        error: "A valid prompt is required"
       }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     console.log(`Processing request to OpenAI with prompt: ${prompt}`);

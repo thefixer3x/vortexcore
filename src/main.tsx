@@ -13,6 +13,10 @@ import { PaymentStatusProvider } from './providers/PaymentStatusProvider'
 // import LogRocket from 'logrocket'
 // import { setupLogRocketErrorTracking, setupNetworkTracking, setupPerformanceTracking } from './lib/logrocket-utils'
 import { AuthProvider } from './contexts/AuthContext'
+import { logConfigStatus } from './utils/configValidator'
+
+// Log configuration status in development
+logConfigStatus();
 
 // Initialize LogRocket for application monitoring
 if (import.meta.env.DEV) {
