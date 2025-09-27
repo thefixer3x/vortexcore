@@ -38,3 +38,4 @@ archive/**/*.cache
 supabase/.temp/
 .vercel
 .cache_ggshield
+.env
