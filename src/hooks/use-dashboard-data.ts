@@ -30,7 +30,7 @@ interface UseDashboardDataResult {
   refresh: () => Promise<void>;
 }
 
-const normaliseAmount = (value: number | string | null | undefined): number => {
+const normalizeAmount = (value: number | string | null | undefined): number => {
   if (typeof value === "number") {
     return value;
   }
