@@ -1,49 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Send, 
-  ArrowDownRight, 
-  CreditCard, 
-  Smartphone,
-  Zap,
-  BarChart3,
-  Users,
-  Settings,
-  PiggyBank,
-  TrendingUp,
-  Shield,
-  Sparkles
-} from "lucide-react";
+import {
+  DASHBOARD_ACTIONS,
+  DASHBOARD_ACTION_ORDER,
+  type DashboardActionType
+} from "./action-config";
+import { Smartphone, BarChart3, Users, Settings, PiggyBank, TrendingUp, Shield, Sparkles, Zap } from "lucide-react";
 
-export const QuickActionsGrid = () => {
-  const quickActions = [
-    {
-      icon: Send,
-      label: "Send Money",
-      description: "Transfer to any account",
-      color: "from-blue-500 to-blue-600",
-      iconBg: "bg-blue-100 dark:bg-blue-900/20",
-      iconColor: "text-blue-600 dark:text-blue-400"
-    },
-    {
-      icon: ArrowDownRight,
-      label: "Request Money",
-      description: "Generate payment link",
-      color: "from-green-500 to-green-600", 
-      iconBg: "bg-green-100 dark:bg-green-900/20",
-      iconColor: "text-green-600 dark:text-green-400"
-    },
-    {
-      icon: CreditCard,
-      label: "Pay Bills",
-      description: "Utilities & subscriptions",
-      color: "from-purple-500 to-purple-600",
-      iconBg: "bg-purple-100 dark:bg-purple-900/20",
-      iconColor: "text-purple-600 dark:text-purple-400"
-    },
+interface QuickActionsGridProps {
+  onActionSelect?: (action: DashboardActionType) => void;
+  disabled?: boolean;
+}
+
+export const QuickActionsGrid = ({ onActionSelect, disabled = false }: QuickActionsGridProps) => {
+  const secondaryActions = [
     {
       icon: Smartphone,
-      label: "Mobile Top-up",
+      label: "Mobile Services",
       description: "Airtime & data bundles",
       color: "from-orange-500 to-orange-600",
       iconBg: "bg-orange-100 dark:bg-orange-900/20",
@@ -101,11 +74,34 @@ export const QuickActionsGrid = () => {
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-            {quickActions.map((action, index) => (
+            {DASHBOARD_ACTION_ORDER.map((key) => {
+              const action = DASHBOARD_ACTIONS[key];
+              return (
+                <Button
+                  key={action.key}
+                  variant="outline"
+                  className="h-auto p-3 sm:p-4 flex flex-col items-center gap-2 sm:gap-3 hover:shadow-md transition-all duration-300 group border-0 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:scale-105 btn-modern"
+                  onClick={() => onActionSelect?.(action.key)}
+                  disabled={disabled}
+                >
+                  <div
+                    className={`p-2 sm:p-3 rounded-full ${action.iconBg} group-hover:scale-110 transition-transform`}
+                  >
+                    <action.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${action.iconColor}`} />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-medium text-xs sm:text-sm leading-tight">{action.label}</p>
+                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">{action.description}</p>
+                  </div>
+                </Button>
+              );
+            })}
+            {secondaryActions.map((action) => (
               <Button
-                key={index}
+                key={action.label}
                 variant="outline"
                 className="h-auto p-3 sm:p-4 flex flex-col items-center gap-2 sm:gap-3 hover:shadow-md transition-all duration-300 group border-0 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:scale-105 btn-modern"
+                disabled
               >
                 <div className={`p-2 sm:p-3 rounded-full ${action.iconBg} group-hover:scale-110 transition-transform`}>
                   <action.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${action.iconColor}`} />

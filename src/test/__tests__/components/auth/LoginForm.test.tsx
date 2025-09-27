@@ -25,16 +25,19 @@ vi.mock('@/hooks/use-location', () => ({
   useLocation: () => mockLocation,
 }))
 
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useNavigate: () => vi.fn(),
-}))
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
 
 describe('LoginForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
-    // Reset auth context to default state
+    if (typeof mockNavigate === 'function') mockNavigate.mockReset?.()
     mockAuthContext.isLoading = false
     mockAuthContext.isAuthenticated = false
     mockAuthContext.user = null
@@ -46,13 +49,13 @@ describe('LoginForm', () => {
         <LoginForm />
       </TestWrapper>
     )
-    
+
     // Check for email input
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
-    
+
     // Check for password input
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    
+
     // Check for sign in button
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
@@ -63,15 +66,15 @@ describe('LoginForm', () => {
         <LoginForm />
       </TestWrapper>
     )
-    
+
     const submitButton = screen.getByRole('button', { name: /sign in/i })
     fireEvent.click(submitButton)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/email is required/i)).toBeInTheDocument()
       expect(screen.getByText(/password is required/i)).toBeInTheDocument()
     })
-    })
+  })
 
   it('displays validation error for invalid email format', async () => {
     render(
@@ -79,13 +82,13 @@ describe('LoginForm', () => {
         <LoginForm />
       </TestWrapper>
     )
-    
+
     const emailInput = screen.getByLabelText(/email/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
-    
+
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } })
     fireEvent.click(submitButton)
-    
+
     await waitFor(() => {
       expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument()
     })
@@ -97,18 +100,18 @@ describe('LoginForm', () => {
         <LoginForm />
       </TestWrapper>
     )
-    
+
     const emailInput = screen.getByLabelText(/email/i)
     const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
-    
+
     // Fill out the form
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
-    
+
     // Submit the form
     fireEvent.click(submitButton)
-    
+
     await waitFor(() => {
       expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
         email: 'test@example.com',
@@ -118,7 +121,7 @@ describe('LoginForm', () => {
         },
       })
     })
-    
+
     // Check that LogRocket tracking was called
     expect(mockLogRocket.track).toHaveBeenCalledWith('login_attempt', {
       method: 'email',
@@ -129,13 +132,13 @@ describe('LoginForm', () => {
   it('shows loading state during authentication', async () => {
     // Mock loading state
     mockAuthContext.isLoading = true
-    
+
     render(
       <TestWrapper>
         <LoginForm />
       </TestWrapper>
     )
-    
+
     const submitButton = screen.getByRole('button')
     expect(submitButton).toBeDisabled()
   })
@@ -147,23 +150,21 @@ describe('LoginForm', () => {
       error: { message: 'Invalid credentials' },
     })
 
-
     render(
       <TestWrapper>
         <LoginForm />
       </TestWrapper>
     )
-    
+
     const emailInput = screen.getByLabelText(/email/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
-    
     const passwordInput = screen.getByLabelText(/password/i)
-    
+
     // Fill out and submit the form
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } })
     fireEvent.click(submitButton)
-    
+
     await waitFor(() => {
       expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalled()
     })
@@ -175,7 +176,7 @@ describe('LoginForm', () => {
         <LoginForm />
       </TestWrapper>
     )
-    
+
     // Should have basic form structure
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()

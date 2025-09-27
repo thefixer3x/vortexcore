@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ArrowUpRight, 
-  ArrowDownRight, 
+import {
+  ArrowUpRight,
+  ArrowDownRight,
   Filter,
   Search,
   Calendar,
@@ -18,75 +18,24 @@ import {
   Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Transaction {
+export interface DashboardTransactionItem {
   id: string;
   description: string;
   amount: number;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
   category: string;
   date: string;
-  status: 'completed' | 'pending' | 'failed';
+  status: "completed" | "pending" | "failed" | "reversed";
+  currency: string;
   merchant?: string;
-  icon?: typeof ShoppingBag;
 }
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "1",
-    description: "Salary Payment",
-    amount: 450000,
-    type: "income",
-    category: "Salary",
-    date: "2024-01-15",
-    status: "completed",
-    merchant: "Acme Corp"
-  },
-  {
-    id: "2", 
-    description: "Grocery Shopping",
-    amount: 12500,
-    type: "expense",
-    category: "Food",
-    date: "2024-01-14",
-    status: "completed",
-    merchant: "Shoprite",
-    icon: ShoppingBag
-  },
-  {
-    id: "3",
-    description: "Uber Ride",
-    amount: 2800,
-    type: "expense", 
-    category: "Transport",
-    date: "2024-01-14",
-    status: "completed",
-    merchant: "Uber",
-    icon: Car
-  },
-  {
-    id: "4",
-    description: "Netflix Subscription",
-    amount: 4900,
-    type: "expense",
-    category: "Entertainment",
-    date: "2024-01-13",
-    status: "completed",
-    merchant: "Netflix",
-    icon: Gamepad2
-  },
-  {
-    id: "5",
-    description: "Electricity Bill",
-    amount: 15600,
-    type: "expense",
-    category: "Utilities",
-    date: "2024-01-12",
-    status: "pending",
-    merchant: "PHCN",
-    icon: Zap
-  }
-];
+interface ModernTransactionListProps {
+  transactions: DashboardTransactionItem[];
+  isLoading?: boolean;
+}
 
 const getCategoryIcon = (category: string) => {
   const icons = {
@@ -114,12 +63,31 @@ const getCategoryColor = (category: string) => {
   return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-600 dark:bg-gray-900/20 dark:text-gray-400';
 };
 
-export const ModernTransactionList = () => {
+const formatAmount = (amount: number, currency: string, isIncome: boolean) => {
+  try {
+    const formatted = new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2
+    }).format(amount);
+
+    return `${isIncome ? "+" : "-"}${formatted}`;
+  } catch (error) {
+    console.warn("Unable to format amount", error);
+    return `${isIncome ? "+" : "-"}${currency} ${amount.toFixed(2)}`;
+  }
+};
+
+export const ModernTransactionList = ({ transactions, isLoading = false }: ModernTransactionListProps) => {
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all');
-  
-  const filteredTransactions = mockTransactions.filter(transaction => 
-    filter === 'all' || transaction.type === filter
-  );
+
+  const filteredTransactions = useMemo(() => {
+    const data = filter === 'all' ? transactions : transactions.filter((transaction) => transaction.type === filter);
+    return data;
+  }, [filter, transactions]);
+
+  const isInitialLoading = isLoading && transactions.length === 0;
+  const showEmptyState = !isLoading && filteredTransactions.length === 0;
 
   return (
     <Card className="border-0 shadow-lg">
@@ -171,12 +139,49 @@ export const ModernTransactionList = () => {
           </Button>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-0">
         <div className="space-y-1">
+          {isInitialLoading && (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 rounded-lg border border-dashed border-muted/40"
+                >
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-right">
+                    <Skeleton className="h-4 w-20 ml-auto" />
+                    <Skeleton className="h-3 w-24 ml-auto" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {filteredTransactions.map((transaction, index) => {
-            const IconComponent = transaction.icon || getCategoryIcon(transaction.category);
-            
+            const IconComponent = getCategoryIcon(transaction.category);
+
+            const statusVariant = transaction.status === 'completed'
+              ? 'secondary'
+              : transaction.status === 'pending'
+                ? 'outline'
+                : 'destructive';
+
+            const isIncome = transaction.type === 'income';
+            const formattedAmount = formatAmount(transaction.amount, transaction.currency, isIncome);
+
+            const transactionDate = new Date(transaction.date);
+            const readableDate = Number.isNaN(transactionDate.getTime())
+              ? transaction.date
+              : transactionDate.toLocaleDateString();
+
             return (
               <div
                 key={transaction.id}
@@ -196,18 +201,21 @@ export const ModernTransactionList = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{transaction.description}</p>
-                      <Badge 
-                        variant={transaction.status === 'completed' ? 'secondary' : 
-                                transaction.status === 'pending' ? 'outline' : 'destructive'}
+                      <Badge
+                        variant={statusVariant}
                         className="text-xs"
                       >
                         {transaction.status}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{transaction.merchant}</span>
-                      <span>•</span>
-                      <span>{new Date(transaction.date).toLocaleDateString()}</span>
+                      {transaction.merchant && (
+                        <>
+                          <span>{transaction.merchant}</span>
+                          <span>•</span>
+                        </>
+                      )}
+                      <span>{readableDate}</span>
                       <Badge variant="outline" className="text-xs">
                         {transaction.category}
                       </Badge>
@@ -219,17 +227,17 @@ export const ModernTransactionList = () => {
                   <div className="text-right">
                     <p className={cn(
                       "font-semibold",
-                      transaction.type === 'income' 
-                        ? "text-green-600 dark:text-green-400" 
+                      isIncome
+                        ? "text-green-600 dark:text-green-400"
                         : "text-red-600 dark:text-red-400"
                     )}>
-                      {transaction.type === 'income' ? '+' : '-'}₦{transaction.amount.toLocaleString()}
+                      {formattedAmount}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {transaction.type === 'income' ? 'Credit' : 'Debit'}
+                      {isIncome ? 'Credit' : 'Debit'}
                     </p>
                   </div>
-                  
+
                   <Button
                     variant="ghost"
                     size="sm"
@@ -248,6 +256,12 @@ export const ModernTransactionList = () => {
             View All Transactions
           </Button>
         </div>
+
+        {showEmptyState && (
+          <div className="py-8 text-center text-muted-foreground text-sm">
+            No transactions to display yet. Complete an action to see it here.
+          </div>
+        )}
       </CardContent>
     </Card>
   );
