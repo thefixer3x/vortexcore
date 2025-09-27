@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun vite",
-    "build": "bun vite build",
+    "dev": "bun --hot serve --port=5173 index.html",
+    "build": "bun build ./src/main.tsx --outdir=dist --target=browser --splitting --minify --sourcemap=external",
     "build:dev": "bun vite build --mode development",
     "lint": "bun eslint .",
     "preview": "bun vite preview",
