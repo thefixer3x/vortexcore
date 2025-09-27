@@ -69,7 +69,7 @@ describe('OpenAIChat', () => {
     fireEvent.click(screen.getByRole('button'))
     
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    const sendButton = screen.getByRole('button', { name: /send/i })
+    const sendButton = screen.getByRole('button', { name: /send/i });
     
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
     expect(messageInput).toHaveValue('Hello AI')
@@ -92,7 +92,10 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     // Check user message is displayed
     await waitFor(() => {
@@ -124,7 +127,9 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    fireEvent.click(sendButton!)
     
     await waitFor(() => {
       expect(screen.getByText(/I'm sorry, I encountered an error/i)).toBeInTheDocument()
@@ -149,7 +154,10 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     // Check loading state
     expect(screen.getByText('Thinking...')).toBeInTheDocument()
@@ -224,10 +232,209 @@ describe('OpenAIChat', () => {
     const messageInput = screen.getByPlaceholderText(/Type a message/i)
     
     fireEvent.change(messageInput, { target: { value: 'Stream test' } })
-    fireEvent.click(screen.getByRole('button', { name: /send/i }))
+    const allButtons = screen.getAllByRole('button')
+    const sendButton = allButtons.find(button => button.type === 'submit')
+    expect(sendButton).toBeDefined()
+    fireEvent.click(sendButton as HTMLElement)
     
     await waitFor(() => {
       expect(screen.getByText('Hello there!')).toBeInTheDocument()
     })
   })
 })
+
+/**
+ * Additional scenarios for OpenAIChat
+ * Testing framework: Vitest
+ * Testing library: React Testing Library (@testing-library/react)
+ */
+
+describe('OpenAIChat – additional scenarios', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Reset fetch mock per test
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).fetch = vi.fn();
+  });
+
+  const openChatAndGetControls = () => {
+    // Open the chat widget
+    fireEvent.click(screen.getByRole('button'));
+    const messageInput = screen.getByPlaceholderText(/Type a message/i) as HTMLInputElement | HTMLTextAreaElement;
+    const getSendButton = (): HTMLButtonElement => {
+      const all = screen.getAllByRole('button') as HTMLButtonElement[];
+      const btn = all.find(b => b.type === 'submit');
+      expect(btn).toBeDefined();
+      return btn as HTMLButtonElement;
+    };
+    return { messageInput, getSendButton };
+  };
+
+  it('disables send on empty and whitespace-only input and prevents submission', () => {
+    render(<OpenAIChat />);
+
+    const { messageInput, getSendButton } = openChatAndGetControls();
+    const sendButton = getSendButton();
+
+    // Initially disabled
+    expect(sendButton).toBeDisabled();
+
+    // Whitespace should not enable send
+    fireEvent.change(messageInput, { target: { value: '   ' } });
+    expect(sendButton).toBeDisabled();
+
+    // Attempting to click should not trigger network
+    fireEvent.click(sendButton);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('clears input after a successful JSON response', async () => {
+    // Mock successful JSON response
+    (global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+      ok: true,
+      headers: { get: () => 'application/json' },
+      json: () => Promise.resolve({ response: 'Hi there!' }),
+    });
+
+    render(<OpenAIChat />);
+    const { messageInput, getSendButton } = openChatAndGetControls();
+
+    fireEvent.change(messageInput, { target: { value: 'Hello, world' } });
+    const sendButton = getSendButton();
+    expect(sendButton).not.toBeDisabled();
+
+    fireEvent.click(sendButton);
+
+    // User message should render
+    await waitFor(() => {
+      expect(screen.getByText('Hello, world')).toBeInTheDocument();
+    });
+
+    // Input should be cleared
+    expect(messageInput).toHaveValue('');
+  });
+
+  it('handles non-OK HTTP response gracefully (error body JSON)', async () => {
+    // Simulate 400/500-like response with JSON body
+    (global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+      ok: false,
+      headers: { get: () => 'application/json' },
+      json: () => Promise.resolve({ error: 'Bad request' }),
+    });
+
+    render(<OpenAIChat />);
+    const { messageInput, getSendButton } = openChatAndGetControls();
+
+    fireEvent.change(messageInput, { target: { value: 'Trigger error' } });
+    const sendButton = getSendButton();
+    fireEvent.click(sendButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/I'm sorry, I encountered an error/i)).toBeInTheDocument();
+    });
+
+    // Ensure API was called with expected route and method
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/functions/v1/ai-router'),
+      expect.objectContaining({ method: 'POST' })
+    );
+  });
+
+  it('minimize and restore retains existing chat history', async () => {
+    // Return a quick JSON response
+    (global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+      ok: true,
+      headers: { get: () => 'application/json' },
+      json: () => Promise.resolve({ response: 'AI says hi' }),
+    });
+
+    render(<OpenAIChat />);
+    const { messageInput, getSendButton } = openChatAndGetControls();
+
+    fireEvent.change(messageInput, { target: { value: 'Hello again' } });
+    const sendButton = getSendButton();
+    fireEvent.click(sendButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Hello again')).toBeInTheDocument();
+    });
+
+    // Minimize
+    fireEvent.click(screen.getByTitle('Minimize'));
+    // Restore
+    fireEvent.click(screen.getByRole('button'));
+
+    // History should still be present
+    expect(screen.getByText('Hello again')).toBeInTheDocument();
+  });
+
+  it('removes "Thinking..." indicator after streaming completes', async () => {
+    // Mock streaming response sequence
+    const mockReader = {
+      read: vi.fn()
+        .mockResolvedValueOnce({
+          value: new TextEncoder().encode('data: {"choices":[{"delta":{"content":"Hello"}}]}\n'),
+          done: false
+        })
+        .mockResolvedValueOnce({
+          value: new TextEncoder().encode('data: {"choices":[{"delta":{"content":" there!"}}]}\n'),
+          done: false
+        })
+        .mockResolvedValueOnce({
+          value: new TextEncoder().encode('data: [DONE]\n'),
+          done: true
+        })
+    };
+
+    (global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+      ok: true,
+      headers: { get: () => 'text/event-stream' },
+      body: { getReader: () => mockReader }
+    });
+
+    render(<OpenAIChat />);
+    const { messageInput, getSendButton } = openChatAndGetControls();
+
+    fireEvent.change(messageInput, { target: { value: 'Stream please' } });
+    const sendButton = getSendButton();
+    fireEvent.click(sendButton);
+
+    // Loading indicator during stream
+    expect(screen.getByText('Thinking...')).toBeInTheDocument();
+
+    // Final aggregated message
+    await waitFor(() => {
+      expect(screen.getByText('Hello there!')).toBeInTheDocument();
+    });
+
+    // Indicator removed after completion
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+  });
+
+  it('clear chat removes prior user messages leaving only the welcome message', async () => {
+    (global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+      ok: true,
+      headers: { get: () => 'application/json' },
+      json: () => Promise.resolve({ response: 'Acknowledged' }),
+    });
+
+    render(<OpenAIChat />);
+    const { messageInput, getSendButton } = openChatAndGetControls();
+
+    fireEvent.change(messageInput, { target: { value: 'Message to clear' } });
+    const sendButton = getSendButton();
+    fireEvent.click(sendButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Message to clear')).toBeInTheDocument();
+    });
+
+    // Clear chat
+    fireEvent.click(screen.getByText('Clear Chat'));
+
+    // Only welcome message should remain
+    const welcomeMessages = screen.getAllByText(/Welcome to VortexCore/i);
+    expect(welcomeMessages.length).toBe(1);
+    expect(screen.queryByText('Message to clear')).not.toBeInTheDocument();
+  });
+});

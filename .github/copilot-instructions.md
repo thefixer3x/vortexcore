@@ -37,4 +37,14 @@ Respond promptly to the author’s updates or questions.
 Ensure all discussions are resolved before merging.
 Merge using the agreed strategy (squash, rebase, or merge commit).
 
+Also verify:
+- No secrets, tokens, or credentials are committed (env files, logs, debug dumps).
+- Input validation and output encoding cover common threats (OWASP Top 10).
+- AuthZ/AuthN changes include negative tests and least-privilege roles.
+- PII/PHI handling follows org policy (redaction, logging filters, data retention).
+- Dependency changes (lockfiles/manifests) are reviewed for licenses and CVEs.
+- Allow Copilot to summarize or explain complex sections of code.
+- Ask Copilot for potential edge cases or scenarios the code might miss.
+- Request test suggestions from Copilot for untested logic.
+
 ---
