@@ -174,7 +174,14 @@
   }
 
   /* Fallback for browsers that don't support custom scrollbars */
-  @supports not (scrollbar-width: thin) and not (-webkit-appearance: none) {
+  @supports not (scrollbar-width: thin) {
+    .scrollbar-thin {
+      /* Use default scrollbar with subtle styling */
+      border-right: 1px solid hsl(var(--border));
+    }
+  }
+  
+  @supports not (-webkit-appearance: none) {
     .scrollbar-thin {
       /* Use default scrollbar with subtle styling */
       border-right: 1px solid hsl(var(--border));
