@@ -25,7 +25,12 @@ export interface MiddlewareOptions {
 function resolveOrigin(origin?: string | null) {
   if (!origin) return '*';
   if (!ALLOWED_ORIGINS.length) return origin; // reflect by default
-  return ALLOWED_ORIGINS.includes(origin) ? origin : '*';
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    return origin;
+  } else {
+    console.warn(`[CORS] Rejected origin: ${origin} at ${new Date().toISOString()}`);
+    return '*';
+  }
 }
 
 function corsHeadersFromRequest(req: Request) {
