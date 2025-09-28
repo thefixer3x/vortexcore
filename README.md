@@ -1,5 +1,7 @@
 # VortexCore App
 
+> **🚨 AI Chat Setup Required**: If AI chat features are not working, please see the [AI Setup Guide](./AI_SETUP_GUIDE.md) for configuration instructions.
+
 ## Project Overview
 
 VortexCore is a modern fintech platform offering comprehensive banking services, transaction management, and AI-powered financial insights. The application features a responsive dashboard, payment processing capabilities, and intelligent virtual assistants to enhance the user experience.
