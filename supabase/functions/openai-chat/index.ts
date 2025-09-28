@@ -14,7 +14,15 @@ serve(withPublicMiddleware(async (req)=>{
       });
     }
     // Parse the request body
-    const body = await req.json().catch(() => ({}));
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error("Failed to parse request body as JSON:", parseError);
+      return new Response(JSON.stringify({
+        error: "Invalid JSON in request body"
+      }), { status: 400, headers: { "Content-Type": "application/json" } });
+    }
     const { prompt, systemPrompt, history } = body;
     if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return new Response(JSON.stringify({
