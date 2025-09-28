@@ -7,10 +7,43 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+  console.error('Missing Supabase environment variables:', {
+    VITE_SUPABASE_URL: !!SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY: !!SUPABASE_PUBLISHABLE_KEY
+  });
+  
+  // For development, provide helpful error message
+  if (import.meta.env.DEV) {
+    throw new Error(
+      'Missing Supabase environment variables. Please:\n' +
+      '1. Copy .env.example to .env\n' +
+      '2. Update VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY with your values\n' +
+      '3. Get your values from: https://supabase.com/dashboard/project/_/settings/api'
+    );
+  } else {
+    throw new Error('Supabase configuration missing. Please contact support.');
+  }
+}
+
+// Validate URL format
+if (!SUPABASE_URL.startsWith('https://') || !SUPABASE_URL.includes('.supabase.co')) {
+  console.warn('SUPABASE_URL may be invalid. Expected format: https://your-project-id.supabase.co');
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    persistSession: true,
+    detectSessionInUrl: true,
+    autoRefreshToken: true,
+  },
+});
+
+// Export configuration for debugging
+export const supabaseConfig = {
+  url: SUPABASE_URL,
+  hasAnonKey: !!SUPABASE_PUBLISHABLE_KEY,
+  isConfigured: !!(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
+};

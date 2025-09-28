@@ -86,9 +86,22 @@ export function GeminiAIChat() {
 
       if (error) {
         console.error("Error calling Gemini AI:", error);
+        
+        // Provide more specific error messages based on error type
+        let errorMessage = "Failed to get a response from the AI assistant";
+        if (error.message?.includes('Missing')) {
+          errorMessage = "AI service is not configured. Please contact support.";
+        } else if (error.message?.includes('timeout') || error.message?.includes('network')) {
+          errorMessage = "Network timeout. Please check your connection and try again.";
+        } else if (error.message?.includes('401') || error.message?.includes('unauthorized')) {
+          errorMessage = "Authentication required. Please sign in to use AI features.";
+        } else if (error.message?.includes('429')) {
+          errorMessage = "Rate limit exceeded. Please wait a moment and try again.";
+        }
+        
         toast({
-          title: "Error",
-          description: "Failed to get a response from the AI assistant",
+          title: "AI Service Error",
+          description: errorMessage,
           variant: "destructive",
         });
         return;
@@ -98,9 +111,17 @@ export function GeminiAIChat() {
       if (data?.response) {
         setMessages(prev => [...prev, { role: 'model', content: data.response }]);
       } else if (data?.error) {
+        console.error("AI API returned error:", data.error);
         toast({
           title: "AI Response Error",
-          description: data.error,
+          description: typeof data.error === 'string' ? data.error : "The AI service encountered an error processing your request",
+          variant: "destructive",
+        });
+      } else {
+        console.warn("AI API returned unexpected response format:", data);
+        toast({
+          title: "Unexpected Response",
+          description: "The AI service returned an unexpected response format",
           variant: "destructive",
         });
       }

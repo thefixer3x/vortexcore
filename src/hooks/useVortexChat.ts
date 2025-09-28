@@ -79,23 +79,52 @@ export function useVortexChat() {
         headers: authHeaders
       });
 
-      // Handle streaming response
+      // Handle different response scenarios
+      if (response.error) {
+        console.error('Supabase function invoke error:', response.error);
+        throw new Error(response.error.message || 'AI service request failed');
+      }
+
+      // Handle streaming response or regular response
       if (response.data) {
         // For non-streaming responses
-        setMessages(prev => [
-          ...prev, 
-          { role: 'assistant', content: response.data.response || response.data }
-        ]);
-      } else if (response.error) {
-        throw new Error(response.error.message);
+        const content = response.data.response || response.data;
+        if (typeof content === 'string' && content.trim()) {
+          setMessages(prev => [
+            ...prev, 
+            { role: 'assistant', content }
+          ]);
+        } else {
+          throw new Error('AI service returned empty or invalid response');
+        }
+      } else {
+        throw new Error('AI service returned no data');
       }
     } catch (error) {
       console.error('Error in VortexAI chat:', error);
+      
+      // Provide specific error messages based on error type
+      let errorMessage = 'I encountered an issue processing your request. Please try again in a moment.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Missing') || error.message.includes('not configured')) {
+          errorMessage = 'AI service is not properly configured. Please contact support.';
+        } else if (error.message.includes('timeout') || error.message.includes('network')) {
+          errorMessage = 'Request timed out. Please check your connection and try again.';
+        } else if (error.message.includes('401') || error.message.includes('unauthorized')) {
+          errorMessage = 'Authentication required. Please sign in to continue.';
+        } else if (error.message.includes('429') || error.message.includes('rate limit')) {
+          errorMessage = 'Too many requests. Please wait a moment before trying again.';
+        } else if (error.message.includes('empty') || error.message.includes('invalid response')) {
+          errorMessage = 'The AI service returned an unexpected response. Please try again.';
+        }
+      }
+      
       setMessages(prev => [
         ...prev,
         { 
           role: 'assistant', 
-          content: 'I encountered an issue processing your request. Please try again in a moment.'
+          content: errorMessage
         }
       ]);
     } finally {
