@@ -178,6 +178,7 @@ const AIRecommendations: React.FC = () => {
 
       {/* Recommendations */}
       <div>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">AI-Powered Recommendations</h3>
         
         <div className="space-y-4">
           {recommendations.map((rec) => (
