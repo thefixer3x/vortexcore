@@ -11,10 +11,8 @@ export function BiometricAuthButton() {
   const navigate = useNavigate();
   const { signIn } = useAuth();
   
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                       window.location.hostname.includes('localhost') ||
-                       process.env.NODE_ENV === 'development';
+  // Check if we're in development mode (Vite)
+  const isDevelopment = import.meta.env.DEV;
   
   // Hide biometric button in production until proper implementation
   if (!isDevelopment) {

@@ -43,9 +43,15 @@ function corsHeadersFromRequest(req: Request) {
 async function getAuthContext(req: Request): Promise<AuthContext> {
   const auth = req.headers.get('Authorization') || '';
   const token = auth.startsWith('Bearer ') ? auth.substring(7) : '';
-  if (!token) return { roles: [] };
+  if (!token) {
+    console.warn(`[Auth] Missing or invalid Authorization header on ${req.method} ${req.url}`);
+    return { roles: [] };
+  }
   const { data, error } = await publicSupabase.auth.getUser(token);
-  if (error || !data?.user) return { roles: [] };
+  if (error || !data?.user) {
+    console.warn(`[Auth] Authentication failure on ${req.method} ${req.url}: ${error ? error.message : 'No user found'}`);
+    return { roles: [] };
+  }
   const roles = (data.user.app_metadata?.roles as string[]) || (data.user.app_metadata?.role ? [data.user.app_metadata.role] : []);
   return { userId: data.user.id, roles };
 }

@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "name": "Vortex Core Canary Gates",
+    "version": "1.0",
+    "release": "v1.0.0-rc3",
+    "change_window_utc": "Sun 22:00",
+    "owners": {
+      "release_manager": "<name|email|pd_service>",
+      "sre_primary": "<name|email|pd_service>",
+      "sre_secondary": "<name|email|pd_service>"
+    }
+  },
+  "env": {
+    "PROMETHEUS_URL": "${PROMETHEUS_URL}",
+    "WEB_BASE_URL": "${WEB_BASE_URL}",
+    "API_BASE_URL": "${API_BASE_URL}",
+    "ARGOCD_APP": "${ARGOCD_APP}",
+    "LAST_GREEN": "${LAST_GREEN}",
+    "FEATURE_FLAG_CLI": "${FEATURE_FLAG_CLI}"
+  },
+  "prechecks": [
+    { "id": "tests_coverage", "type": "thresholds", "unit": "ratio", "data": { "unit": 0.80, "integration": 0.80, "e2e": 0.75 } },
+    { "id": "blocking_bugs", "type": "limits", "data": { "sev1_max": 0, "sev2_max": 0, "allow_risk_accept": true } },
+    { "id": "security_clean", "type": "booleans", "data": { "sast": true, "dast": true, "deps_high": 0, "container_high": 0, "sbom_present": true, "secrets_rotated": true } },
+    { "id": "uat_signoff", "type": "boolean", "data": { "value": true, "evidence": "vortexcore.app/dev/report" } },
+    { "id": "cab_approved", "type": "string", "data": { "ticket": "CAB-4321" } }
+  ],
+  "stages": [
+    {
+      "name": "canary-10",
+      "traffic_percent": 10,
+      "min_duration_minutes": 30,
+      "min_requests": 50000,
+      "gates": [
+        {
+          "id": "latency_p95",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:p95_latency_seconds",
+          "operator": "<=",
+          "threshold": 0.300,
+          "unit": "seconds",
+          "window": "5m",
+          "consecutive": 3
+        },
+        {
+          "id": "latency_p99",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:p99_latency_seconds",
+          "operator": "<=",
+          "threshold": 0.400,
+          "unit": "seconds",
+          "window": "5m",
+          "consecutive": 3
+        },
+        {
+          "id": "error_rate",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:http_error_rate_ratio",
+          "operator": "<=",
+          "threshold": 0.005,
+          "unit": "ratio",
+          "window": "5m",
+          "consecutive": 3
+        },
+        {
+          "id": "checkout_success",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:checkout_success_ratio",
+          "operator": ">=",
+          "threshold": 0.98,
+          "unit": "ratio",
+          "window": "5m",
+          "consecutive": 3
+        },
+        {
+          "id": "kyc_pass_delta",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:kyc_pass_rate_delta_vs_baseline",
+          "operator": "<=",
+          "threshold": 0.02,
+          "unit": "delta_ratio",
+          "window": "15m",
+          "consecutive": 2
+        },
+        {
+          "id": "search_latency_p95",
+          "source": "prometheus",
+          "endpoint_from_env": "PROMETHEUS_URL",
+          "query": "REPLACE_ME:search_latency_p95_seconds",
+          "operator": "<=",
+          "threshold": 0.250,
+          "unit": "seconds",
+          "window": "5m",
+          "consecutive": 3
+        },
+        {
+          "id": "mobile_crash_free",
+          "source": "store_analytics",
+          "provider": "app_store_connect|play_console",
+          "metric": "crash_free_sessions_ratio",
+          "operator": ">=",
+          "threshold": 0.995,
+          "window": "1h"
+        }
+      ],
+      "smoke_tests": [
+        { "name": "api_health", "command": "curl -fsS $API_BASE_URL/healthz" },
+        { "name": "web_health", "command": "curl -fsS $WEB_BASE_URL/readyz" },
+        { "name": "smoke_pack", "command": "node smoke-test.js" },
+        { "name": "playwright_smoke", "command": "npx playwright test --grep '@smoke'" }
+      ],
+      "promote_when": { "all_gates_pass_for_minutes": 10 }
+    },
+    {
+      "name": "canary-50",
+      "traffic_percent": 50,
+      "min_duration_minutes": 60,
+      "min_requests": 100000,
+      "gates_ref": ["latency_p95", "latency_p99", "error_rate", "checkout_success", "kyc_pass_delta", "search_latency_p95", "mobile_crash_free"],
+      "smoke_tests_ref": ["api_health", "web_health", "smoke_pack", "playwright_smoke"],
+      "promote_when": { "all_gates_pass_for_minutes": 15 }
+    },
+    {
+      "name": "full-100",
+      "traffic_percent": 100,
+      "hold_minutes_post_promo": 120,
+      "verification": {
+        "gates_ref": ["latency_p95", "latency_p99", "error_rate", "checkout_success"],
+        "stabilize_for_minutes": 20
+      }
+    }
+  ],
+  "rollback": {
+    "triggers": [
+      { "ref": "error_rate", "operator": ">", "threshold": 0.005, "breach_for_minutes": 5 },
+      { "ref": "latency_p95", "operator": ">", "threshold": 0.350, "breach_for_minutes": 10 },
+      { "ref": "checkout_success", "operator": "<", "threshold": 0.97, "breach_for_minutes": 10 },
+      { "id": "dependency_5xx", "source": "prometheus", "endpoint_from_env": "PROMETHEUS_URL", "query": "REPLACE_ME:dependency_5xx_vs_baseline_ratio", "operator": ">", "threshold": 3.0, "breach_for_minutes": 5 },
+      { "ref": "mobile_crash_free", "operator": "<", "threshold": 0.99, "breach_for_minutes": 30 },
+      { "id": "sev1_incident", "source": "incident", "operator": "==", "threshold": true }
+    ],
+    "actions": [
+      { "name": "argocd_rollback", "command": "argocd app rollback $ARGOCD_APP --to-revision $LAST_GREEN" },
+      { "name": "disable_flags", "command": "bash -lc \"$FEATURE_FLAG_CLI disable wallet_sync marketplace_search payments\"" }
+    ]
+  },
+  "dependencies": {
+    "vendors": ["stripe", "weavr", "prembly", "openai", "firecrawl"],
+    "status_checks": [
+      { "source": "http", "url": "https://status.stripe.com", "expect": 200 },
+      { "source": "http", "url": "https://status.openai.com", "expect": 200 }
+    ],
+    "quota_checks": [
+      { "vendor": "stripe", "type": "rate_limit", "min_remaining": 0.20 },
+      { "vendor": "openai", "type": "rate_limit", "min_remaining": 0.20 }
+    ]
+  },
+  "synthetic_monitors": [
+    { "region": "NG", "urls": ["$WEB_BASE_URL/healthz", "$WEB_BASE_URL/api/ping"], "interval": "1m" },
+    { "region": "UK", "urls": ["$WEB_BASE_URL/healthz"], "interval": "1m" },
+    { "region": "EU", "urls": ["$WEB_BASE_URL/healthz"], "interval": "1m" },
+    { "region": "BR", "urls": ["$WEB_BASE_URL/healthz"], "interval": "1m" }
+  ]
+}
+
