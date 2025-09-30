@@ -84,7 +84,7 @@ const OverviewTabContent: React.FC = () => {
           <p className="text-3xl font-bold text-blue-60">
             {metrics?.avgQueryTime ? `${metrics.avgQueryTime}ms` : '--'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">Target: <50ms</p>
+          <p className="text-sm text-gray-500 mt-1">Target: {'<'}50ms</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
@@ -92,7 +92,7 @@ const OverviewTabContent: React.FC = () => {
           <p className="text-3xl font-bold text-green-600">
             {metrics?.cacheHitRate ? `${metrics.cacheHitRate}%` : '--'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">Target: >90%</p>
+          <p className="text-sm text-gray-500 mt-1">Target: {'>'}90%</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow border">
