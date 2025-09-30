@@ -19,7 +19,11 @@ import { chromium } from 'playwright';
   // Check what's in the root div
   const rootContent = await page.evaluate(() => {
     const root = document.getElementById('root');
+    if (!root) {
+      return { found: false, innerHTML: null, children: 0, textContent: null };
+    }
     return {
+      found: true,
       innerHTML: root.innerHTML,
       children: root.children.length,
       textContent: root.textContent
@@ -45,14 +49,18 @@ import { chromium } from 'playwright';
   console.log('🚨 JavaScript errors:', jsErrors);
   
   // Wait a bit more to see if React loads
-  console.log('⏳ Waiting for React to load...');
-  await page.waitForTimeout(5000);
-  
-  // Check again after waiting
   const rootContentAfter = await page.evaluate(() => {
     const root = document.getElementById('root');
+    if (!root) {
+      return { found: false, innerHTML: null, children: 0, textContent: null };
+    }
     return {
+      found: true,
       innerHTML: root.innerHTML,
+      children: root.children.length,
+      textContent: root.textContent
+    };
+  });
       children: root.children.length,
       textContent: root.textContent
     };
@@ -79,10 +87,17 @@ import { chromium } from 'playwright';
   // Check CSS loading
   const cssLoaded = await page.evaluate(() => {
     const styles = Array.from(document.styleSheets);
-    return styles.map(sheet => ({
-      href: sheet.href,
-      rules: sheet.cssRules ? sheet.cssRules.length : 'No access'
-    }));
+    return styles.map(sheet => {
+      let rules;
+      try {
+        // Attempt to read cssRules; may throw on cross-origin sheets
+        rules = sheet.cssRules ? sheet.cssRules.length : 0;
+      } catch (e) {
+        // Fallback for inaccessible sheets
+        rules = 'No access';
+      }
+      return { href: sheet.href, rules };
+    });
   });
   
   console.log('🎨 CSS loading status:', cssLoaded);
