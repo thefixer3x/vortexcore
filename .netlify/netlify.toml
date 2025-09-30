@@ -1,5 +1,5 @@
 functionsDirectory = "/Users/seyederick/DevOps/_project_folders/vortex-core-app/netlify/functions"
-functionsDirectoryOrigin = "config"
+functionsDirectoryOrigin = "default"
 redirectsOrigin = "config"
 plugins = []
 headers = []
@@ -8,7 +8,7 @@ headers = []
 publish = "/Users/seyederick/DevOps/_project_folders/vortex-core-app/dist"
 publishOrigin = "config"
 commandOrigin = "config"
-command = "bun install --frozen-lockfile && bun run build"
+command = "curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL=\"$HOME/.bun\" && export PATH=\"$BUN_INSTALL/bin:$PATH\" && bun --version && bun install --frozen-lockfile && bun run build"
 functions = "/Users/seyederick/DevOps/_project_folders/vortex-core-app/netlify/functions"
 
 [build.environment]
@@ -27,8 +27,8 @@ functions = "/Users/seyederick/DevOps/_project_folders/vortex-core-app/netlify/f
 
 [dev]
 command = "bun run dev"
-port = 8080.0
-targetPort = 5173.0
+port = 3000.0
+targetPort = 3000.0
 
 [dev.env]
 
