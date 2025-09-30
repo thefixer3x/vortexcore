@@ -2,11 +2,11 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.8c01f5d59c844d3dabb12e89b11166e0',
+  appId: 'app.vortexcore.app',
   appName: 'vortex-core-app',
   webDir: 'dist',
   server: {
-    url: 'https://8c01f5d5-9c84-4d3d-abb1-2e89b11166e0.lovableproject.com?forceHideBadge=true',
+    url: 'https://vortexcore.app',
     cleartext: true
   },
   ios: {
@@ -22,7 +22,7 @@ const config: CapacitorConfig = {
   // Add default currency configuration
   plugins: {
     LocalNotifications: {
-      defaultCurrency: 'NGN'
+      defaultCurrency: 'USD'
     }
   }
 };

@@ -113,7 +113,7 @@ SET row_security = off;
 --
 
 INSERT INTO "control_room"."apps" ("id", "name", "description", "status", "schema_name", "original_project_ref", "migration_status", "created_at", "updated_at") VALUES
-	('vortexcore', 'Vortexcore.app', 'Main aggregation platform', 'active', 'app_vortexcore', 'muyhurqfcsjqtnbozyir', 'pending', '2025-05-14 13:33:22.060105+00', '2025-05-14 13:33:22.060105+00'),
+	('vortexcore', 'Vortexcore.app', 'Main aggregation platform', 'active', 'app_vortexcore', 'mxtsdgkwzjzlttpotole', 'pending', '2025-05-14 13:33:22.060105+00', '2025-05-14 13:33:22.060105+00'),
 	('seftec', 'SEFTEC Store', 'E-commerce platform', 'active', 'app_seftec', 'ptnrwrgzrsbocgxlpvhd', 'pending', '2025-05-14 13:33:22.060105+00', '2025-05-14 13:33:22.060105+00'),
 	('saas', 'SaaS Platform', 'Software as a Service platform', 'active', 'app_saas', 'nbmomsntbamfthxfdnme', 'pending', '2025-05-14 13:33:22.060105+00', '2025-05-14 13:33:22.060105+00'),
 	('apple', 'Apple Store Lekki', 'Retail store management', 'active', 'app_apple', 'rsabczhfeehazuyajarx', 'pending', '2025-05-14 13:33:22.060105+00', '2025-05-14 13:33:22.060105+00');

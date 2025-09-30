@@ -1,0 +1,17 @@
+
+ name                               value               environments                        created     
+ VITE_SUPABASE_URL                  Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/DevelopmentDevelopment]8;;, ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/PreviewPreview]8;;, ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;    30d ago     
+ VITE_SUPABASE_ANON_KEY             Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/DevelopmentDevelopment]8;;, ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/PreviewPreview]8;;, ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;    30d ago     
+ POSTGRES_URL                       Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_PRISMA_URL                Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_URL_NON_POOLING           Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_USER                      Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_HOST                      Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_PASSWORD                  Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ POSTGRES_DATABASE                  Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ SUPABASE_ANON_KEY                  Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ SUPABASE_URL                       Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ SUPABASE_SERVICE_ROLE_KEY          Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ SUPABASE_JWT_SECRET                Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+ NEXT_PUBLIC_SUPABASE_ANON_KEY      Encrypted           ]8;;https://vercel.com/thefixers-team/vortexcore/settings/environments/ProductionProduction]8;;                          109d ago    
+
