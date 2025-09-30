@@ -20,7 +20,7 @@ export function AuthCallbackHandler() {
           description: error.message || "Failed to complete authentication",
           variant: "destructive"
         });
-        setTimeout(() => window.location.href = "https://auth.vortexcore.app", 3000);
+        setTimeout(() => navigate("/login"), 3000);
         return;
       }
       
@@ -29,9 +29,9 @@ export function AuthCallbackHandler() {
           title: "Authentication Successful",
           description: "You have successfully signed in"
         });
-        window.location.href = "https://auth.vortexcore.app/dashboard";
+        navigate("/dashboard");
       } else {
-        window.location.href = "https://auth.vortexcore.app";
+        navigate("/login");
       }
     };
     

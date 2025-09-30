@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Plus, 
-  CreditCard, 
-  Sparkles, 
+import {
+  Plus,
+  CreditCard,
+  Sparkles,
   Bell,
   Settings,
   TrendingUp,
@@ -16,15 +16,55 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationCenter } from "./NotificationCenter";
 
-export const ModernDashboardHeader = () => {
+interface ModernDashboardHeaderProps {
+  totalBalance: number;
+  currency?: string;
+  onNewTransaction?: () => void;
+  userName?: string | null;
+  hasWallets?: boolean;
+}
+
+const formatBalance = (amount: number, currency: string) => {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency
+    }).format(amount);
+  } catch (error) {
+    console.warn("Unable to format balance", error);
+    return `${currency} ${amount.toFixed(2)}`;
+  }
+};
+
+export const ModernDashboardHeader = ({
+  totalBalance,
+  currency = "USD",
+  onNewTransaction,
+  userName,
+  hasWallets = false
+}: ModernDashboardHeaderProps) => {
   const { user } = useAuth();
   const [showBalance, setShowBalance] = useState(true);
-  
+
   const currentHour = new Date().getHours();
   const greeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
-  
-  const totalBalance = 16366.50; // This would come from actual account data
-  
+
+  const displayName = useMemo(() => {
+    if (userName) {
+      return userName;
+    }
+
+    if (user?.name) {
+      return user.name;
+    }
+
+    if (user?.email) {
+      return user.email.split("@")[0];
+    }
+
+    return "there";
+  }, [userName, user]);
+
   return (
     <div className="space-y-6 mb-8">
       {/* Welcome Header */}
@@ -32,7 +72,7 @@ export const ModernDashboardHeader = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-              {greeting}, {user?.name || "Alex"}
+              {greeting}, {displayName}
             </h1>
             <Badge variant="secondary" className="gap-1">
               <Sparkles className="h-3 w-3" />
@@ -49,7 +89,11 @@ export const ModernDashboardHeader = () => {
             <Settings className="h-4 w-4" />
             <span className="hidden sm:inline">Settings</span>
           </Button>
-          <Button className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+          <Button
+            className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            onClick={onNewTransaction}
+            disabled={!hasWallets}
+          >
             <Plus className="h-4 w-4" />
             New Transaction
           </Button>
@@ -125,12 +169,18 @@ export const ModernDashboardHeader = () => {
           </div>
           <div className="space-y-1">
             <p className="text-3xl font-bold">
-              {showBalance ? `₦${totalBalance.toLocaleString()}` : "••••••"}
+              {showBalance ? formatBalance(totalBalance, currency) : "••••••"}
             </p>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-green-400" />
-              <span className="text-sm text-green-400">+5.2% from last month</span>
-            </div>
+            {hasWallets ? (
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-green-400" />
+                <span className="text-sm text-green-400">Track your spending trends in real time</span>
+              </div>
+            ) : (
+              <div className="text-sm text-white/70">
+                Connect a wallet to start monitoring your balances
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
