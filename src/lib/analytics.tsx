@@ -1,90 +1,248 @@
-import { useEffect } from 'react';
-import LogRocket from 'logrocket';
+import { supabase } from "@/integrations/supabase/client";
 
-// Wrapper component to add LogRocket user identification after login
-export function LogRocketUserIdentifier({ userId, userEmail, userName, extraData = {} }) {
-  useEffect(() => {
-    if (userId) {
-      // Identify the user in LogRocket
-      LogRocket.identify(userId, {
-        name: userName || 'Unknown User',
-        email: userEmail || '',
-        ...extraData
-      });
+// In-memory cache for frequently accessed data
+class InMemoryCache {
+  private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
+
+  set(key: string, data: any, ttl: number = 300000) { // Default TTL: 5 minutes
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    });
+  }
+
+  get(key: string) {
+    const item = this.cache.get(key);
+    if (!item) return null;
+
+    if (Date.now() - item.timestamp > item.ttl) {
+      this.cache.delete(key);
+      return null;
     }
-  }, [userId, userEmail, userName, extraData]);
 
-  // This is a utility component that doesn't render anything
-  return null;
+    return item.data;
+  }
+
+  delete(key: string) {
+    this.cache.delete(key);
+  }
+
+  clear() {
+    this.cache.clear();
+  }
 }
 
-// Track custom events throughout the app
-export function trackEvent(eventName, properties = {}) {
-  LogRocket.track(eventName, {
-    timestamp: new Date().toISOString(),
-    ...properties
-  });
-}
+const cache = new InMemoryCache();
 
-// Track form submissions
-export function trackFormSubmission(formName, status, details = {}) {
-  LogRocket.track('form_submission', {
-    form: formName,
-    status: status, // 'success', 'error', 'validation_failed'
-    ...details
-  });
-}
+// Enhanced analytics with performance monitoring and caching for Supabase queries
+export const logSlowQueries = async (query: Promise<any>, queryName: string) => {
+  const start = Date.now();
+  const result = await query;
+  const duration = Date.now() - start;
 
-// Track user actions
-export function trackUserAction(action, target, details = {}) {
-  LogRocket.track('user_action', {
-    action: action, // 'click', 'hover', 'scroll', etc.
-    target: target, // element or feature name
-    ...details
-  });
-}
+  if (duration > 1000) {
+    console.warn(`Slow query detected: ${queryName} took ${duration}ms`);
+    // In a production environment, you might send this to a monitoring service
+    // like Sentry, LogRocket, etc.
+  }
 
-// Track app performance
-export function trackPerformance(metricName, value, details = {}) {
-  LogRocket.track('performance', {
-    metric: metricName,
-    value: value,
-    ...details
-  });
-}
+  return result;
+};
 
-// Create a hook for tracking component renders and lifecycle
-export function useTrackComponentLifecycle(componentName) {
-  useEffect(() => {
-    const startTime = performance.now();
-    
-    LogRocket.track('component_mount', {
-      component: componentName,
-      timestamp: new Date().toISOString()
-    });
-    
-    return () => {
-      const duration = performance.now() - startTime;
-      
-      LogRocket.track('component_unmount', {
-        component: componentName,
-        duration: duration,
-        timestamp: new Date().toISOString()
-      });
-    };
-  }, [componentName]);
-}
-
-// Custom hook for tracking feature usage
-export function useFeatureTracking(featureName) {
-  const trackFeatureUsage = (action, details = {}) => {
-    LogRocket.track('feature_usage', {
-      feature: featureName,
-      action: action,
-      timestamp: new Date().toISOString(),
-      ...details
-    });
-  };
+// Function to batch related queries into a single request with caching
+export const batchUserQueries = async (userId: string) => {
+  const cacheKey = `batch_user_queries_${userId}`;
+  const cachedResult = cache.get(cacheKey);
   
-  return trackFeatureUsage;
-}
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('profiles')
+      .select(`
+        *,
+        wallets (id, balance, currency, created_at, updated_at),
+        user_settings (key, value, created_at, updated_at)
+      `)
+      .eq('id', userId)
+      .single(),
+    'batch_user_queries'
+  );
+
+  if (error) {
+    console.error('Error in batchUserQueries:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 5 minutes
+  cache.set(cacheKey, data, 300000);
+  return { data, error: null };
+};
+
+// Function to get chat data with related information in a single query with caching
+export const getChatWithRelatedData = async (conversationId: string) => {
+  const cacheKey = `chat_with_related_data_${conversationId}`;
+  const cachedResult = cache.get(cacheKey);
+  
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('chat_conversations')
+      .select(`
+        *,
+        chat_messages (id, role, content, timestamp, encrypted),
+        profiles (full_name, avatar_url)
+      `)
+      .eq('id', conversationId)
+      .single(),
+    'get_chat_with_related_data'
+  );
+
+  if (error) {
+    console.error('Error in getChatWithRelatedData:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 2 minutes (chats might update frequently)
+  cache.set(cacheKey, data, 120000);
+  return { data, error: null };
+};
+
+// Function to get transaction data with related information with caching
+export const getTransactionWithRelatedData = async (transactionId: string) => {
+  const cacheKey = `transaction_with_related_data_${transactionId}`;
+  const cachedResult = cache.get(cacheKey);
+  
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('transactions')
+      .select(`
+        *,
+        profiles (full_name, email)
+      `)
+      .eq('id', transactionId)
+      .single(),
+    'get_transaction_with_related_data'
+  );
+
+  if (error) {
+    console.error('Error in getTransactionWithRelatedData:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 1 minute (transactions are relatively static after creation)
+ cache.set(cacheKey, data, 60000);
+  return { data, error: null };
+};
+
+// Optimized function for getting virtual card data with related transactions with caching
+export const getVirtualCardWithTransactions = async (cardId: string) => {
+  const cacheKey = `virtual_card_with_transactions_${cardId}`;
+  const cachedResult = cache.get(cacheKey);
+  
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('virtual_cards')
+      .select(`
+        *,
+        virtual_card_transactions (*)
+      `)
+      .eq('id', cardId)
+      .single(),
+    'get_virtual_card_with_transactions'
+  );
+
+  if (error) {
+    console.error('Error in getVirtualCardWithTransactions:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 2 minutes
+  cache.set(cacheKey, data, 1200);
+  return { data, error: null };
+};
+
+// Function to get user's recent transactions with caching
+export const getUserRecentTransactions = async (userId: string, limit: number = 10) => {
+  const cacheKey = `user_recent_transactions_${userId}_${limit}`;
+  const cachedResult = cache.get(cacheKey);
+  
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit),
+    'get_user_recent_transactions'
+  );
+
+  if (error) {
+    console.error('Error in getUserRecentTransactions:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 1 minute
+ cache.set(cacheKey, data, 60000);
+  return { data, error: null };
+};
+
+// Function to get user's wallet information with caching
+export const getUserWallet = async (userId: string) => {
+  const cacheKey = `user_wallet_${userId}`;
+  const cachedResult = cache.get(cacheKey);
+  
+  if (cachedResult) {
+    return { data: cachedResult, error: null };
+  }
+
+  const { data, error } = await logSlowQueries(
+    supabase
+      .from('wallets')
+      .select('*')
+      .eq('user_id', userId)
+      .single(),
+    'get_user_wallet'
+  );
+
+  if (error) {
+    console.error('Error in getUserWallet:', error);
+    return { data: null, error };
+  }
+
+  // Cache the result for 30 seconds (balance might change frequently)
+  cache.set(cacheKey, data, 30000);
+  return { data, error: null };
+};
+
+// Function to clear specific cache entries when data is updated
+export const invalidateCache = (pattern: string) => {
+  for (const key of cache.cache.keys()) {
+    if (key.includes(pattern)) {
+      cache.delete(key);
+    }
+  }
+};
+
+// Function to clear all cache
+export const clearCache = () => {
+  cache.clear();
+};

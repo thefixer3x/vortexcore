@@ -1,8 +1,7 @@
 {
   "buildCommand": "bun run build",
-  "devCommand": "bun run dev",
   "installCommand": "bun install",
-  "framework": "vite",
+  "framework": null,
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }

@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_SOURCE="muyhurqfcsjqtnbozyir"
+PROJECT_SOURCE="mxtsdgkwzjzlttpotole"
 PROJECT_TARGET="mxtsdgkwzjzlttpotole"
 
 echo "📦 VortexCore.app Data Migration Script"
