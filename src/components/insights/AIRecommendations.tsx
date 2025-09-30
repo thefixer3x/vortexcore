@@ -146,7 +146,6 @@ const AIRecommendations: React.FC = () => {
               </div>
               <div className="text-sm text-gray-500">vs. 1 hour ago</div>
             </div>
-          </div>
         </div>
 
         {/* Performance Metrics */}
@@ -156,30 +155,29 @@ const AIRecommendations: React.FC = () => {
             <p className="text-3xl font-bold text-blue-60">
               {performanceData[performanceData.length - 1]?.avgQueryTime}ms
             </p>
-            <p className="text-sm text-gray-500 mt-1">Target: <50ms</p>
+            <p className="text-sm text-gray-500 mt-1">Target: &lt;50ms</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow border">
             <h3 className="text-lg font-medium text-gray-900 mb-2">Cache Hit Rate</h3>
             <p className="text-3xl font-bold text-green-600">
-              {performanceData[performanceData.length - 1]?.cacheHitRate}%
+              { performanceData[ performanceData.length - 1]?.cacheHitRate}%
             </p>
-            <p className="text-sm text-gray-500 mt-1">Target: >90%</p>
+            <p className="text-sm text-gray-500 mt-1">Target: &gt;90%</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow border">
             <h3 className="text-lg font-medium text-gray-900 mb-2">Slow Queries</h3>
             <p className="text-3xl font-bold text-orange-600">
-              {performanceData[performanceData.length - 1]?.slowQueries}
+              { performanceData[ performanceData.length - 1]?.slowQueries}
             </p>
-            <p className="text-sm text-gray-500 mt-1">Target: <5/hour</p>
+            <p className="text-sm text-gray-500 mt-1">Target: &lt;5/hour</p>
           </div>
         </div>
       </div>
 
       {/* Recommendations */}
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">AI-Powered Recommendations</h3>
         
         <div className="space-y-4">
           {recommendations.map((rec) => (
