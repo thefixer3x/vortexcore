@@ -8,7 +8,6 @@ import { FloatingActionButton } from "@/components/dashboard/FloatingActionButto
 import { DashboardSkeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import LogRocket from "logrocket"; // Temporarily disabled
-import { usePageViewDuration } from "@/hooks/use-analytics";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { DashboardActionDialog } from "@/components/dashboard/DashboardActionDialog";
 import {
@@ -27,8 +26,6 @@ const ACCOUNT_COLORS = [
 const Dashboard = () => {
   const { wallets, transactions, profile, isLoading, error, refresh } = useDashboardData();
   const [selectedAction, setSelectedAction] = useState<DashboardActionType | null>(null);
-
-  usePageViewDuration("dashboard");
 
   const hasWallets = wallets.length > 0;
   const totalBalance = useMemo(

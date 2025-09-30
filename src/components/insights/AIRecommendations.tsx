@@ -146,6 +146,7 @@ const AIRecommendations: React.FC = () => {
               </div>
               <div className="text-sm text-gray-500">vs. 1 hour ago</div>
             </div>
+          </div>
         </div>
 
         {/* Performance Metrics */}
