@@ -72,10 +72,11 @@ export function OpenAIChat() {
         const token = await getAccessToken();
         if (token) headers["Authorization"] = `Bearer ${token}`;
       }
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       if (supabaseAnonKey) headers["apikey"] = supabaseAnonKey;
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co';
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
+      if (!supabaseUrl) throw new Error("Missing VITE_SUPABASE_URL");
       const endpoint = `${supabaseUrl}/functions/v1/ai-router`;
 
       const response = await fetch(endpoint, {
@@ -378,4 +379,3 @@ export function OpenAIChat() {
     </div>
   );
 }
-

@@ -112,8 +112,8 @@ Update your application's environment variables to point to the new function end
 
 ```env
 # Update .env file
-VITE_SUPABASE_URL=https://mxtsdgkwzjzlttpotole.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
+VITE_SUPABASE_ANON_KEY=<YOUR_ANON_KEY>
 ```
 
 ### 4. Verify Function Integrations
