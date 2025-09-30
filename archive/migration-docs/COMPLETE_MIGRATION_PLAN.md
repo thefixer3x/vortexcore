@@ -191,14 +191,14 @@ supabase secrets set nixieai_secret_key="your_key_here"
 
 **Total Estimated Time**: 9-14 days
 
-## NEXT IMMEDIATE ACTIONS
+## Post-migration Checks
 
-1. **Start with Database Schema Migration** - Most critical blocker
-2. **Set up missing API secrets** - Required for function operation
-3. **Create comprehensive test plan** - Ensure functionality preservation
-4. **Plan data migration strategy** - Minimize user disruption
+1. **Verify database schema migration** - Confirm target schema and RLS match expectations
+2. **Confirm API secrets present** - Check required keys exist in the target environment
+3. **Validate test plan execution** - Run and review unit/E2E coverage and outcomes
+4. **Confirm data integrity** - Spot-check migrated data and user access paths
 
 ---
 
 *Migration plan created on June 9, 2025*
-*Status: Ready for execution*
+*Status: Completed — post-migration verification ongoing*
