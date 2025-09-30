@@ -13,4 +13,34 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    db: {
+      schema: 'public',
+    },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      headers: {
+        // Enable statement caching
+        'X-Client-Info': 'vortex-core-app/1.0 performance-optimized',
+      },
+      fetch: (url, options = {}) => {
+        // Add request timing for performance monitoring
+        const start = Date.now();
+        return fetch(url, options).then(response => {
+          const duration = Date.now() - start;
+          // Log slow requests (over 500ms) to help identify performance issues
+          if (duration > 500) {
+            console.warn(`Slow Supabase request: ${duration}ms`, { url, method: options.method });
+          }
+          return response;
+        });
+      },
+    },
+  }
+);

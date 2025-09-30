@@ -35,4 +35,6 @@ archive/**/*.cache
 supabase/.temp/
 .vercel
 .cache_ggshield
-.vercel
+
+# Local Netlify folder
+.netlify

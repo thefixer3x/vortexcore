@@ -11,8 +11,7 @@ import {
   Bell,
   ShieldCheck,
   HelpCircle,
-  ChevronRight,
-  CreditCard as CardIcon
+  ChevronRight
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { SideNavHeader } from "./SideNavHeader";
@@ -58,7 +57,6 @@ export function SideNav() {
     { name: "Control Room", path: "/dashboard", icon: LayoutDashboard },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
     { name: "VortexAI", path: "/insights", icon: PieChart },
-    { name: "Virtual Cards", path: "/virtual-cards", icon: CardIcon },
     { name: "Settings", path: "/settings", icon: Settings },
     { name: "User Management", path: "/users", icon: Users },
   ];

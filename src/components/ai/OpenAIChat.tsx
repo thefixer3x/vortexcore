@@ -75,8 +75,7 @@ export function OpenAIChat() {
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       if (supabaseAnonKey) headers["apikey"] = supabaseAnonKey;
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) throw new Error("Missing VITE_SUPABASE_URL");
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mxtsdgkwzjzlttpotole.supabase.co';
       const endpoint = `${supabaseUrl}/functions/v1/ai-router`;
 
       const response = await fetch(endpoint, {

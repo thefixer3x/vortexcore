@@ -36,7 +36,7 @@ print_error() {
 }
 
 # Source and target project references
-SOURCE_PROJECT="muyhurqfcsjqtnbozyir"  # Vortexcore.app
+SOURCE_PROJECT="mxtsdgkwzjzlttpotole"  # Vortexcore.app
 TARGET_PROJECT="mxtsdgkwzjzlttpotole"  # the-fixer-initiative
 
 # List of functions to migrate (from the source project)
@@ -129,7 +129,7 @@ migrate_secrets() {
 # Main migration function
 main() {
     print_header "VortexCore Function Migration"
-    echo -e "${CYAN}Source: Vortexcore.app (muyhurqfcsjqtnbozyir)${NC}"
+    echo -e "${CYAN}Source: Vortexcore.app (mxtsdgkwzjzlttpotole)${NC}"
     echo -e "${CYAN}Target: the-fixer-initiative (mxtsdgkwzjzlttpotole)${NC}"
     echo ""
     

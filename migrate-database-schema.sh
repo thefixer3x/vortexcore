@@ -7,7 +7,7 @@
 set -e
 
 PROJECT_TARGET="mxtsdgkwzjzlttpotole"
-PROJECT_SOURCE="muyhurqfcsjqtnbozyir"
+PROJECT_SOURCE="mxtsdgkwzjzlttpotole"
 
 echo "🚀 Starting Database Migration Process..."
 echo "Source Project: $PROJECT_SOURCE"

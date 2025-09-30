@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -12,18 +11,21 @@ import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
+import VirtualCards from "./pages/VirtualCards";
 import GeminiDemo from "./pages/GeminiDemo";
 import PerplexityDemo from "./pages/PerplexityDemo";
+import TestAuth from "./pages/TestAuth";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryManager";
 import BulkUpload from "./components/payments/beneficiaries/BulkUpload";
 import CategoryManager from "./components/payments/beneficiaries/CategoryManager";
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
+// import { LogRocketRouterTracker } from "./components/analytics/LogRocketRouterTracker";
+// import LogRocketErrorBoundary from "./components/error/LogRocketErrorBoundary";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
 import { Home } from "lucide-react";
 import { Button } from "./components/ui/button";
-import VirtualCards from "./pages/VirtualCards";
 
 // Create a new page for User Management
 const Users = () => (
@@ -94,6 +96,7 @@ const App = () => {
             <Route path="/ecosystem/gemini" element={<GeminiDemo />} />
             <Route path="/ecosystem/perplexity" element={<PerplexityDemo />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
+            <Route path="/test-auth" element={<TestAuth />} />
             
             {/* Protected app routes */}
             <Route element={<ProtectedLayout />}>

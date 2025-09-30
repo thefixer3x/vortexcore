@@ -5,10 +5,14 @@
 
 [dev]
   command = "bun run dev"
-  port = 3000
-  targetPort = 3000
+  port = 8080
+  targetPort = 5173
 
 env = { }
+
+# Explicitly set functions directory
+[functions]
+  directory = "netlify/functions"
 
 # Single-page app rewrite so deep links resolve to index.html
 [[redirects]]
