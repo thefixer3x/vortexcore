@@ -146,6 +146,7 @@ const AIRecommendations: React.FC = () => {
               </div>
               <div className="text-sm text-gray-500">vs. 1 hour ago</div>
             </div>
+          </div>
         </div>
 
         {/* Performance Metrics */}
@@ -178,6 +179,7 @@ const AIRecommendations: React.FC = () => {
 
       {/* Recommendations */}
       <div>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">AI-Powered Recommendations</h3>
         
         <div className="space-y-4">
           {recommendations.map((rec) => (

@@ -2,7 +2,7 @@
 import { InsightsHeader } from "@/components/insights/InsightsHeader";
 import { FinancialOverviewTabs } from "@/components/insights/FinancialOverviewTabs";
 import { InsightWidget } from "@/components/dashboard/InsightWidget";
-import { AIRecommendations } from "@/components/insights/AIRecommendations";
+import AIRecommendations from "@/components/insights/AIRecommendations";
 
 const spendingTrend = [
   { month: "Jan", amount: 1200 },
