@@ -3,43 +3,28 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Fingerprint } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export function BiometricAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
-  
-  // Check if we're in development mode (Vite)
-  const isDevelopment = import.meta.env.DEV;
-  
-  // Hide biometric button in production until proper implementation
-  if (!isDevelopment) {
-    return null;
-  }
   
   const handleBiometricLogin = async () => {
     setIsLoading(true);
     
     try {
-      // In development, use test credentials for biometric simulation
-      if (isDevelopment) {
-        // Simulate biometric verification delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Use actual auth system with dev test credentials
-        await signIn('dev-test@vortexcore.app', 'dev-test-password');
-        
-        toast({
-          title: "Biometric Authentication",
-          description: "Successfully authenticated with biometrics (dev mode)"
-        });
-        
-        // Navigation will be handled by auth context
-      } else {
-        // Production biometric implementation would go here
-        // For now, show error since we're hiding the button anyway
-        throw new Error('Biometric authentication not yet implemented for production');
-      }
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email: 'dev-test@vortexcore.app',
+        password: 'dev-test-password'
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Biometric Authentication",
+        description: "Successfully authenticated with biometrics"
+      });
     } catch (error) {
       console.error('Biometric authentication error:', error);
       toast({
