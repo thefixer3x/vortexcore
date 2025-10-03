@@ -13,10 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   CreditCard, 
   Plus, 
-  Lock, 
-  Unlock, 
-  Eye, 
-  EyeOff,
   RefreshCw,
   AlertCircle,
   CheckCircle2,

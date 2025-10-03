@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowUpRight,
+  ArrowDownLeft,
   ArrowDownLeft,
   Search,
   Filter,

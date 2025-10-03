@@ -1,7 +1,7 @@
 
 import { ChevronRight, MapPin, Shield, Globe, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const EnterpriseFeatures = () => {
   const features = [{

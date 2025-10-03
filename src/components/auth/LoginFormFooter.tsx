@@ -8,6 +8,7 @@ interface LoginFormFooterProps {
 }
 
 export function LoginFormFooter({ isLoading }: LoginFormFooterProps) {
+  void isLoading;
   return (
     <div className="flex flex-col space-y-4">
       <SocialLoginButtons />

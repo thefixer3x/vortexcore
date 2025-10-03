@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  LayoutDashboard, 
   CreditCard, 
   PieChart, 
   Settings, 
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { SideNavHeader } from "./SideNavHeader";
+
 import { SideNavProfile } from "./SideNavProfile";
 import { SideNavSection } from "./SideNavSection";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -35,7 +34,7 @@ import {
 export function EnhancedSideNav() {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useSidebar();
-  const { theme, setTheme, isDark, toggleTheme } = useTheme();
+  const { theme, setTheme, toggleTheme } = useTheme();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
