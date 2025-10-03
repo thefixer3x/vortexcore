@@ -8,7 +8,6 @@ import {
   Eye, 
   EyeOff,
   Copy,
-  Calendar,
   ShieldCheck
 } from "lucide-react";
 import { getCardSensitiveDetails } from "@/services/virtualCardService";

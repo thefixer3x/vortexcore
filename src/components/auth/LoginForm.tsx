@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ShieldCheck } from "lucide-react";
-import { SocialLoginButtons } from "./SocialLoginButtons";
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useLocation } from "@/hooks/use-location";
@@ -27,11 +27,6 @@ export function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // If we have location data, include it in metadata
-      const locationData = location.country ? {
-        login_country: location.country,
-        login_city: location.city
-      } : undefined;
       
       // Log login attempt
       LogRocket.track('login_attempt', {
@@ -101,12 +96,12 @@ export function LoginForm() {
         // Check if 2FA is required
         setShowTwoFactor(true);
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err);
       // Log failed login attempt
       LogRocket.track('login_failed', {
         method: 'email',
-        error: error.message || 'unknown_error'
+        error: err instanceof Error ? err.message : 'unknown_error'
       });
       
       toast({

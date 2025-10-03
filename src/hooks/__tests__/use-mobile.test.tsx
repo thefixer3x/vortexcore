@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { renderHook, act } from '@testing-library/react'
 import { useIsMobile } from '../use-mobile'
 import { describe, it, expect, beforeEach, vi } from 'vitest'

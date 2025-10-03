@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const PartnerLogos = () => {
   return <div className="py-4">
