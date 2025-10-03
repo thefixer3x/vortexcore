@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 // import LogRocket from "logrocket";
 import { supabase } from "@/integrations/supabase/client";
-import { Session, User as SupabaseUser } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 
 interface User {
   id: string;
@@ -16,6 +16,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   identifyUser: (user: User) => void;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   getAccessToken: () => Promise<string | null>;
 };
@@ -108,6 +109,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // LogRocket.track('user_identified');
   };
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data?.session) {
+        return { success: true };
+      }
+
+      return { success: false, error: 'No session created' };
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const logout = async () => {
     try {
       await supabase.auth.signOut();
@@ -144,7 +167,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         isAuthenticated: !!user && !!session, 
         isLoading,
-        identifyUser, 
+        identifyUser,
+        signIn, 
         logout,
         getAccessToken
       }}
