@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Fingerprint } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -8,7 +7,6 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function BiometricAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { signIn } = useAuth();
   
   // Check if we're in development mode (Vite)
