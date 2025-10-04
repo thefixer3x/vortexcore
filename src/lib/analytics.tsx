@@ -125,7 +125,7 @@ export const getTransactionWithRelatedData = async (transactionId: string) => {
 
   const { data, error } = await logSlowQueries(
     supabase
-      .from('transactions')
+      .from('vortex_transactions')
       .select(`
         *,
         profiles (full_name, email)
@@ -187,7 +187,7 @@ export const getUserRecentTransactions = async (userId: string, limit: number = 
 
   const { data, error } = await logSlowQueries(
     supabase
-      .from('transactions')
+      .from('vortex_transactions')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
@@ -216,10 +216,10 @@ export const getUserWallet = async (userId: string) => {
 
   const { data, error } = await logSlowQueries(
     supabase
-      .from('wallets')
+      .from('vortex_wallets')
       .select('*')
       .eq('user_id', userId)
-      .single(),
+      .maybeSingle(),
     'get_user_wallet'
   );
 
