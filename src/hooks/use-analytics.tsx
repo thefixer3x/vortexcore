@@ -135,13 +135,13 @@ export const useAnalytics = () => {
           .single(),
         
         supabase
-          .from('wallets')
+          .from('vortex_wallets')
           .select('*')
           .eq('user_id', userId)
           .single(),
         
         supabase
-          .from('transactions')
+          .from('vortex_transactions')
           .select('*')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
