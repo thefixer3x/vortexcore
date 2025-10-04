@@ -128,7 +128,7 @@ export const DashboardActionDialog = ({
         metadata.notes = notes;
       }
 
-      const { error } = await supabase.from("vortex_transactions").insert({
+      const { error } = await supabase.from("vortex_transactions").insert([{
         user_id: user.id,
         wallet_id: wallet?.id ?? null,
         type: actionConfig.transactionType,
@@ -138,7 +138,7 @@ export const DashboardActionDialog = ({
         reference: `VC-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         description: notes ? `${actionConfig.label}: ${notes}` : actionConfig.label,
         metadata
-      });
+      }]);
 
       if (error) {
         throw error;
