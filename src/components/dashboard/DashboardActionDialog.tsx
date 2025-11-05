@@ -137,7 +137,7 @@ export const DashboardActionDialog = ({
         currency: wallet?.currency ?? "NGN",
         reference: `VC-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         description: notes ? `${actionConfig.label}: ${notes}` : actionConfig.label,
-        metadata
+        metadata: metadata as any
       }]);
 
       if (error) {

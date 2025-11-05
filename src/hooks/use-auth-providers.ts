@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Provider } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -23,13 +23,14 @@ export function useAuthProviders() {
       
       return { data, error: null };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : `Failed to sign in with ${provider}`;
       console.error(`Error signing in with ${provider}:`, error);
       toast({
         title: "Authentication Error",
-        description: error.message || `Failed to sign in with ${provider}`,
+        description: errorMessage,
         variant: "destructive"
       });
-      return { data: null, error };
+      return { data: null, error: error instanceof Error ? error : new Error(errorMessage) };
     } finally {
       setLoading(false);
     }
@@ -46,13 +47,14 @@ export function useAuthProviders() {
       
       return { data: response.data, error: null };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to set up two-factor authentication";
       console.error('Error setting up 2FA:', error);
       toast({
         title: "2FA Setup Error",
-        description: error.message || "Failed to set up two-factor authentication",
+        description: errorMessage,
         variant: "destructive"
       });
-      return { data: null, error };
+      return { data: null, error: error instanceof Error ? error : new Error(errorMessage) };
     } finally {
       setLoading(false);
     }
@@ -69,13 +71,14 @@ export function useAuthProviders() {
       
       return { data: response.data, error: null };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to verify two-factor authentication code";
       console.error('Error verifying 2FA:', error);
       toast({
         title: "2FA Verification Error",
-        description: error.message || "Failed to verify two-factor authentication code",
+        description: errorMessage,
         variant: "destructive"
       });
-      return { data: null, error };
+      return { data: null, error: error instanceof Error ? error : new Error(errorMessage) };
     } finally {
       setLoading(false);
     }
