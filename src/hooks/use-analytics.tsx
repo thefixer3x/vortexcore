@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced analytics hook with performance monitoring
@@ -32,11 +32,11 @@ export const useAnalytics = () => {
         (payload) => {
           console.log('Transaction change received:', payload);
           // Handle the specific transaction change
-          setAnalyticsData(prev => ({
+          setAnalyticsData((prev: any) => ({
             ...prev,
             transactions: {
               ...prev?.transactions,
-              [payload.new.id]: payload.new
+              [(payload.new as any).id]: payload.new
             }
           }));
         }
@@ -65,11 +65,11 @@ export const useAnalytics = () => {
         },
         (payload) => {
           console.log('Chat message change received:', payload);
-          setAnalyticsData(prev => ({
+          setAnalyticsData((prev: any) => ({
             ...prev,
             chatMessages: {
               ...prev?.chatMessages,
-              [payload.new.id]: payload.new
+              [(payload.new as any).id]: payload.new
             }
           }));
         }
@@ -98,7 +98,7 @@ export const useAnalytics = () => {
         },
         (payload) => {
           console.log('Wallet change received:', payload);
-          setAnalyticsData(prev => ({
+          setAnalyticsData((prev: any) => ({
             ...prev,
             wallet: payload.new
           }));

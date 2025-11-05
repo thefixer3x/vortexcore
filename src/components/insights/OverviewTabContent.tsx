@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { logSlowQueries, batchUserQueries, getChatWithRelatedData, getTransactionWithRelatedData, getUserRecentTransactions, getUserWallet, invalidateCache } from '@/lib/analytics';
+import { batchUserQueries, getUserRecentTransactions, invalidateCache } from '@/lib/analytics';
 
 interface PerformanceMetrics {
   avgQueryTime: number;
