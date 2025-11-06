@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_chat_sessions: {
+        Row: {
+          ai_model: string
+          created_at: string
+          id: string
+          messages: Json
+          session_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_model?: string
+          created_at?: string
+          id?: string
+          messages?: Json
+          session_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_model?: string
+          created_at?: string
+          id?: string
+          messages?: Json
+          session_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_recommendations: {
         Row: {
           created_at: string | null
@@ -1378,7 +1408,7 @@ export type Database = {
           granted: boolean | null
           granted_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           revoked_at: string | null
           updated_at: string | null
           user_agent: string | null
@@ -1390,7 +1420,7 @@ export type Database = {
           granted?: boolean | null
           granted_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           revoked_at?: string | null
           updated_at?: string | null
           user_agent?: string | null
@@ -1402,7 +1432,7 @@ export type Database = {
           granted?: boolean | null
           granted_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           revoked_at?: string | null
           updated_at?: string | null
           user_agent?: string | null
@@ -1706,10 +1736,7 @@ export type Database = {
           subcategory: string
         }[]
       }
-      cleanup_expired_recommendations: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_expired_recommendations: { Args: never; Returns: undefined }
       get_cash_flow_summary: {
         Args: { p_consent_id: string; p_days_back?: number }
         Returns: {
@@ -1722,10 +1749,7 @@ export type Database = {
           transaction_count: number
         }[]
       }
-      get_product_image_url: {
-        Args: { image_path: string }
-        Returns: string
-      }
+      get_product_image_url: { Args: { image_path: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1733,18 +1757,9 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_owner: {
-        Args: { bulk_id: string }
-        Returns: boolean
-      }
-      request_password_reset: {
-        Args: { email: string }
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_owner: { Args: { bulk_id: string }; Returns: boolean }
+      request_password_reset: { Args: { email: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
