@@ -59,18 +59,13 @@ export const batchUserQueries = async (userId: string) => {
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('profiles')
-      .select(`
-        *,
-        wallets (id, balance, currency, created_at, updated_at),
-        user_settings (key, value, created_at, updated_at)
-      `)
-      .eq('id', userId)
-      .single(),
-    'batch_user_queries'
-  );
+  const query = supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+    
+  const { data, error } = await logSlowQueries(query, 'batch_user_queries');
 
   if (error) {
     console.error('Error in batchUserQueries:', error);
@@ -82,27 +77,22 @@ export const batchUserQueries = async (userId: string) => {
   return { data, error: null };
 };
 
-// Function to get chat data with related information in a single query with caching
-export const getChatWithRelatedData = async (conversationId: string) => {
-  const cacheKey = `chat_with_related_data_${conversationId}`;
+// Function to get AI chat session data with caching
+export const getChatWithRelatedData = async (sessionId: string) => {
+  const cacheKey = `chat_with_related_data_${sessionId}`;
   const cachedResult = cache.get(cacheKey);
   
   if (cachedResult) {
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('chat_conversations')
-      .select(`
-        *,
-        chat_messages (id, role, content, timestamp, encrypted),
-        profiles (full_name, avatar_url)
-      `)
-      .eq('id', conversationId)
-      .single(),
-    'get_chat_with_related_data'
-  );
+  const query = supabase
+    .from('ai_chat_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single();
+    
+  const { data, error } = await logSlowQueries(query, 'get_chat_with_related_data');
 
   if (error) {
     console.error('Error in getChatWithRelatedData:', error);
@@ -123,17 +113,13 @@ export const getTransactionWithRelatedData = async (transactionId: string) => {
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('vortex_transactions')
-      .select(`
-        *,
-        profiles (full_name, email)
-      `)
-      .eq('id', transactionId)
-      .single(),
-    'get_transaction_with_related_data'
-  );
+  const query = supabase
+    .from('vortex_transactions')
+    .select('*')
+    .eq('id', transactionId)
+    .single();
+    
+  const { data, error } = await logSlowQueries(query, 'get_transaction_with_related_data');
 
   if (error) {
     console.error('Error in getTransactionWithRelatedData:', error);
@@ -154,17 +140,13 @@ export const getVirtualCardWithTransactions = async (cardId: string) => {
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('virtual_cards')
-      .select(`
-        *,
-        virtual_card_transactions (*)
-      `)
-      .eq('id', cardId)
-      .single(),
-    'get_virtual_card_with_transactions'
-  );
+  const query = supabase
+    .from('virtual_cards')
+    .select('*')
+    .eq('id', cardId)
+    .single();
+    
+  const { data, error } = await logSlowQueries(query, 'get_virtual_card_with_transactions');
 
   if (error) {
     console.error('Error in getVirtualCardWithTransactions:', error);
@@ -185,15 +167,14 @@ export const getUserRecentTransactions = async (userId: string, limit: number = 
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('vortex_transactions')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(limit),
-    'get_user_recent_transactions'
-  );
+  const query = supabase
+    .from('vortex_transactions')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+    
+  const { data, error } = await logSlowQueries(query, 'get_user_recent_transactions');
 
   if (error) {
     console.error('Error in getUserRecentTransactions:', error);
@@ -214,14 +195,13 @@ export const getUserWallet = async (userId: string) => {
     return { data: cachedResult, error: null };
   }
 
-  const { data, error } = await logSlowQueries(
-    supabase
-      .from('vortex_wallets')
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle(),
-    'get_user_wallet'
-  );
+  const query = supabase
+    .from('vortex_wallets')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+    
+  const { data, error} = await logSlowQueries(query, 'get_user_wallet');
 
   if (error) {
     console.error('Error in getUserWallet:', error);
@@ -233,13 +213,9 @@ export const getUserWallet = async (userId: string) => {
   return { data, error: null };
 };
 
-// Function to clear specific cache entries when data is updated
-export const invalidateCache = (pattern: string) => {
-  for (const key of cache.cache.keys()) {
-    if (key.includes(pattern)) {
-      cache.delete(key);
-    }
-  }
+// Function to clear all cache
+export const invalidateCache = () => {
+  cache.clear();
 };
 
 // Function to clear all cache
