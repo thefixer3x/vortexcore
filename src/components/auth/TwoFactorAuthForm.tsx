@@ -8,7 +8,7 @@ import {
   InputOTPGroup, 
   InputOTPSlot 
 } from "@/components/ui/input-otp";
-import { QrCode, Smartphone } from "lucide-react";
+import { Smartphone } from "lucide-react";
 
 interface TwoFactorAuthFormProps {
   email: string;
@@ -36,7 +36,7 @@ export function TwoFactorAuthForm({
       if (error) {
         toast({
           title: "2FA Setup Error",
-          description: error.message || "Failed to set up two-factor authentication",
+          description: (error as any)?.message || "Failed to set up two-factor authentication",
           variant: "destructive"
         });
         return;
@@ -69,12 +69,12 @@ export function TwoFactorAuthForm({
     
     try {
       setIsLoading(true);
-      const { data, error } = await verifyTwoFactorAuth(factorId, code);
+      const { error } = await verifyTwoFactorAuth(factorId, code);
       
       if (error) {
         toast({
           title: "2FA Verification Error",
-          description: error.message || "Failed to verify two-factor authentication code",
+          description: (error as any)?.message || "Failed to verify two-factor authentication code",
           variant: "destructive"
         });
         return;

@@ -2,10 +2,12 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const nixieKey = Deno.env.get('nixieai_secret_key');
 const perplexityKey = Deno.env.get('perplexity_ai_keys');
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-};
+const allowedOrigins = Deno.env.get('ALLOWED_ORIGINS')?.split(',') || ['http://localhost:3000'];
+
+ const corsHeaders = {
+  'Access-Control-Allow-Origin': allowedOrigins[0], // You'll need to check origin dynamically
+   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
+ };
 serve(async (req)=>{
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -15,6 +17,20 @@ serve(async (req)=>{
   }
   try {
     const { message, previousMessages, learningMode, childAge, childFriendlyMode } = await req.json();
+  
+    // Validate required fields
+    if (!message || typeof message !== 'string') {
+      throw new Error("'message' is required and must be a string");
+    }
+
+    if (!previousMessages || !Array.isArray(previousMessages)) {
+      throw new Error("'previousMessages' is required and must be an array");
+    }
+
+    // Validate optional fields
+    if (learningMode && !['math', 'coding', 'confidence'].includes(learningMode)) {
+      throw new Error("'learningMode' must be one of: math, coding, confidence");
+    }
     // Default age range if not provided
     const age = childAge || '7-14';
     // Determine learning mode context and persona
@@ -34,10 +50,11 @@ serve(async (req)=>{
       modeContext = 'You are in general learning mode. Be curious and wonder-filled about all topics. Your personality is inquisitive and enjoys exploring new ideas together with the child. You ask thoughtful questions and are excited to learn alongside them.';
     }
     // Child-friendly mode context (for ages 7-10)
-    let childFriendlyContext = '';
-    if (childFriendlyMode) {
-      childFriendlyContext = `
-      IMPORTANT: You are currently speaking to a young child (ages 7-10). Adjust your tone to be:
+    // Prepare conversation history for context
+    const conversationHistory = (previousMessages || []).map((msg)=>({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
       - Friendly, calm, and encouraging — like a big sister or helpful friend
       - Use simple words and short sentences (10 words or less per sentence)
       - Break down complex ideas into easy examples using everyday objects, puzzles, or blocks
@@ -153,15 +170,15 @@ serve(async (req)=>{
         return new Response(JSON.stringify({
           response: aiResponse
         }), {
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        });
-      } else {
-        const errorData = await perplexityResponse.text();
-        throw new Error(`Perplexity API error: ${errorData}`);
+    return new Response(JSON.stringify({
+      error: "An error occurred while processing your request. Please try again later."
+    }), {
+      status: 500,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json'
       }
+    });
     }
     // If we get here, both providers failed or weren't configured
     throw new Error("No AI provider keys available");

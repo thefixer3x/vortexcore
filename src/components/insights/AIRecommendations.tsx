@@ -1,73 +1,264 @@
+import React, { useState, useEffect } from 'react';
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Check, AlertTriangle } from "lucide-react";
+interface PerformanceData {
+  timestamp: Date;
+  avgQueryTime: number;
+  cacheHitRate: number;
+  activeConnections: number;
+  slowQueries: number;
+  cpuUsage: number;
+  memoryUsage: number;
+}
 
-interface AISuggestion {
-  id: number;
+interface Recommendation {
+  id: string;
   title: string;
   description: string;
-  impact: string;
-  type: string;
+  priority: 'high' | 'medium' | 'low';
+  impact: 'high' | 'medium' | 'low';
+  status: 'pending' | 'in-progress' | 'completed';
 }
 
-interface AIRecommendationsProps {
-  suggestions: AISuggestion[];
-}
+const AIRecommendations: React.FC = () => {
+  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-export function AIRecommendations({ suggestions }: AIRecommendationsProps) {
-  const getSuggestionIcon = (type: string) => {
-    switch (type) {
-      case "saving":
-        return <TrendingDown className="h-5 w-5 text-green-500" />;
-      case "warning":
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />;
-      case "opportunity":
-        return <TrendingUp className="h-5 w-5 text-blue-500" />;
-      default:
-        return <Check className="h-5 w-5" />;
-    }
+  // Simulate fetching performance data
+  useEffect(() => {
+    // In a real application, this would come from your monitoring service
+    const mockPerformanceData: PerformanceData[] = [
+      {
+        timestamp: new Date(Date.now() - 3600000),
+        avgQueryTime: 65,
+        cacheHitRate: 78,
+        activeConnections: 24,
+        slowQueries: 8,
+        cpuUsage: 65,
+        memoryUsage: 72
+      },
+      {
+        timestamp: new Date(Date.now() - 180000),
+        avgQueryTime: 52,
+        cacheHitRate: 82,
+        activeConnections: 18,
+        slowQueries: 5,
+        cpuUsage: 58,
+        memoryUsage: 68
+      },
+      {
+        timestamp: new Date(),
+        avgQueryTime: 45,
+        cacheHitRate: 89,
+        activeConnections: 15,
+        slowQueries: 2,
+        cpuUsage: 45,
+        memoryUsage: 62
+      }
+    ];
+
+    const mockRecommendations: Recommendation[] = [
+      {
+        id: '1',
+        title: 'Enable Redis Caching',
+        description: 'Implement Redis caching for frequently accessed data to reduce database load',
+        priority: 'high',
+        impact: 'high',
+        status: 'pending'
+      },
+      {
+        id: '2',
+        title: 'Optimize Connection Pooling',
+        description: 'Adjust connection pool settings to reduce overhead from connection establishment',
+        priority: 'high',
+        impact: 'medium',
+        status: 'completed'
+      },
+      {
+        id: '3',
+        title: 'Update Database Extensions',
+        description: 'Update outdated extensions to reduce migration query overhead',
+        priority: 'medium',
+        impact: 'medium',
+        status: 'completed'
+      },
+      {
+        id: '4',
+        title: 'Add Missing Indexes',
+        description: 'Add indexes to frequently queried columns to improve query performance',
+        priority: 'medium',
+        impact: 'high',
+        status: 'pending'
+      },
+      {
+        id: '5',
+        title: 'Optimize Realtime Subscriptions',
+        description: 'Refine realtime subscription filters to reduce unnecessary data transfer',
+        priority: 'low',
+        impact: 'medium',
+        status: 'completed'
+      }
+    ];
+
+    setPerformanceData(mockPerformanceData);
+    setRecommendations(mockRecommendations);
+    setLoading(false);
+  }, []);
+
+  // Calculate trend
+  const calculateTrend = () => {
+    if (performanceData.length < 2) return 0;
+    
+    const first = performanceData[0];
+    const last = performanceData[performanceData.length - 1];
+    
+    // Calculate improvement in query time (lower is better)
+    const queryTimeImprovement = ((first.avgQueryTime - last.avgQueryTime) / first.avgQueryTime) * 100;
+    
+    return queryTimeImprovement;
   };
 
+  const trend = calculateTrend();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
-    <Card className="rounded-xl overflow-hidden animate-fade-in">
-      <div className="px-6 py-4 border-b">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">AI Recommendations</h2>
-          <Badge variant="secondary">{suggestions.length} new suggestions</Badge>
+    <div className="p-6">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Performance Insights & Recommendations</h2>
+        
+        {/* Performance Trend Summary */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">Performance Trend</h3>
+              <p className="text-gray-600 mt-1">Query performance has improved {trend.toFixed(1)}% in the last hour</p>
+            </div>
+            <div className="text-right">
+              <div className={`text-3xl font-bold ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {trend > 0 ? '↑' : '↓'} {Math.abs(trend).toFixed(1)}%
+              </div>
+              <div className="text-sm text-gray-500">vs. 1 hour ago</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Avg Query Time</h3>
+            <p className="text-3xl font-bold text-blue-60">
+              {performanceData[performanceData.length - 1]?.avgQueryTime}ms
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Target: &lt;50ms</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Cache Hit Rate</h3>
+            <p className="text-3xl font-bold text-green-600">
+              { performanceData[ performanceData.length - 1]?.cacheHitRate}%
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Target: &gt;90%</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow border">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Slow Queries</h3>
+            <p className="text-3xl font-bold text-orange-600">
+              { performanceData[ performanceData.length - 1]?.slowQueries}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Target: &lt;5/hour</p>
+          </div>
         </div>
       </div>
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {suggestions.map((suggestion) => (
-            <Card key={suggestion.id} className="border shadow-sm hover:shadow-md transition-all duration-300">
-              <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    {getSuggestionIcon(suggestion.type)}
+
+      {/* Recommendations */}
+      <div>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">AI-Powered Recommendations</h3>
+        
+        <div className="space-y-4">
+          {recommendations.map((rec) => (
+            <div 
+              key={rec.id} 
+              className={`p-4 rounded-lg border ${
+                rec.status === 'completed' 
+                  ? 'bg-green-50 border-green-200' 
+                  : rec.status === 'in-progress' 
+                    ? 'bg-blue-50 border-blue-200' 
+                    : 'bg-white border-gray-200'
+              }`}
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center">
+                    <h4 className="text-lg font-medium text-gray-900">{rec.title}</h4>
+                    <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                      rec.priority === 'high' 
+                        ? 'bg-red-100 text-red-800' 
+                        : rec.priority === 'medium' 
+                          ? 'bg-yellow-100 text-yellow-800' 
+                          : 'bg-green-100 text-green-800'
+                    }`}>
+                      {rec.priority}
+                    </span>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-1">
-                      <h4 className="font-medium">{suggestion.title}</h4>
-                      <Badge variant="outline" className="ml-2">
-                        {suggestion.impact}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {suggestion.description}
-                    </p>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">Dismiss</Button>
-                      <Button size="sm">Take Action</Button>
-                    </div>
-                  </div>
+                  <p className="text-gray-600 mt-1">{rec.description}</p>
                 </div>
-              </CardContent>
-            </Card>
+                
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  rec.status === 'completed' 
+                    ? 'bg-green-100 text-green-800' 
+                    : rec.status === 'in-progress' 
+                      ? 'bg-blue-100 text-blue-800' 
+                      : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {rec.status.replace('-', ' ')}
+                </span>
+              </div>
+              
+              <div className="mt-3 flex items-center">
+                <span className="text-sm text-gray-500 mr-4">
+                  Impact: 
+                  <span className={`ml-1 ${
+                    rec.impact === 'high' 
+                      ? 'text-red-600' 
+                      : rec.impact === 'medium' 
+                        ? 'text-yellow-600' 
+                        : 'text-green-600'
+                  }`}>
+                    {rec.impact}
+                  </span>
+                </span>
+                
+                {rec.status === 'pending' && (
+                  <button className="ml-auto px-3 py-1 bg-blue-60 text-white text-sm rounded-md hover:bg-blue-700">
+                    Implement
+                  </button>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>
-    </Card>
+
+      {/* Implementation Guide */}
+      <div className="mt-8 bg-gray-50 p-6 rounded-lg border">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Implementation Guide</h3>
+        <ol className="list-decimal list-inside space-y-2 text-gray-700">
+          <li>Implement the database extension updates using the script in APPLY_THIS_IN_SUPABASE_DASHBOARD.sql</li>
+          <li>Update connection pooling settings in your Supabase dashboard as outlined in MANUAL_DASHBOARD_FIXES.md</li>
+          <li>Monitor performance metrics after each change to measure improvement</li>
+          <li>Consider implementing Redis caching for production environments</li>
+          <li>Regularly review query performance in your Supabase dashboard</li>
+        </ol>
+      </div>
+    </div>
   );
-}
+};
+
+export default AIRecommendations;

@@ -1,5 +1,5 @@
 
-import { ArrowRight, Sparkles, Globe } from "lucide-react";
+import { Sparkles, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 

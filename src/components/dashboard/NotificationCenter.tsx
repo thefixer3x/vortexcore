@@ -1,14 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Bell, 
   X, 
-  TrendingUp, 
   Shield, 
-  DollarSign,
-  CreditCard,
   AlertTriangle,
   CheckCircle,
   Info

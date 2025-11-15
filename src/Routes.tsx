@@ -9,6 +9,7 @@ import Settings from './pages/Settings';
 import Ecosystem from './pages/Ecosystem';
 import GeminiDemo from './pages/GeminiDemo';
 import PerplexityDemo from './pages/PerplexityDemo';
+import TestAuth from './pages/TestAuth';
 import NotFound from './pages/NotFound';
 
 const Routes: React.FC = () => {
@@ -23,6 +24,7 @@ const Routes: React.FC = () => {
       <Route path="/ecosystem" element={<Ecosystem />} />
       <Route path="/demo/gemini" element={<GeminiDemo />} />
       <Route path="/demo/perplexity" element={<PerplexityDemo />} />
+      <Route path="/auth" element={<TestAuth />} />
       <Route path="*" element={<NotFound />} />
     </RouterRoutes>
   );

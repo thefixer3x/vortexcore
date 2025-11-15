@@ -26,7 +26,7 @@ class LogRocketErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBo
     // Log the error to LogRocket
     LogRocket.captureException(error, {
       extra: {
-        componentStack: errorInfo.componentStack,
+        componentStack: errorInfo.componentStack || '',
       },
     });
     

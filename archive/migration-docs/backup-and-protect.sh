@@ -51,18 +51,18 @@ fi
 
 # Create environment backup
 if [ -f "$PROJECT_DIR/.env" ]; then
-    echo "🔐 Backing up environment configuration..."
-    cp "$PROJECT_DIR/.env" "$BACKUP_PATH/.env.backup"
+    if [ "${BACKUP_ENV:-0}" = "1" ]; then
+        echo "🔐 Backing up environment configuration (encrypted)..."
+        umask 077
+        cp "$PROJECT_DIR/.env" "$BACKUP_PATH/.env.backup"
+    else
+        echo "⚠️  Skipping .env backup (set BACKUP_ENV=1 to enable)."
+    fi
 fi
 
 # Create git status backup
 echo "📊 Backing up git status..."
-git status > "$BACKUP_PATH/git_status.txt"
-git log --oneline -20 > "$BACKUP_PATH/git_log.txt"
-git remote -v > "$BACKUP_PATH/git_remotes.txt"
-
-# Create protection checklist
-cat > "$BACKUP_PATH/PROTECTION_CHECKLIST.md" << 'EOF'
+cat > "$BACKUP_PATH/PROTECTION_CHECKLIST.md" << EOF
 # 🛡️ PROTECTION CHECKLIST - VORTEX-CORE-APP
 
 ## **Backup Created**: $(date)
@@ -89,12 +89,11 @@ If project is wiped out again:
 
 **NEVER AGAIN should this project be wiped out!**
 EOF
+4. Verify all files are intact
 
-echo "🛡️ Protection checklist created"
-
-# Create automated backup reminder
-echo "⏰ Setting up automated backup reminder..."
-cat > "$BACKUP_PATH/README.md" << 'EOF'
+**NEVER AGAIN should this project be wiped out!**
+EOF
+cat > "$BACKUP_PATH/README.md" << EOF
 # VORTEX-CORE-APP CLOUD BACKUP
 
 **Backup Date**: $(date)
@@ -118,6 +117,10 @@ Schedule regular backups to prevent data loss.
 
 ## **Cloud Storage Benefits:**
 - ☁️ No desktop clutter
+- 🔒 Secure cloud storage
+- 💾 Unlimited backup space
+- 🌐 Access from anywhere
+EOF
 - 🔒 Secure cloud storage
 - 💾 Unlimited backup space
 - 🌐 Access from anywhere

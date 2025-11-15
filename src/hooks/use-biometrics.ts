@@ -57,10 +57,13 @@ export function useBiometrics() {
     checkBiometricAvailability();
   }, []);
 
-  const authenticate = async (): Promise<boolean> => {
+  const authenticate = async (): Promise<{ success: boolean; error?: string }> => {
     // This will be implemented with Capacitor plugins
     // For now, just return success if biometrics are available
-    return status.available;
+    if (!status.available) {
+      return { success: false, error: 'Biometrics not available' };
+    }
+    return { success: true };
   };
 
   return {

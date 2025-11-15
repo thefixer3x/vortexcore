@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { 
   MessageSquare, 
   Send, 
-  ChevronUp, 
   ChevronDown,
   Sparkles
 } from "lucide-react";

@@ -6,7 +6,6 @@ import {
   Plus,
   CreditCard,
   Sparkles,
-  Bell,
   Settings,
   TrendingUp,
   Eye,

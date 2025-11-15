@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BellRing } from "lucide-react";
-import { OverviewTabContent } from "./OverviewTabContent";
+import OverviewTabContent from "./OverviewTabContent";
 import { BankStatementAnalysis } from "./BankStatementAnalysis";
 
 interface FinancialOverviewTabsProps {
@@ -36,7 +36,7 @@ export function FinancialOverviewTabs({ spendingTrend, formatCurrency }: Financi
         </div>
         
         <TabsContent value="overview">
-          <OverviewTabContent spendingTrend={spendingTrend} formatCurrency={formatCurrency} />
+          <OverviewTabContent />
         </TabsContent>
         
         <TabsContent value="income" className="m-0">

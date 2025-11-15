@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuthProviders } from "@/hooks/use-auth-providers";
-import { Github, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { Twitter, Instagram, Linkedin, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
