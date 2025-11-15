@@ -26,8 +26,11 @@ export function AccountCard({ account, className }: AccountCardProps) {
   };
   
   const getAccountTypeIcon = (type: string) => {
-    // You can add more account type icons here
-    return <CreditCard className="h-5 w-5" />;
+    // Future: choose icon by type
+    switch (type?.toLowerCase()) {
+      default:
+        return <CreditCard className="h-5 w-5" />;
+    }
   };
   
   const getCardBackground = () => {

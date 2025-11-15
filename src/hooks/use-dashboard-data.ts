@@ -3,17 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 
-type WalletRow = Tables<"wallets">;
-type TransactionRow = Tables<"transactions">;
-type ProfileRow = Tables<"profiles">;
+type WalletRow = Tables<"vortex_wallets">;
+type TransactionRow = Tables<"vortex_transactions">;
 
 export type DashboardWallet = WalletRow & {
   balance: number;
 };
 
-export type DashboardTransaction = TransactionRow & {
+export type DashboardTransaction = Omit<TransactionRow, 'amount'> & {
   amount: number;
-  metadata: Record<string, unknown> | null;
 };
 
 export interface DashboardProfile {
@@ -69,13 +67,13 @@ export const useDashboardData = (): UseDashboardDataResult => {
     try {
       const [walletResponse, transactionResponse, profileResponse] = await Promise.all([
         supabase
-          .from("wallets")
+          .from("vortex_wallets")
           .select("*")
           .eq("user_id", userId)
           .eq("is_active", true)
           .order("created_at", { ascending: true }),
         supabase
-          .from("transactions")
+          .from("vortex_transactions")
           .select("*")
           .eq("user_id", userId)
           .order("created_at", { ascending: false })
@@ -99,13 +97,12 @@ export const useDashboardData = (): UseDashboardDataResult => {
 
       const normalisedWallets = (walletResponse.data ?? []).map((wallet) => ({
         ...wallet,
-        balance: normaliseAmount(wallet.balance)
+        balance: normalizeAmount(wallet.balance)
       }));
 
       const normalisedTransactions = (transactionResponse.data ?? []).map((transaction) => ({
         ...transaction,
-        amount: normaliseAmount(transaction.amount),
-        metadata: (transaction.metadata as Record<string, unknown> | null) ?? null
+        amount: normalizeAmount(transaction.amount)
       }));
 
       setWallets(normalisedWallets);
@@ -132,7 +129,7 @@ export const useDashboardData = (): UseDashboardDataResult => {
       .channel(`dashboard_wallets_${userId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "wallets", filter: `user_id=eq.${userId}` },
+        { event: "*", schema: "public", table: "vortex_wallets", filter: `user_id=eq.${userId}` },
         () => {
           void fetchData();
         }
@@ -143,7 +140,7 @@ export const useDashboardData = (): UseDashboardDataResult => {
       .channel(`dashboard_transactions_${userId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "transactions", filter: `user_id=eq.${userId}` },
+        { event: "*", schema: "public", table: "vortex_transactions", filter: `user_id=eq.${userId}` },
         () => {
           void fetchData();
         }

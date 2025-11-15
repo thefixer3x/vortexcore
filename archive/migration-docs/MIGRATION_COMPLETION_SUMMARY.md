@@ -2,7 +2,7 @@
 
 ## Migration Summary
 **Date Completed:** June 9, 2025  
-**Source Project:** VortexCore.app (`muyhurqfcsjqtnbozyir`)  
+**Source Project:** VortexCore.app (`mxtsdgkwzjzlttpotole`)  
 **Target Project:** Control Room/The Fixer Initiative (`mxtsdgkwzjzlttpotole`)  
 **Migration Type:** Safe integration without data reset
 

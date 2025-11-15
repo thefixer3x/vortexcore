@@ -69,20 +69,23 @@ VortexCore demonstrates enterprise-grade architecture with comprehensive securit
 // Recommended security middleware additions
 app.use(helmet({
   contentSecurityPolicy: {
+    useDefaults: true,
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      scriptSrc: ["'self'", "'nonce-{{NONCE}}'"],  // inject a per-request nonce
+      styleSrc: ["'self'"],                        // prefer no inline styles
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+      upgradeInsecureRequests: []
     }
   },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true
-  }
+  crossOriginOpenerPolicy: { policy: "same-origin" },
+  crossOriginEmbedderPolicy: true,
+  crossOriginResourcePolicy: { policy: "same-origin" },
+  referrerPolicy: { policy: "no-referrer" },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true }
 }));
-```
 
 ---
 
@@ -111,14 +114,12 @@ app.use(helmet({
 ### 📈 Architecture Recommendations
 
 #### **Immediate Improvements**
-
-1. **Circuit Breaker Implementation**
-```typescript
 class CircuitBreaker {
   private failures = 0;
   private state: 'closed' | 'open' | 'half-open' = 'closed';
   private threshold = 5;
   private timeout = 60000;
+  private lastFailTime = 0;
 
   async call<T>(operation: () => Promise<T>): Promise<T> {
     if (this.state === 'open') {
@@ -131,11 +132,19 @@ class CircuitBreaker {
     
     try {
       const result = await operation();
-      this.onSuccess();
+      this.failures = 0;
+      this.state = 'closed';
       return result;
     } catch (error) {
-      this.onFailure();
+      this.failures += 1;
+      this.lastFailTime = Date.now();
+      if (this.failures >= this.threshold) {
+        this.state = 'open';
+      }
       throw error;
+    }
+  }
+}
     }
   }
 }

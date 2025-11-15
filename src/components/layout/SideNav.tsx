@@ -11,20 +11,19 @@ import {
   Bell,
   ShieldCheck,
   HelpCircle,
-  ChevronRight,
-  CreditCard as CardIcon
+  ChevronRight
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { SideNavHeader } from "./SideNavHeader";
 import { SideNavProfile } from "./SideNavProfile";
 import { SideNavSection } from "./SideNavSection";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 
 export function SideNav() {
   const location = useLocation();
   const { sidebarOpen, toggleSidebar } = useSidebar();
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
+  
 
   // Handle clicks outside the sidebar to close it on mobile
   useEffect(() => {
@@ -58,7 +57,6 @@ export function SideNav() {
     { name: "Control Room", path: "/dashboard", icon: LayoutDashboard },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
     { name: "VortexAI", path: "/insights", icon: PieChart },
-    { name: "Virtual Cards", path: "/virtual-cards", icon: CardIcon },
     { name: "Settings", path: "/settings", icon: Settings },
     { name: "User Management", path: "/users", icon: Users },
   ];

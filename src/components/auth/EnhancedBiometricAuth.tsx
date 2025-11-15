@@ -6,17 +6,14 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBiometrics } from '@/hooks/use-biometrics';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import {
   Fingerprint,
-  Scan,
   Shield,
   ShieldCheck,
   ShieldAlert,
   Smartphone,
   Eye,
   AlertCircle,
-  CheckCircle,
   Settings
 } from 'lucide-react';
 
@@ -45,7 +42,7 @@ export function EnhancedBiometricAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [testingType, setTestingType] = useState<string | null>(null);
 
-  const { status: biometricStatus, authenticate, checkAvailability } = useBiometrics();
+  const { status: biometricStatus, authenticate } = useBiometrics();
   const { user, isAuthenticated } = useAuth();
 
   // Load user's biometric settings
@@ -59,15 +56,10 @@ export function EnhancedBiometricAuth() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('vortex_settings')
-        .select('setting_value')
-        .eq('user_id', user.id)
-        .eq('setting_key', 'biometric_settings')
-        .single();
-
-      if (!error && data) {
-        setSettings(JSON.parse(data.setting_value));
+      // Store settings in localStorage for now since vortex_settings table doesn't exist
+      const stored = localStorage.getItem(`biometric_settings_${user.id}`);
+      if (stored) {
+        setSettings(JSON.parse(stored));
       }
     } catch (error) {
       console.error('Error loading biometric settings:', error);
@@ -78,14 +70,8 @@ export function EnhancedBiometricAuth() {
     if (!user) return;
 
     try {
-      await supabase
-        .from('vortex_settings')
-        .upsert({
-          user_id: user.id,
-          setting_key: 'biometric_settings',
-          setting_value: JSON.stringify(newSettings)
-        });
-
+      // Store settings in localStorage for now since vortex_settings table doesn't exist
+      localStorage.setItem(`biometric_settings_${user.id}`, JSON.stringify(newSettings));
       setSettings(newSettings);
     } catch (error) {
       console.error('Error saving biometric settings:', error);

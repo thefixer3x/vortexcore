@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LogRocket from "logrocket";
-import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -34,7 +34,6 @@ export function OpenAIChat() {
   const [retryCount, setRetryCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { getAccessToken, isAuthenticated } = useAuth();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,138 +60,25 @@ export function OpenAIChat() {
         historyLength: messages.length,
       });
 
-      const history = messages.map((m) => ({ role: m.role, content: m.content }));
+      const history = messages.slice(0, -2).map((m) => ({ role: m.role, content: m.content }));
 
-      const wantRealtime = /today|current|latest|now|price|index|market|exchange rate/i.test(
-        userMessage.content
-      );
-
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (isAuthenticated) {
-        const token = await getAccessToken();
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-      }
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      if (supabaseAnonKey) headers["apikey"] = supabaseAnonKey;
-
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) throw new Error("Missing VITE_SUPABASE_URL");
-      const endpoint = `${supabaseUrl}/functions/v1/ai-router`;
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          messages: [...history, userMessage],
-          model: "gpt-4o-mini",
-          wantRealtime,
-        }),
+      const { data, error } = await supabase.functions.invoke('openai-chat', {
+        body: {
+          prompt: userMessage.content,
+          history
+        }
       });
 
-      if (!response.ok) {
-        let errorMessage = "Failed to connect to VortexAI";
-        if (response.status === 404) {
-          errorMessage =
-            "AI assistant is temporarily unavailable. Our team is working to restore service.";
-        } else if (response.status === 500) {
-          errorMessage =
-            "AI assistant is experiencing technical difficulties. Please try again in a few moments.";
-        } else if (response.status === 403) {
-          errorMessage =
-            "AI assistant access is currently restricted. Please check your account status.";
-        } else {
-          errorMessage = `AI assistant is temporarily unavailable (Error ${response.status}). Please try again later.`;
-        }
-        throw new Error(errorMessage);
-      }
-
-      const contentType = response.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            role: "assistant",
-            content:
-              data.response ||
-              "I apologize, but I couldn't generate a response at this time.",
-          };
-          return updated;
-        });
-      } else if (contentType.includes("text/event-stream")) {
-        const reader = response.body?.getReader();
-        if (!reader) throw new Error("Response body is not readable");
-
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let assistantText = "";
-
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || "";
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || !trimmed.startsWith("data:")) continue;
-            const payload = trimmed.replace(/^data:\s*/, "");
-            if (payload === "[DONE]") {
-              buffer = "";
-              break;
-            }
-            try {
-              const json = JSON.parse(payload);
-              if (json.choices?.[0]?.delta?.content) {
-                assistantText += json.choices[0].delta.content;
-              } else if (json.response) {
-                assistantText = json.response;
-              } else if (typeof json === "string") {
-                assistantText += json;
-              } else if (json.content) {
-                assistantText += json.content;
-              }
-              setMessages((prev) => {
-                const updated = [...prev];
-                updated[updated.length - 1] = {
-                  role: "assistant",
-                  content: assistantText,
-                };
-                return updated;
-              });
-            } catch {
-              if (payload !== "[DONE]") {
-                assistantText += payload;
-                setMessages((prev) => {
-                  const updated = [...prev];
-                  updated[updated.length - 1] = {
-                    role: "assistant",
-                    content: assistantText,
-                  };
-                  return updated;
-                });
-              }
-            }
-          }
-        }
-      } else {
-        const text = await response.text();
-        let assistantText =
-          "I received a response, but it was in an unexpected format.";
-        try {
-          const data = JSON.parse(text);
-          if (data.response) assistantText = data.response;
-        } catch {
-          if (text && text.length < 1000) assistantText = text;
-        }
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: "assistant", content: assistantText };
-          return updated;
-        });
-      }
+      if (error) throw new Error(error.message || "Failed to get AI response");
+      
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          role: "assistant",
+          content: data?.response || "I apologize, but I couldn't generate a response at this time.",
+        };
+        return updated;
+      });
 
       setRetryCount(0);
     } catch (error) {
@@ -379,4 +265,3 @@ export function OpenAIChat() {
     </div>
   );
 }
-
