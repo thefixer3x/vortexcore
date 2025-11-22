@@ -34,10 +34,9 @@ npx supabase db push
 
 # Option B: Via Supabase Dashboard
 1. Go to https://supabase.com/dashboard/project/YOUR_PROJECT/sql
-2. Copy contents of 20251122_create_missing_core_tables.sql
+2. Copy contents of 20251122_create_wallets_transactions_tables.sql
 3. Paste and click "Run"
-4. Verify all 7 tables created: wallets, transactions, conversations,
-   ai_chat_sessions, child_profiles, vortex_settings, stripe_customers
+4. Verify both tables created: wallets, transactions
 ```
 
 **Verification:**
@@ -45,12 +44,11 @@ npx supabase db push
 SELECT table_name
 FROM information_schema.tables
 WHERE table_schema = 'public'
-  AND table_name IN ('wallets', 'transactions', 'conversations',
-                     'ai_chat_sessions', 'child_profiles',
-                     'vortex_settings', 'stripe_customers');
+  AND table_name IN ('wallets', 'transactions');
 ```
 
-Should return 7 rows.
+Should return 2 rows (wallets and transactions).
+Note: profiles, chat_conversations, and chat_messages already exist.
 
 ---
 
