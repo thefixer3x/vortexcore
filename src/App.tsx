@@ -20,8 +20,7 @@ import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryM
 import BulkUpload from "./components/payments/beneficiaries/BulkUpload";
 import CategoryManager from "./components/payments/beneficiaries/CategoryManager";
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
-// import { LogRocketRouterTracker } from "./components/analytics/LogRocketRouterTracker";
-// import LogRocketErrorBoundary from "./components/error/LogRocketErrorBoundary";
+import ErrorBoundary from "./components/error/ErrorBoundary";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import { OpenAIChat } from "./components/ai/OpenAIChat";
 import { Home } from "lucide-react";
@@ -84,12 +83,13 @@ const ComingSoon = ({ title }: { title: string }) => (
 
 const App = () => {
   return (
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SidebarProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <SidebarProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
@@ -132,10 +132,11 @@ const App = () => {
           
           {/* Persistent AI Chat Bubble - available on all pages */}
           <OpenAIChat />
-        </SidebarProvider>
-      </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
+          </SidebarProvider>
+        </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 
