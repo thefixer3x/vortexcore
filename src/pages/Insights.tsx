@@ -1,8 +1,8 @@
-
 import { InsightsHeader } from "@/components/insights/InsightsHeader";
 import { FinancialOverviewTabs } from "@/components/insights/FinancialOverviewTabs";
 import { InsightWidget } from "@/components/dashboard/InsightWidget";
 import AIRecommendations from "@/components/insights/AIRecommendations";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const spendingTrend = [
   { month: "Jan", amount: 1200 },
@@ -74,25 +74,18 @@ const aiSuggestions = [
 ];
 
 const Insights = () => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
+  const { formatCurrency } = useCurrency();
 
   return (
     <div className="animate-fade-in">
-      <InsightsHeader 
-        title="AI Insights" 
-        description="Financial analytics and personalized recommendations" 
+      <InsightsHeader
+        title="AI Insights"
+        description="Financial analytics and personalized recommendations"
       />
-      
-      <FinancialOverviewTabs 
-        spendingTrend={spendingTrend} 
-        formatCurrency={formatCurrency} 
+
+      <FinancialOverviewTabs
+        spendingTrend={spendingTrend}
+        formatCurrency={formatCurrency}
       />
       
       <div className="mb-8">
