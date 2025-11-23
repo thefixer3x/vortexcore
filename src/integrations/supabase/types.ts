@@ -14,9 +14,11 @@ export type Database = {
           avatar_url: string | null
           company_name: string | null
           created_at: string
+          default_currency: string
           email: string | null
           full_name: string | null
           id: string
+          language: string
           phone: string | null
           role: string | null
           updated_at: string
@@ -25,9 +27,11 @@ export type Database = {
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string
+          default_currency?: string
           email?: string | null
           full_name?: string | null
           id: string
+          language?: string
           phone?: string | null
           role?: string | null
           updated_at?: string
@@ -36,9 +40,11 @@ export type Database = {
           avatar_url?: string | null
           company_name?: string | null
           created_at?: string
+          default_currency?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          language?: string
           phone?: string | null
           role?: string | null
           updated_at?: string

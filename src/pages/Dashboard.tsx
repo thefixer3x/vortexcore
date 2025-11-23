@@ -9,6 +9,7 @@ import { DashboardSkeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import LogRocket from "logrocket"; // Temporarily disabled
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { DashboardActionDialog } from "@/components/dashboard/DashboardActionDialog";
 import {
   type DashboardActionType,
@@ -25,6 +26,7 @@ const ACCOUNT_COLORS = [
 
 const Dashboard = () => {
   const { wallets, transactions, profile, isLoading, error, refresh } = useDashboardData();
+  const { currency } = useCurrency();
   const [selectedAction, setSelectedAction] = useState<DashboardActionType | null>(null);
 
   const hasWallets = wallets.length > 0;
@@ -32,8 +34,6 @@ const Dashboard = () => {
     () => wallets.reduce((total, wallet) => total + wallet.balance, 0),
     [wallets]
   );
-
-  const primaryCurrency = wallets[0]?.currency ?? "USD";
 
   const accountCards = useMemo(
     () =>
@@ -132,7 +132,7 @@ const Dashboard = () => {
       <div className="animate-slide-up">
         <ModernDashboardHeader
           totalBalance={totalBalance}
-          currency={primaryCurrency}
+          currency={currency}
           onNewTransaction={() => setSelectedAction("send")}
           userName={profile?.full_name || profile?.company_name || null}
           hasWallets={hasWallets}
