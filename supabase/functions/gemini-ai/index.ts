@@ -1,13 +1,28 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { withAuthMiddleware } from "../_shared/middleware.ts";
+import { withPublicMiddleware } from "../_shared/middleware.ts";
 
-serve(withAuthMiddleware(async (req) => {
+serve(withPublicMiddleware(async (req) => {
   try {
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) throw new Error("Gemini API Key not configured in Supabase Secrets");
+    if (!GEMINI_API_KEY) {
+      console.error("GEMINI_API_KEY not configured");
+      return new Response(JSON.stringify({ 
+        error: "Gemini AI service is not configured. Please contact support." 
+      }), { 
+        status: 503, 
+        headers: { "Content-Type": "application/json" } 
+      });
+    }
 
     const { prompt, systemPrompt, history, model = "gemini-pro" } = await req.json();
-    if (!prompt) return new Response(JSON.stringify({ error: "Prompt is required" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+      return new Response(JSON.stringify({ 
+        error: "A valid prompt is required" 
+      }), { 
+        status: 400, 
+        headers: { "Content-Type": "application/json" } 
+      });
+    }
 
     const isGemini2Model = model.startsWith("gemini-2");
     const apiEndpoint = isGemini2Model
@@ -37,5 +52,5 @@ serve(withAuthMiddleware(async (req) => {
     console.error("Error in gemini-ai function:", error);
     return new Response(JSON.stringify({ error: error.message || "An error occurred while processing your request" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
-}, ['POST'])));
+}, ['POST']));
 

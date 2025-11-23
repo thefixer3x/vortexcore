@@ -30,7 +30,7 @@
     "express-rate-limit": "^7.1.5",
     "speakeasy": "^2.0.0",
     "qrcode": "^1.5.3",
-    "nodemailer": "^6.9.7",
+    "nodemailer": "^7.0.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
