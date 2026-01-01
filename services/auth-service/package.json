@@ -16,7 +16,7 @@
   "author": "VortexCore Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "express": "^4.22.1",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
     "bcryptjs": "^2.4.3",
