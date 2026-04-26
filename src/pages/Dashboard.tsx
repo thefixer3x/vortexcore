@@ -15,6 +15,7 @@ import {
   type DashboardActionType,
   DASHBOARD_ACTIONS
 } from "@/components/dashboard/action-config";
+import { OBFAccountPanel } from "@/components/obf";
 
 const ACCOUNT_COLORS = [
   "bg-gradient-to-br from-blue-500 to-blue-700",
@@ -28,6 +29,8 @@ const Dashboard = () => {
   const { wallets, transactions, profile, isLoading, error, refresh } = useDashboardData();
   const { currency } = useCurrency();
   const [selectedAction, setSelectedAction] = useState<DashboardActionType | null>(null);
+
+  const OBF_LIVE = import.meta.env.VITE_OBF_LIVE === "true";
 
   const hasWallets = wallets.length > 0;
   const totalBalance = useMemo(
@@ -158,6 +161,13 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* OBF Accounts — Providus via onasis-gateway (gated by VITE_OBF_LIVE) */}
+      {OBF_LIVE && (
+        <div className="animate-fade-in [animation-delay:0.25s]">
+          <OBFAccountPanel />
+        </div>
+      )}
 
       {/* Quick Actions Grid with Enhanced Animations */}
       <div className="animate-scale-in">
