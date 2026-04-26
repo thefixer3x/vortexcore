@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuthProviders } from "@/hooks/use-auth-providers";
-import { Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { X, Camera, Briefcase, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
@@ -68,7 +68,7 @@ export function SocialLoginButtons() {
         {isLoading === 'twitter' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <Twitter className="h-4 w-4" />
+          <X className="h-4 w-4" />
         )}
         <span>X (Twitter)</span>
       </Button>
@@ -83,7 +83,7 @@ export function SocialLoginButtons() {
         {isLoading === 'linkedin' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <Linkedin className="h-4 w-4" />
+          <Briefcase className="h-4 w-4" />
         )}
         <span>LinkedIn</span>
       </Button>
@@ -98,7 +98,7 @@ export function SocialLoginButtons() {
         {isLoading === 'instagram' ? (
           <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
         ) : (
-          <Instagram className="h-4 w-4" />
+          <Camera className="h-4 w-4" />
         )}
         <span>Instagram</span>
       </Button>
