@@ -36,7 +36,7 @@ export function FinancialOverviewTabs({ spendingTrend, formatCurrency }: Financi
         </div>
         
         <TabsContent value="overview">
-          <OverviewTabContent spendingTrend={spendingTrend} formatCurrency={formatCurrency} />
+          <OverviewTabContent />
         </TabsContent>
         
         <TabsContent value="income" className="m-0">

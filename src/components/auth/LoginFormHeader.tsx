@@ -1,6 +1,3 @@
-
-import React from "react";
-
 export function LoginFormHeader() {
   return (
     <div className="text-center">

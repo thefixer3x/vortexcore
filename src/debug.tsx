@@ -1,5 +1,5 @@
 // Debug component to test if React is working
-import React from 'react';
+
 
 export const DebugComponent = () => {
   if (import.meta.env.DEV) {

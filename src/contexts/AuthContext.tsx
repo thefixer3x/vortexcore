@@ -16,6 +16,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   identifyUser: (user: User) => void;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   getAccessToken: () => Promise<string | null>;
 };
@@ -108,6 +109,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // LogRocket.track('user_identified');
   };
 
+  const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (error) {
+      console.error("Error signing in:", error);
+      return { success: false, error: "An unexpected error occurred" };
+    }
+  };
+
   const logout = async () => {
     try {
       await supabase.auth.signOut();
@@ -140,11 +152,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider 
       value={{ 
-        user, 
+        user,
         session,
-        isAuthenticated: !!user && !!session, 
+        isAuthenticated: !!user && !!session,
         isLoading,
-        identifyUser, 
+        identifyUser,
+        signIn,
         logout,
         getAccessToken
       }}
