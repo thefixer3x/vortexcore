@@ -57,10 +57,8 @@ export function useBiometrics() {
     checkBiometricAvailability();
   }, []);
 
-  const authenticate = async (): Promise<boolean> => {
-    // This will be implemented with Capacitor plugins
-    // For now, just return success if biometrics are available
-    return status.available;
+  const authenticate = async (): Promise<{ success: boolean; error?: string }> => {
+    return { success: false, error: "Biometric authentication is not implemented yet" };
   };
 
   return {
