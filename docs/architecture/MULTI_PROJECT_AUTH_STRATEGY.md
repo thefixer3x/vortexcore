@@ -17,7 +17,22 @@ We applied VortexCore-specific auth fixes globally without considering your exis
 ## ✅ **Immediate Restoration Steps**
 
 ### 1. **Run Restoration Script:**
+
+The restoration script `restore-original-auth.sh` must be located in the same directory as this document (or created if missing). It reverts auth config files, restores original OAuth keys, resets environment variables, and replaces modified config files with backups.
+
+**To create the script** (if it doesn't exist), save the following as `restore-original-auth.sh` in the `scripts/` directory and make it executable with `chmod +x scripts/restore-original-auth.sh`:
+
 ```bash
+#!/bin/bash
+# restore-original-auth.sh - Restores the repo to the original single-project auth configuration
+# Usage: ./restore-original-auth.sh [--skip-backup]
+# Prerequisites: backup files must exist (e.g., .env.backup.YYYYMMDDHHMMSS)
+# End state: Reapplies original config files/credentials and restores single-project auth
+```
+
+**To run the script:**
+```bash
+chmod +x scripts/restore-original-auth.sh  # ensure execute permission
 ./restore-original-auth.sh
 ```
 
@@ -41,7 +56,7 @@ http://localhost:5173/auth/callback
 
 #### **OAuth Providers:**
 - **Twitter**: `https://api.lanonasis.com/auth/callback?return_to=vortexcore`
-- **Other providers**: Follow same pattern
+- **Other providers**: Follow the same callback URL structure: `https://api.lanonasis.com/auth/callback?return_to=<project_name>` where `<project_name>` is the URL-encoded project slug (e.g., `vortexcore`). Register the exact callback URL in each OAuth provider's settings.
 
 ### 3. **Fix Vercel Custom Domain:**
 
@@ -53,7 +68,9 @@ vercel domains inspect me.vortexcore.app
 
 #### **If Domain Not Configured:**
 ```bash
-vercel domains add me.vortexcore.app --scope=team_thefixers
+# Replace team_thefixers with your actual Vercel team slug
+# Find your team slug via: vercel teams ls
+vercel domains add me.vortexcore.app --scope=YOUR_TEAM_SLUG
 ```
 
 #### **DNS Configuration:**
@@ -110,23 +127,84 @@ export const FEATURE_FLAGS = {
 
 ### **3. Configuration Backup System**
 
+Two scripts manage auth configuration backups. They should be placed in the `scripts/` directory.
+
+**`backup-auth-config.sh`** - Backs up auth DB dumps, identity-provider configs, env vars, TLS certs, and related YAMLs.
 ```bash
 # Create backup before any auth changes
-./backup-auth-config.sh
-
-# Restore if needed
-./restore-auth-config.sh [backup-date]
+./scripts/backup-auth-config.sh
 ```
+
+**`restore-auth-config.sh [backup-date]`** - Restores from a timestamped backup (e.g., `.env.backup.YYYYMMDDHHMMSS`).
+```bash
+# Restore if needed
+./scripts/restore-auth-config.sh 20251122_120000
+```
+
+**Usage:** Both scripts require execute permission (`chmod +x scripts/backup-auth-config.sh scripts/restore-auth-config.sh`).
+
+**What gets backed up/restored:**
+- Auth database dumps (`auth_backup_*.sql`)
+- Supabase identity provider configuration
+- Environment variables (VITE_* auth-related vars)
+- TLS/SSL certificates (if applicable)
+- Related YAML configuration files
 
 ### **4. Staged Deployment Strategy**
 
+> **Note:** This is a simplified/pseudocode example. For a complete GitHub Actions workflow, see `.github/workflows/staged-auth-deploy.yml`.
+
 ```yaml
-# .github/workflows/staged-auth-deploy.yml
-stages:
-  - development: Test on localhost
-  - staging: Test on staging.vortexcore.app
-  - integration: Test central auth integration
-  - production: Deploy to me.vortexcore.app
+# .github/workflows/staged-auth-deploy.yml (reference only)
+on:
+  push:
+    branches: [development, staging, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        run: npm install -g bun
+      - name: Install dependencies
+        run: bun install
+      - name: Build
+        run: bun run build
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: bun test
+
+  deploy-development:
+    needs: test
+    if: github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to development
+        run: echo "Deploying to development..."
+
+  deploy-staging:
+    needs: test
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying to staging..."
+
+  deploy-production:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying to production..."
 ```
 
 ---
@@ -205,11 +283,18 @@ If something breaks during restoration:
 
 ### **1. Immediate Rollback:**
 ```bash
-# Restore from backup
+# List available backups to identify the correct timestamp
+ls -la .env.backup.*
+
+# Restore from backup (replace [timestamp] with the chosen filename)
 cp .env.backup.[timestamp] .env
 
-# Revert auth configuration
+# Revert auth configuration files
 git checkout HEAD~1 -- src/utils/auth-config.ts src/hooks/use-auth-fix.ts
+
+# Verify rollback succeeded by starting the app and checking key env vars
+npm run dev
+# or run an env-check script to confirm .env values are restored
 ```
 
 ### **2. Supabase Quick Restore:**

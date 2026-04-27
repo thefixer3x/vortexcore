@@ -34,7 +34,7 @@ npx supabase db push
 
 # Option B: Via Supabase Dashboard
 1. Go to https://supabase.com/dashboard/project/YOUR_PROJECT/sql
-2. Copy contents of 20251122_create_wallets_transactions_tables.sql
+2. Copy contents of 20251122_create_missing_core_tables.sql
 3. Paste and click "Run"
 4. Verify both tables created: wallets, transactions
 ```
@@ -130,37 +130,47 @@ curl -X POST 'https://YOUR_PROJECT.supabase.co/auth/v1/token?grant_type=password
 
 **Option A: Supabase Edge Functions Rate Limiting**
 
-Create `supabase/functions/rate-limiter/index.ts`:
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+Create `supabase/functions/rate-limiter/index.ts`. For production deployments, replace the in-memory Map with a persistent/store backend (e.g., Upstash Redis, Vercel Edge Config, or a Supabase table-based rate limit store) to track per-user request counts across instances.
 
-const rateLimit = new Map<string, number[]>();
-const WINDOW_MS = 60000; // 1 minute
-const MAX_REQUESTS = 100;
+**Recommended persistent options:**
+- **Upstash Redis**: Use `@upstash/redis` for distributed rate limiting with TTL
+- **Vercel Edge Config**: Use Edge Config for fast global state
+- **Supabase Table**: Create a `rate_limits` table with user_id, timestamp, count
+
+**Example using Upstash Redis:**
+```typescript
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 serve(async (req) => {
   const userId = req.headers.get('x-user-id') || req.headers.get('x-forwarded-for');
-
   if (!userId) return new Response('Unauthorized', { status: 401 });
 
-  const now = Date.now();
-  const userRequests = rateLimit.get(userId) || [];
-  const recentRequests = userRequests.filter(time => now - time < WINDOW_MS);
+  const key = `rate_limit:${userId}`;
+  const windowMs = 60000;
+  const maxRequests = 100;
 
-  if (recentRequests.length >= MAX_REQUESTS) {
+  const count = await redis.incr(key);
+  if (count === 1) {
+    await redis.expire(key, Math.ceil(windowMs / 1000));
+  }
+
+  if (count > maxRequests) {
     return new Response('Rate limit exceeded', {
       status: 429,
-      headers: { 'Retry-After': '60' }
+      headers: { 'Retry-After': '60', 'X-RateLimit-Remaining': '0' }
     });
   }
 
-  recentRequests.push(now);
-  rateLimit.set(userId, recentRequests);
-
-  return new Response('OK', { status: 200 });
+  return new Response('OK', { status: 200, headers: { 'X-RateLimit-Remaining': String(maxRequests - count) } });
 });
 ```
+
+When using persistent storage, update the rate limiter to reference the persistent client instead of the in-memory `rateLimit` Map.
 
 **Option B: Netlify/Vercel Rate Limiting**
 

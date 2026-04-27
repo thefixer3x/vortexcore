@@ -48,7 +48,7 @@
 
 ### Step 2: Set API Keys in Supabase (5 minutes)
 
-Go to: [Supabase Dashboard](https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/settings/vault)
+Go to: [Supabase Dashboard](https://supabase.com/dashboard/project/{SUPABASE_PROJECT_ID}/settings/vault)
 
 Add these secrets:
 - `OPENAI_API_KEY` = Your OpenAI key
@@ -60,7 +60,7 @@ Add these secrets:
 ### Step 3: Deploy Edge Functions (2 minutes)
 ```bash
 # Link to your project
-supabase link --project-ref mxtsdgkwzjzlttpotole
+supabase link --project-ref YOUR_PROJECT_ID
 
 # Deploy all functions
 supabase functions deploy ai-router

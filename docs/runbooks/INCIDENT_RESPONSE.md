@@ -87,9 +87,9 @@
 **Response Time:** < 1 hour
 
 **Actions:**
-1. Create incident ticket in tracking system
-2. Notify on-call team
-3. Update status page (investigating)
+1. Create incident ticket in Jira using the "Incident Response" template (link: https://github.com/YOUR_ORG/YOUR_REPO/issues/new?template=incident.yml) or in your project's issue tracker
+2. Notify on-call team via PagerDuty (or your on-call escalation tool)
+3. Update status page (navigate to your status page admin panel or POST to /api/status with token from Vault)
 4. Begin troubleshooting
 5. Regular updates every 30 minutes
 6. Deploy fix
@@ -185,7 +185,7 @@ The VortexCore Team
 **Solution:**
 ```bash
 # 1. Check Supabase status
-curl https://YOUR_PROJECT.supabase.co/rest/v1/
+curl https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/
 
 # 2. Check connection pool
 # Go to Supabase Dashboard → Settings → Database → Connection pooling
@@ -208,7 +208,8 @@ vercel redeploy --force
 # https://dashboard.stripe.com/webhooks
 
 # 2. Verify webhook endpoint is accessible
-curl -X POST https://your-app.com/api/stripe-webhook \
+# Replace your-production-domain.com with your actual deployment URL
+curl -X POST https://your-production-domain.com/api/stripe-webhook \
   -H "Content-Type: application/json" \
   -d '{"test": true}'
 
@@ -323,16 +324,20 @@ vercel rollback
 
 ## 9. Emergency Contacts
 
+> ⚠️ **SETUP REQUIRED** — The following contact placeholders must be replaced with real values before this runbook is operational. Retrieve credentials from your password manager/vault.
+
 **Internal:**
-- On-Call Engineering: [PagerDuty]
+- On-Call Engineering: [PagerDuty escalation link or on-call number]
 - Engineering Manager: [Phone]
 - CTO: [Phone]
 - CEO: [Phone]
 
 **External:**
 - Supabase Support: support@supabase.io
-- Stripe Emergency: [Saved in password manager]
+- Stripe Emergency: [Retrieve from password manager - secure location URL]
 - Legal Counsel: [Phone]
+
+**Document Status:** ⚠️ INCOMPLETE — Requires verification of reachability via incident drill after contacts are updated.
 
 ---
 

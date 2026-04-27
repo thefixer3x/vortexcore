@@ -25,7 +25,7 @@
 - **Ctrl/Cmd + B**: Toggle sidebar visibility
 - **Escape**: Close sidebar on mobile
 - **Focus management**: Proper focus handling for screen readers
-- **ARIA labels**: Full accessibility compliance
+- **ARIA labels**: WCAG 2.1 Level AA compliant
 
 ### 🎯 UI/UX Enhancements
 - **Icon-only mode**: Clean icon view when collapsed

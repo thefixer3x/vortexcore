@@ -3,15 +3,18 @@
 ## Overview
 Transform VortexCore from production-ready state to consumer-launch-ready product through structured phases of testing, feature completion, security hardening, user validation, and end-to-end verification.
 
-## **Phase 1: Foundation Testing & Validation** 
+## **Phase 1: Foundation Testing & Validation**
 *Timeline: Week 1-2 | Priority: Critical*
+
+> **Execution Note:** Phases 2-5 may run partially in parallel during some periods to allow for overlapping workstreams. Dependencies and handoffs between phases are defined in the "Phase Dependencies" section under Project Management Integration.
 
 ### 1.1 Test Infrastructure Setup
 - [ ] **Configure Bun Test Environment**
-  - Setup Vitest configuration for component tests
-  - Create test utilities and helpers
-  - Configure test coverage reporting
-  - Integrate with GitHub Actions CI
+  - Bun has a built-in test runner (`bun test`) and is recommended for Bun projects
+  - Setup `bun test` configuration for component tests
+  - Create test utilities and helpers compatible with Bun's test runner
+  - Configure test coverage reporting (bun test --coverage)
+  - Integrate with GitHub Actions CI using `bun test`
 
 - [ ] **Playwright E2E Testing Setup**
   - Install and configure Playwright with Bun

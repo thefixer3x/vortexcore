@@ -34,9 +34,12 @@ https://api.lanonasis.com/auth/callback?return_to=vortexcore
 https://me.vortexcore.app/dashboard
 https://me.vortexcore.app/auth/callback
 https://lanonasis.supabase.co/auth/callback
+
+**Development URLs (non-production only):**
 http://localhost:5173/dashboard
 http://localhost:5173/auth/callback
 ```
+> Note: Development URLs should only be used in non-production environments.
 
 ### **2. OAuth Providers (Should Already Be Correct)**
 Your OAuth providers should already point to:
@@ -106,7 +109,26 @@ Your OAuth architecture is actually perfect and shouldn't be changed.
 2. **Fix Vercel domain** (command line - 1 minute)  
 3. **Test auth flow** (should work immediately)
 
-The restoration script will handle the code changes, you just need to update the Supabase dashboard settings.
+The restoration script will handle the code changes. You just need to update the Supabase dashboard settings.
+
+### **Restoration script**
+
+**Location:** `scripts/restore-oauth.sh` (relative to repository root)
+
+**How to run:**
+```bash
+chmod +x scripts/restore-oauth.sh
+./scripts/restore-oauth.sh --env prod
+```
+
+**Required parameters:**
+- `--env prod` or `--env dev` — specifies which environment configuration to apply
+
+**What the script modifies:**
+1. Updates Supabase redirect URIs to match the production/dev URLs listed above
+2. Restores original OAuth client secrets from backup (referenced via `scripts/restore-oauth.sh` environment)
+3. Runs database migrations to reset auth configuration to the centralized setup
+4. Clears any cached auth state to force re-authentication with corrected URLs
 
 ---
 

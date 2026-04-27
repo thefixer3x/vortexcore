@@ -77,20 +77,27 @@ DROP EXTENSION IF EXISTS pg_graphql CASCADE; -- Only if not using GraphQL
 
 ### **4. Add Missing Indexes (if applicable)**
 
-Review your actual application queries:
+> **Note:** The `index_advisor` function requires the `hypopg` extension. Enable it with `CREATE EXTENSION IF NOT EXISTS hypopg;` before running the query below.
+
+**Alternative approach without hypopg** — use `pg_stat_statements` to find high-impact queries:
 
 ```sql
--- Find queries without index suggestions
+-- Find high-row or high-frequency queries on public tables
 SELECT 
   query,
   calls,
+  total_exec_time,
   mean_time,
-  (SELECT index_advisor(query))
+  rows,
+  (mean_time * calls) as total_time
 FROM pg_stat_statements 
 WHERE query LIKE 'SELECT%FROM public.%'
-ORDER BY mean_time DESC 
+  AND NOT query LIKE '%pg_%'
+ORDER BY mean_time * calls DESC 
 LIMIT 20;
 ```
+
+Review your actual application queries and add indexes for columns used in WHERE, JOIN, and ORDER BY clauses.
 
 ---
 

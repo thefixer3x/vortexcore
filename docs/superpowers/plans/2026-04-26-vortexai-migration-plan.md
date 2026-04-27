@@ -114,7 +114,7 @@ curl -s https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/openai-chat \
 | Route | Method | Status | Notes |
 |-------|--------|--------|-------|
 | `/health` | GET | ✅ **200 LIVE** | `{"status":"ok","service":"Onasis-CORE API Gateway","version":"1.0.0"}` |
-| `/api/v1/ai-chat` | POST | ❌ **500 broken** | AWS Lambda syntax error: `SyntaxError: Missing } in template expression`. A Netlify function at this route has a bug. |
+| `/api/v1/ai-chat` | POST | ❌ **500 broken** | Netlify function syntax error: `SyntaxError: Missing } in template expression`. This route on `api.lanonasis.com` is a broken Netlify function (not the VPS router at `ai.vortexcore.app`). |
 | `/api/v1/memories/search` | POST | ⚠️ **400/401** | MaaS endpoint — auth required. Not in scope. |
 
 **Key finding:** `api.lanonasis.com` is the **Onasis-CORE API Gateway** (`unified_gateway.js` in `onasis-gateway` repo), NOT the AI router. The two are separate services. The `/api/v1/ai-chat` route on this domain is a broken Netlify function — separate from the Railway-deployed `onasis_ai_router`.
@@ -233,7 +233,7 @@ These must ALL be verified before writing any code.
 ### 4.2 Fix the broken `/api/v1/ai-chat` on `api.lanonasis.com`
 - [ ] Locate the Netlify function causing `SyntaxError: Missing } in template expression`
 - [ ] Fix it OR note that `api.lanonasis.com/api/v1/ai-chat` is not the target endpoint (Railway URL is)
-- [ ] **This is a separate task** — does not block VortexCore migration if Railway URL is confirmed
+- [ ] **This is a separate task** — does not block VortexCore migration since the target is the VPS URL (`https://ai.vortexcore.app`) confirmed in §4.1
 
 ### 4.3 Set Supabase Edge Function Secret
 - [ ] Create secret `ONASIS_AI_GATEWAY_KEY` in Supabase project secrets
@@ -378,8 +378,12 @@ Step 12: Test in browser — sign in → open chat bubble → send message
           ↓
 Step 13: Delete Lovable edge functions (§5.3)
           ↓
-Step 14: Deploy remaining functions:
-         supabase functions deploy --no-verify-jwt openai-chat  ← skip (deleted)
+Step 14: Deploy remaining functions (excluding deleted functions):
+```bash
+# Deploy remaining: vortex-ai, stripe, ai-router, gemini-ai, etc.
+# openai-chat has been deleted — do NOT deploy it
+supabase functions deploy vortex-ai
+```
          ↓
 Step 15: Commit + push to main
 ```

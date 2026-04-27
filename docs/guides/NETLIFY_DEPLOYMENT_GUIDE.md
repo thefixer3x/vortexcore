@@ -33,10 +33,18 @@ netlify deploy --prod --dir=dist
 ```
 
 ### Fix 3: Use the Fixed Dev Script
+
+The script `netlify-dev-fix.sh` (located in `scripts/` directory) automates starting both servers properly. To use it:
+
 ```bash
-# This starts both servers properly
-./netlify-dev-fix.sh
+# Make the script executable if needed
+chmod +x scripts/netlify-dev-fix.sh
+
+# Run the script to start both servers
+./scripts/netlify-dev-fix.sh
 ```
+
+The script starts the frontend dev server in the background and then launches Netlify Dev.
 
 ## 🌐 Direct Netlify Deploy
 
@@ -72,10 +80,11 @@ git push origin main
 4. Add these variables:
 
 ```
-VITE_SUPABASE_URL=https://mxtsdgkwzjzlttpotole.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dHNkZ2t3emp6bHR0cG90b2xlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxMDUyNTksImV4cCI6MjA2MjY4MTI1OX0.2KM8JxBEsqQidSvjhuLs8HCX-7g-q6YNswedQ5ZYq3g
-OPENAI_API_KEY=your-actual-openai-key
-PERPLEXITY_API_KEY=pplx-REDACTED
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_API_URL=your-api-server-url
+OPENAI_API_KEY=your-openai-api-key
+PERPLEXITY_API_KEY=your-perplexity-api-key
 ```
 
 ## 🧪 Testing Strategy

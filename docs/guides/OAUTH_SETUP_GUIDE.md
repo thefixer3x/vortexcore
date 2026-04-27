@@ -9,7 +9,8 @@ Based on the application code, the following OAuth providers are implemented:
 2. Instagram
 3. Twitter
 4. LinkedIn (using OIDC)
-5. Email (built-in)
+
+Email authentication (magic link or password) is a separate, non-OAuth method provided by the app.
 
 ## Prerequisites
 
@@ -35,7 +36,7 @@ Based on the application code, the following OAuth providers are implemented:
 #### Google Developer Console:
 1. Go to https://console.developers.google.com/
 2. Create a new project or select an existing one
-3. Enable the Google+ API
+3. Enable the **Google Identity Services (OAuth 2.0)** or the **People API** as needed for profile/email scopes.
 4. Go to Credentials → OAuth consent screen
 5. Set up the OAuth consent screen with your app information
 6. Go to Credentials → Create Credentials → OAuth client ID
@@ -152,7 +153,7 @@ You can use this script to verify your OAuth setup:
 
 echo "Verifying OAuth provider setup..."
 
-PROJECT_REF="mxtsdgkwzjzlttpotole"
+PROJECT_REF="<YOUR_PROJECT_REF>"
 PROVIDERS=("google" "instagram" "twitter" "linkedin_oidc")
 
 for provider in "${PROVIDERS[@]}"; do

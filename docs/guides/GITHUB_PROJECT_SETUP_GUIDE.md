@@ -28,19 +28,22 @@
 ### 2. Configure Project Views
 
 #### Board View Setup
-Create 5 columns:
+Create 7 columns:
 - **📋 Backlog** (Phase planning)
 - **🚀 Phase 1: Testing** (In progress testing tasks)
-- **🎯 Phase 2: Features** (In progress feature tasks)  
+- **🎯 Phase 2: Features** (In progress feature tasks)
 - **🔒 Phase 3: Security** (In progress security tasks)
+- **🛠️ Phase 4: Integration** (Phase 4 tasks)
+- **⚙️ Phase 5: Release** (Phase 5 tasks)
 - **✅ Done** (Completed tasks)
 
 #### Timeline View Setup
-Create 5 milestones:
+Create 5 milestones (note: phases may overlap intentionally to indicate parallel workstreams):
+
 - **Phase 1: Foundation Testing** (Week 1-2)
 - **Phase 2: Feature Enhancement** (Week 3-5)
-- **Phase 3: Security Hardening** (Week 4-6)
-- **Phase 4: User Testing** (Week 6-8)
+- **Phase 3: Security Hardening** (Week 4-6) — overlaps with Phase 2 due to parallel security work
+- **Phase 4: User Testing** (Week 6-8) — overlaps with Phase 3 for integration testing
 - **Phase 5: Launch Validation** (Week 8-10)
 
 ### 3. Import Issues from Plan
@@ -99,6 +102,16 @@ In your project settings, add these automation rules:
 #### Rule 1: Auto-assign to phases
 - **When**: Issue is created with label `phase-1`
 - **Then**: Set status to `Phase 1: Testing`
+- **When**: Issue is created with label `phase-2`
+- **Then**: Set status to `Phase 2: Testing`
+- **When**: Issue is created with label `phase-3`
+- **Then**: Set status to `Phase 3: Testing`
+- **When**: Issue is created with label `phase-4`
+- **Then**: Set status to `Phase 4: Testing`
+- **When**: Issue is created with label `phase-5`
+- **Then**: Set status to `Phase 5: Testing`
+
+**How to configure:** In GitHub Project → Settings → Workflows → Add workflow. Select trigger "Issue created" or "Label added", action "Set status", save.
 
 #### Rule 2: Move completed items  
 - **When**: Issue is closed
@@ -134,7 +147,40 @@ Create these labels in your repository:
 
 ### 6. Link to CI/CD Pipeline
 
-The GitHub Actions workflow (`launch-readiness-ci.yml`) will automatically run validation for each phase. Issues will be automatically updated based on test results.
+The GitHub Actions workflow (`launch-readiness-ci.yml` in `.github/workflows/`) will automatically run validation for each phase. If this file does not exist, create it with the following minimal configuration:
+
+```yaml
+# .github/workflows/launch-readiness-ci.yml
+name: Launch Readiness CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        run: npm install -g bun && bun install
+      - name: Run tests
+        run: bun test
+      - name: Build
+        run: bun run build
+      - name: Integration checks
+        run: echo "Running launch readiness checks..."
+
+# Required repository secrets:
+# - VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID (for Vercel deployment)
+# - SUPABASE_URL, SUPABASE_KEY (for Supabase operations)
+# - STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET (for payment testing)
+#
+# Enable GitHub Actions: Go to repository Settings → Actions → Enable workflows
+```
 
 ### 7. Progress Tracking
 
@@ -169,7 +215,7 @@ supabase functions deploy stripe ai-router openai-chat openai-assistant
 - Ensure secrets are set: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`.
 
 ### Vercel
-- Add `.vercel` to `.gitignore` (already updated here) and link locally:
+- Add `.vercel` to your project's `.gitignore` (if not already present) and link locally:
 ```bash
 vercel link   # select existing org/project
 vercel env pull .env  # optional: sync envs locally

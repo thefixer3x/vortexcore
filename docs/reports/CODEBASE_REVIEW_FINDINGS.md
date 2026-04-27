@@ -146,6 +146,8 @@ After running the fixes:
 
 1. **If migrations fail**: Check that tables don't already exist
    ```sql
+   -- ⚠️ WARNING: Backup first! These commands are destructive and will permanently delete data.
+   -- Recommend taking a database backup and verifying migrations/tables before running.
    -- Run in Supabase SQL editor
    DROP TABLE IF EXISTS child_profiles CASCADE;
    DROP SCHEMA IF EXISTS nixie CASCADE;

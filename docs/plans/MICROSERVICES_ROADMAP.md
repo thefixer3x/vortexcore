@@ -71,7 +71,7 @@ database: transactions_db (PostgreSQL + TimescaleDB)
 - Transaction history
 - Real-time transaction updates
 - Transaction categorization
-- Fraud detection integration
+- Fraud detection (consumes scores from AI Insights Service)
 
 **API Endpoints:**
 - `GET /transactions`
@@ -79,6 +79,24 @@ database: transactions_db (PostgreSQL + TimescaleDB)
 - `GET /transactions/:id`
 - `GET /transactions/categories`
 - `POST /transactions/bulk`
+
+**Event-Driven Architecture:**
+- **Emitted Events:**
+  - `transaction.created` - emitted on new transaction creation
+  - `transaction.categorized` - emitted after AI categorization completes
+  - `transaction.fraud_detected` - emitted when fraud score exceeds threshold (consumed by AI Insights Service)
+- **Event Consumers:**
+  - Fraud detector (AI Insights Service) - subscribes to `transaction.created` to score new transactions
+  - Notifications service - subscribes to `transaction.created` for payment confirmation alerts
+  - Analytics/audit trail - subscribes to all transaction events for logging and compliance
+- **Transport:** Apache Kafka or RabbitMQ (see Message Broker section)
+- **Schema/Versioning:** Avro schemas with Confluent Schema Registry; events are immutable and versioned
+- **Retry/Error Handling:** Dead-letter queue (DLQ) for failed event processing; 3 retry attempts with exponential backoff
+- **Endpoint Event Mapping:**
+  - `POST /transactions` → emits `transaction.created`
+  - `POST /transactions/bulk` → emits multiple `transaction.created` events
+  - Internal categorization job → emits `transaction.categorized`
+  - Fraud threshold breach → emits `transaction.fraud_detected`
 
 ### 💰 **Payment Processing Service**
 ```
@@ -93,6 +111,31 @@ database: payments_db (PostgreSQL)
 - Payment methods management
 - Beneficiary management
 - Payment scheduling
+
+**PCI-DSS Adherence:**
+- All card data tokenized via PCI-DSS compliant vault (no raw PAN storage)
+- PA-DSS compliant flows for payment processing
+- Encryption: TLS 1.2+ in transit; AES-256 at rest via KMS
+
+**Idempotency & Retry:**
+- Idempotency keys required for all payment initiation endpoints (`X-Idempotency-Key` header)
+- Idempotency data stored for 24h to prevent duplicate charges on retry
+- Retry with exponential backoff: 1s, 2s, 4s, max 3 retries before dead-letter
+
+**Distributed Transaction Strategy (Saga Pattern):**
+- Saga orchestrator manages cross-service consistency (e.g., payment + ledger + notification)
+- Compensation flows: reverse ledger entry on payment failure, release hold on card
+- Rollback procedure documented per endpoint; automated compensation triggered on timeout
+
+**Payment Reconciliation:**
+- Nightly batch reconciliation job comparing payment gateway vs. local records
+- Exception alerts for discrepancy > 0.01% or threshold amount
+- Automated settlement reports with P&L impact
+
+**Logging/Audit/SLA:**
+- All payment events logged with correlation ID to trace across services
+- SLA: 99.9% uptime, < 2s latency for payment initiation
+- Alert thresholds: error rate > 1%, latency p95 > 3s
 
 **Event-Driven Architecture:**
 - Payment initiated events
@@ -119,7 +162,7 @@ database: insights_db (PostgreSQL + Vector DB)
 
 **AI Models:**
 - Spending pattern recognition
-- Fraud detection ML
+- Fraud detection ML (model scoring for Transaction Service)
 - Investment recommendations
 - Cash flow prediction
 
@@ -128,6 +171,40 @@ database: insights_db (PostgreSQL + Vector DB)
 - `GET /ai/insights/recommendations`
 - `POST /ai/analyze/transaction-patterns`
 - `GET /ai/predictions/cash-flow`
+
+**MLOps & AI Governance:**
+
+*Model Training Pipeline:*
+- Training infra: Cloud GPU instances (AWS/GCP) with CI/CD integration
+- Training jobs triggered on: new data batch, model retraining schedule, code changes
+- Data sources: transactions_db, user profile data (PII anonymized before training)
+- Model artifacts stored in artifact registry (e.g., MLflow) with version tags
+
+*Model Versioning:*
+- Version tags (v1, v2, ...) stored alongside artifact registry entry
+- Rollback: previous version can be deployed via feature flag or config change
+- Model lineage tracked (training data → preprocessing → training job → model version)
+
+*A/B Testing / Canary Deployments:*
+- Canary: route 5% of traffic to new model, compare error rate and business metrics
+- Gradual rollout: 5% → 20% → 50% → 100% based on OKR thresholds
+- Rollback trigger: error rate increase > 2% or accuracy drop > 1%
+
+*Data Privacy & GDPR:*
+- Training data minimization: only features needed for model are extracted
+- User data anonymization before training (replace identifiers with pseudonymous tokens)
+- Consent handling: users can opt out of having their data used for model training
+- Right to deletion: delete user data from training sets; models retrained without that data
+
+*Model Monitoring & Drift Detection:*
+- Metrics: prediction distribution, feature drift (Population Stability Index), accuracy on holdout
+- Alerts: drift detected → retraining job triggered automatically
+- Monitoring dashboard: Grafana + custom ML monitoring metrics
+
+*Feature Store:*
+- Shared feature definitions (e.g., `spending_last_30_days`, `avg_transaction_amount`)
+- Storage: PostgreSQL + Redis cache for low-latency feature serving
+- Access patterns: batch training (PostgreSQL), real-time inference (Redis cache)
 
 ### 📈 **Analytics & Reporting Service**
 ```
@@ -142,6 +219,12 @@ database: analytics_db (ClickHouse/BigQuery)
 - Data aggregation
 - Performance metrics
 - User behavior tracking
+
+**API Endpoints:**
+- `GET /analytics/dashboard/:userId` - Retrieve dashboard metrics for a user
+- `POST /analytics/reports/custom` - Generate a custom report (body: report parameters, date range)
+- `GET /analytics/metrics/performance` - Retrieve performance metrics (query params: period, granularity)
+- `GET /analytics/export/:reportId` - Download a generated report (returns CSV/JSON)
 
 ---
 

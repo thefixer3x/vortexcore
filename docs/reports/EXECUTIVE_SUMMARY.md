@@ -28,9 +28,15 @@
 
 ### Day 1-2: Security Fixes
 ```bash
-# Fix vulnerabilities immediately
-npm audit fix --force
+# Fix vulnerabilities (use --force only as last resort - may introduce breaking changes)
+npm audit fix
 npm update esbuild@latest vite@latest
+
+# WARNING: Using --force can introduce breaking changes. Only use if:
+# - All unit tests pass after audit fix --force
+# - You have verified the build works
+# - You are prepared to handle potential regressions
+# Example: npm audit fix --force  # Use only if default audit fix fails
 
 # Verify fixes
 npm audit --audit-level=moderate
@@ -46,10 +52,22 @@ npm run build
 ### Day 6-7: Security Headers
 ```typescript
 // Add to auth service
+import helmet from 'helmet';
 app.use(helmet({
-  contentSecurityPolicy: { /* CSP config */ },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://api.lanonasis.com"],
+    }
+  },
   hsts: { maxAge: 31536000, includeSubDomains: true }
 }));
+
+// Note: Configure CSP directives for your specific app.
+// See Helmet CSP docs: https://helmetjs.github.io/docs/csp/
 ```
 
 ---
