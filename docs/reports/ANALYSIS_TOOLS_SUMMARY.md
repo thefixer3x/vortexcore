@@ -7,7 +7,7 @@
 ./inspect-all-changes.sh
 ```
 **What it does:**
-- Analyzes ALL potential impacts of our changes
+- Analyzes ALL potential impacts of the changes
 - Checks Supabase, Vercel, Netlify configurations
 - Reviews environment variables and deployments
 - Creates detailed markdown report
@@ -70,7 +70,7 @@ After running the scripts, you'll get:
    ```
 
 2. **Check Supabase Auth Settings:**
-   - Go to: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/auth/url-configuration
+   - Go to: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>/auth/url-configuration
    - Verify Site URL: `https://api.lanonasis.com`
    - Check Redirect URLs match your ecosystem
 
@@ -91,9 +91,9 @@ After running the scripts, you'll get:
 ## 🔧 **What We Likely Affected**
 
 ### **High Probability Issues:**
-1. **Supabase Auth Redirect URLs** - We definitely changed these
-2. **Database Triggers** - We modified user/profile creation
-3. **Environment Variables** - We added production URLs
+1. **Supabase Auth Redirect URLs** - Changed auth redirect settings
+2. **Database Triggers** - Modified user/profile creation
+3. **Environment Variables** - Added production URLs
 4. **Custom Domain Serving** - me.vortexcore.app issues
 
 ### **Medium Probability Issues:**
@@ -120,8 +120,8 @@ After running the scripts, you'll get:
    ```bash
    # Use /test-auth page
    # Create new test account
-   # Email: emergency@test.com
-   # Password: emergency123
+   # Email: <user@example.com>
+   # Password: <password>
    ```
 
 3. **Magic Link Bypass:**
@@ -157,14 +157,14 @@ After running the scripts, you'll get:
 ## 📞 **Support Resources**
 
 ### **Direct Links:**
-- **Supabase Dashboard**: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole
+- **Supabase Dashboard**: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Netlify Dashboard**: https://app.netlify.com
 
 ### **Key Configuration URLs:**
-- **Auth Settings**: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/auth/url-configuration
-- **Database**: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/editor
-- **Functions**: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/functions
+- **Auth Settings**: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>/auth/url-configuration
+- **Database**: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>/editor
+- **Functions**: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>/functions
 
 ## 🚀 **Next Steps**
 

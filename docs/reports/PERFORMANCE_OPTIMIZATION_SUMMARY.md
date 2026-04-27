@@ -52,7 +52,7 @@ Based on the optimizations implemented, you should see:
 |--------|--------|--------|-------------|
 | Avg Query Time | ~50-200ms | <50ms | 75% reduction |
 | P95 Query Time | ~500ms | <200ms | 60% reduction |
-| Cache Hit Rate | 96-99% | >90% | Maintained |
+| Cache Hit Rate | 92% (post-optimization baseline) | >96% | Improved |
 | Connection Count | Variable | Stable & Low | Optimized |
 | CPU Usage | Variable | <50% avg | Reduced |
 

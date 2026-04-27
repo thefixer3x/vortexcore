@@ -170,8 +170,8 @@ gh api repos/OWNER/REPO/branches --jq '.[] | select(.protected) | .name'
 
 ### **Scan for Security Issues:**
 ```bash
-# Check for secrets in code
-rg -i "(?:api[_-]?key|secret|token|password)" --type-not=lockb
+# Check for secrets in code (replace lockb with valid type like lock or json, or omit --type-not)
+rg -i "(?:api[_-]?key|secret|token|password)"
 
 # Verify .env is ignored
 git check-ignore .env
@@ -302,8 +302,8 @@ gh api repos/OWNER/REPO --jq '.permissions.admin'
 ## 🎯 Quick Reference Commands
 
 ```bash
-# Apply protection (replace OWNER/REPO/BRANCH)
-gh api --method PUT repos/OWNER/REPO/branches/BRANCH/protection --input protection.json
+# Apply protection (replace OWNER/REPO/BRANCH with your actual repository and branch name)
+# Example: gh api --method PUT repos/thefixer3x/vortex-core-app/branches/main/protection --input protection.json
 
 # Remove protection
 gh api --method DELETE repos/OWNER/REPO/branches/BRANCH/protection

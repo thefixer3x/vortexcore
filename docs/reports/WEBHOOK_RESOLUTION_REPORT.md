@@ -8,7 +8,7 @@ The webhook endpoints error has been **RESOLVED**. Your VortexCore application n
 
 ### ✅ Working Webhook Endpoints
 - **ai-router**: ✅ Active and responding (HTTP 200)
-- **openai**: ✅ Active and responding (HTTP 200) 
+- **openai**: ✅ Active and responding (HTTP 200)
 - **openai-assistant**: ✅ Deployed and active
 - **stripe**: ✅ Deployed and active
 - **paystack**: ✅ Deployed and active
@@ -16,8 +16,8 @@ The webhook endpoints error has been **RESOLVED**. Your VortexCore application n
 - **gateway**: ✅ Deployed and active
 
 ### ✅ Properly Configured
-- **Supabase Project**: Linked to `mxtsdgkwzjzlttpotole` (the-fixer-initiative)
-- **Supabase URL**: `https://mxtsdgkwzjzlttpotole.supabase.co`
+- **Supabase Project**: `<YOUR_PROJECT_ID>` (your Supabase project reference)
+- **Supabase URL**: `https://<YOUR_PROJECT_ID>.supabase.co`
 - **Supabase Anon Key**: ✅ Configured and working
 - **OpenAI API Key**: ✅ Configured in Supabase secrets
 - **Stripe Keys**: ✅ Configured in Supabase secrets
@@ -38,21 +38,23 @@ The webhook endpoints error has been **RESOLVED**. Your VortexCore application n
 
 ```bash
 # AI Router Test
-curl -X POST -H "Authorization: Bearer [ANON_KEY]" \
+# Replace ${SUPABASE_URL} and ${ANON_KEY} with your actual values
+curl -X POST -H "Authorization: Bearer ${ANON_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"messages":[{"role":"user","content":"test"}]}' \
-  "https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/ai-router"
+  "${SUPABASE_URL}/functions/v1/ai-router"
 
 # Response: HTTP 200 ✅
 {"response":"Test received. How can I assist you with your banking needs today?..."}
 ```
 
 ```bash
-# OpenAI Test  
-curl -X POST -H "Authorization: Bearer [ANON_KEY]" \
+# OpenAI Test
+# Replace ${SUPABASE_URL} and ${ANON_KEY} with your actual values
+curl -X POST -H "Authorization: Bearer ${ANON_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"messages":[{"role":"user","content":"test"}]}' \
-  "https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/openai"
+  "${SUPABASE_URL}/functions/v1/openai"
 
 # Response: HTTP 200 ✅
 {"message":"Hello undefined!"}
@@ -112,7 +114,7 @@ supabase secrets set GEMINI_API_KEY="your_actual_gemini_api_key"
 ## 📞 Support
 
 If you encounter any issues:
-1. Check Supabase dashboard: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole
+1. Check Supabase dashboard: https://supabase.com/dashboard/project/<YOUR_PROJECT_ID>
 2. View function logs in the Supabase Functions section
 3. Use the test scripts: `./test-webhook-endpoints.sh` or `./configure-api-keys.sh`
 

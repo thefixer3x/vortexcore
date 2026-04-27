@@ -27,18 +27,18 @@
 ## 🚀 Deployment URLs
 
 ### Netlify
-- **App**: `https://your-netlify-site.netlify.app`
-- **Health Check**: `https://your-netlify-site.netlify.app/health`
-- **Auth Test**: `https://your-netlify-site.netlify.app/test-auth`
+- **App**: `[REPLACE_WITH_YOUR_NETLIFY_URL]` (e.g., https://your-app.netlify.app)
+- **Health Check**: `[REPLACE_WITH_YOUR_NETLIFY_URL]/health`
+- **Auth Test**: `[REPLACE_WITH_YOUR_NETLIFY_URL]/test-auth`
 
-### Vercel  
-- **App**: `https://your-vercel-deployment.vercel.app`
-- **Health Check**: `https://your-vercel-deployment.vercel.app/api/health`
-- **Auth Test**: `https://your-vercel-deployment.vercel.app/test-auth`
+### Vercel
+- **App**: `[REPLACE_WITH_YOUR_VERCEL_URL]` (e.g., https://your-app.vercel.app)
+- **Health Check**: `[REPLACE_WITH_YOUR_VERCEL_URL]/api/health`
+- **Auth Test**: `[REPLACE_WITH_YOUR_VERCEL_URL]/test-auth`
 
 ### Supabase
-- **Edge Functions**: `https://mxtsdgkwzjzlttpotole.supabase.co/functions/v1/`
-- **Dashboard**: `https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole`
+- **Edge Functions**: `https://<PROJECT_REF>.supabase.co/functions/v1/`
+- **Dashboard**: `https://supabase.com/dashboard/project/<PROJECT_REF>`
 
 ## 🔧 Auth Testing Options
 
@@ -55,7 +55,7 @@
 3. Sign in with same credentials
 
 ### Option 3: Fix Existing Issues
-1. Go to [Supabase Auth Dashboard](https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/auth/users)
+1. Go to [Supabase Auth Dashboard](https://supabase.com/dashboard/project/<PROJECT_REF>/auth/users)
 2. Delete any problematic test users
 3. Set **Authentication > Email > Enable Email Confirmations = OFF**
 4. Try signup again

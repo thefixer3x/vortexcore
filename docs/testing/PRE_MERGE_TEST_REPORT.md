@@ -1,6 +1,6 @@
 # 🧪 Pre-Merge Test Report - VortexCore
 
-**Date:** 2025-08-30  
+**Date:** 2025-08-30 (historical report for tests executed on this date)  
 **Branch:** `dev-cleanup`  
 **Target:** `main` (production)
 
@@ -35,7 +35,7 @@
 
 #### **🗂️ File Organization - CLEAN**
 
-- **✅ Archive Structure**: Problematic files preserved in `archive/` (team accessible)
+- **✅ Archive Structure**: Deprecated artifacts, failing tests, and security-sensitive files preserved in `archive/` (team accessible)
 - **✅ Function Cleanup**: 29 → 12 VortexCore-focused functions
 - **✅ Security**: No secrets in codebase, proper `.gitignore`
 

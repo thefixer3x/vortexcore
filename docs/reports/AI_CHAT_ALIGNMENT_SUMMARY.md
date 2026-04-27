@@ -18,8 +18,38 @@
   - RLS policies for data security
 
 - ✅ **conversations** table also exists (potential redundancy)
-  - Similar structure to ai_chat_sessions
-  - May need consolidation in future
+   - Similar structure to ai_chat_sessions
+   - May need consolidation in future
+
+### **Table Consolidation Strategy**
+
+The canonical schema going forward is `ai_chat_sessions`. The `conversations` table exists for legacy compatibility.
+
+**Compatibility Differences:**
+| Column | ai_chat_sessions | conversations |
+|--------|-----------------|---------------|
+| session_name | ✅ | ✅ |
+| messages | JSONB | JSONB |
+| ai_model | ✅ | ❌ |
+| is_active | ✅ (added later) | ❌ |
+| last_message_at | ✅ (added later) | ❌ |
+| message_count | ✅ (added later) | ❌ |
+| session_metadata | ✅ (added later) | ❌ |
+
+**Consolidation Timeline:** Phase 2 (after initial migration stabilizes)
+
+**Migration Plan:**
+1. Create a data migration script that copies all `conversations` records into `ai_chat_sessions`
+2. Field mapping: `conversations.id` → `ai_chat_sessions.id`, `conversations.user_id` → `ai_chat_sessions.user_id`, `conversations.created_at` → `ai_chat_sessions.created_at`
+3. For `messages` field: map directly (both are JSONB)
+4. Handle conflicts: use `ON CONFLICT (id) DO UPDATE` to merge rather than replace
+5. Preserve timestamps to avoid breaking chronological order
+6. Downtime expectation: minimal — migration runs in background with row-by-row processing
+7. Locking: use `INSERT ... ON CONFLICT` with batch sizes of 1000 rows to avoid table locks
+
+**Testing:** Run a dry migration on a snapshot copy first; verify all legacy session IDs map correctly and that client code reading `ai_chat_sessions` returns equivalent data.
+
+**Impact on existing data:** Existing `conversations` rows will be preserved (not deleted) until after full validation; `useVortexChat` hook will continue to work during transition period.
 
 ## 🔧 Database Alignment Issues Fixed
 
@@ -96,6 +126,26 @@
 2. **Add new `useVortexChatPersistent`** - Enhanced functionality
 3. **Apply `ai_chat_optimization.sql`** - Database improvements
 
+### Migration Details
+
+**Data migration strategy for existing records:**
+1. Write a migration script that iterates over `conversations` table
+2. Map fields: `id → id`, `user_id → user_id`, `messages → messages`, `created_at → created_at`
+3. Use `INSERT ... ON CONFLICT (id) DO UPDATE` to handle duplicates
+4. Preserve timestamps to maintain chronological integrity
+
+**Rollback plan:**
+1. Do not drop `conversations` table — keep it for rollback window
+2. To rollback: revert `ai_chat_optimization.sql` changes and restore original hook behavior
+3. Reverse table merge: move data back from `ai_chat_sessions` to `conversations` if needed
+
+**Testing strategy:**
+1. Dry-run migration on a backup copy of the database
+2. Verification checklist: confirm all sessions appear in `ai_chat_sessions`, verify message content integrity, check RLS policies still enforce user isolation
+3. Run migration against snapshot/backup before applying to production
+
+**Compatibility window:** Both `useVortexChat` and `useVortexChatPersistent` run in parallel for 2 weeks post-migration; after validation, deprecate `useVortexChat`
+
 ### For Future Implementation
 1. Gradually migrate components to use persistent hook
 2. Consider consolidating `conversations` and `ai_chat_sessions` tables
@@ -103,13 +153,21 @@
 
 ## 📊 Database Schema Changes
 
-### New Columns Added (Optional)
+### New Columns Added (Optional — apply based on feature needs)
 ```sql
 -- Performance and metadata columns
+-- Conditions for each:
+--   is_active: enables archival/soft-delete filtering (skip if not needed)
+--   last_message_at: enables sorting by last message (skip if not needed)
+--   message_count: enables rate limit enforcement and analytics (skip if not needed)
+--   session_metadata: enables flexible per-session data storage (skip if not needed)
+-- Migration safety: run inside transaction; backfill message_count/last_message_at using a background job rather than instant UPDATE to avoid lock contention on large tables
 ALTER TABLE ai_chat_sessions ADD COLUMN is_active BOOLEAN DEFAULT true;
 ALTER TABLE ai_chat_sessions ADD COLUMN last_message_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE ai_chat_sessions ADD COLUMN message_count INTEGER DEFAULT 0;
 ALTER TABLE ai_chat_sessions ADD COLUMN session_metadata JSONB DEFAULT '{}';
+
+-- Maintenance: run during off-peak hours; estimated time for 1M rows ~5-10 minutes with batched updates
 ```
 
 ### New Indexes Created
@@ -122,9 +180,9 @@ CREATE INDEX idx_ai_chat_sessions_messages_gin ON ai_chat_sessions USING gin(mes
 ## 🎯 Next Steps
 
 ### Immediate Actions
-1. ✅ Apply database optimization script
-2. ✅ Test new persistent chat hook
-3. ✅ Verify component integration
+1. [ ] Apply database optimization script
+2. [ ] Test new persistent chat hook
+3. [ ] Verify component integration
 
 ### Future Enhancements
 1. **Message Search**: Full-text search across message content

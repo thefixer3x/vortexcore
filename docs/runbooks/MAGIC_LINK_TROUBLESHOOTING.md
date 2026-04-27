@@ -16,33 +16,47 @@
 
 ---
 
-## ✅ **Immediate Fixes Applied:**
+## ✅ **Fix Overview**
 
-### 1. **Smart Redirect Configuration**
-- Created `src/utils/auth-config.ts` with intelligent URL detection
-- Magic links now use production URLs when testing locally
-- Automatically detects Vercel/Netlify deployment URLs
+The script will:
+1. Detect your Vercel/Netlify URLs automatically
+2. Update auth configuration with production URLs
+3. Add environment variables
+4. Build and test the project
+5. Deploy updates to both platforms
+6. Provide manual Supabase configuration steps
 
-### 2. **Updated Auth Components**
-- `TestAuth.tsx` now uses smart redirects
-- `use-auth-fix.ts` hook updated with proper URLs
-- No more localhost redirect issues
+These changes are applied when the operator runs the fix script.
 
 ---
 
-## 🛠️ **Run This to Fix Everything:**
+## 🛠️ **What the Fix Script Does:**
 
-```bash
-./fix-magic-link-redirects.sh
-```
+The script `fix-magic-link-redirects.sh` (located in `scripts/` directory) performs the following actions when executed:
 
-This script will:
-1. ✅ Detect your Vercel/Netlify URLs automatically
-2. ✅ Update auth configuration with production URLs
-3. ✅ Add environment variables
-4. ✅ Build and test the project
-5. ✅ Deploy updates to both platforms
-6. ✅ Provide manual Supabase configuration steps
+1. **Detects deployment environment** — identifies Vercel/Netlify URLs automatically
+2. **Creates auth-config.ts** — `src/utils/auth-config.ts` with intelligent URL detection for production and local development
+3. **Updates TestAuth.tsx** — modifies `TestAuth.tsx` to use smart redirects based on detected environment
+4. **Updates use-auth-fix.ts** — modifies the `use-auth-fix.ts` hook to set proper redirect URLs
+5. **Updates environment variables** — adds VITE_PRODUCTION_URL, VITE_VERCEL_URL, VITE_NETLIFY_URL to `.env`
+6. **Builds and tests** — runs `bun run build` to verify no errors
+7. **Deploys to both platforms** — pushes to Vercel and Netlify
+
+**Prerequisites:**
+- Bun runtime installed
+- Supabase CLI installed
+- Vercel CLI (`vercel`) installed
+- Netlify CLI (`netlify`) installed
+
+**Run location:** Execute from the project root directory (`/`).
+
+**Permission requirement:** The script needs execute permission (`chmod +x scripts/fix-magic-link-redirects.sh`) before running.
+
+**If script is missing or fails:**
+1. Check permissions with `ls -la scripts/fix-magic-link-redirects.sh`
+2. Verify all CLIs are installed (`bun --version`, `vercel --version`, `netlify --version`)
+3. Run with verbose flags: `DEBUG=1 ./scripts/fix-magic-link-redirects.sh`
+4. Review logs at `.spin/logs` or the terminal output for errors and retry
 
 ---
 
@@ -53,10 +67,10 @@ The AI chat shows "I encountered an error" because:
 ### Option 1: Set Real OpenAI Key
 ```bash
 # Add to .env
-OPENAI_API_KEY=sk-your-real-openai-key-here
+OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
 
 # Set in Supabase Edge Functions
-supabase secrets set OPENAI_API_KEY="sk-your-real-openai-key-here"
+supabase secrets set OPENAI_API_KEY="<YOUR_OPENAI_API_KEY>"
 
 # Redeploy functions
 supabase functions deploy ai-router
@@ -65,7 +79,7 @@ supabase functions deploy ai-router
 ### Option 2: Use Perplexity Instead (You have this key)
 ```bash
 # Your Perplexity key is already set
-supabase secrets set PERPLEXITY_API_KEY="pplx-REDACTED"
+supabase secrets set PERPLEXITY_API_KEY="<YOUR_PERPLEXITY_API_KEY>"
 ```
 
 ### Option 3: Disable AI Chat for Testing
@@ -76,9 +90,9 @@ supabase secrets set PERPLEXITY_API_KEY="pplx-REDACTED"
 
 ## 📱 **Manual Supabase Configuration:**
 
-**CRITICAL**: You must manually add these URLs in Supabase Dashboard:
+**CRITICAL**: You must manually add these URLs in Supabase Dashboard. Replace `YOUR_PROJECT_ID`, `your-vercel-app`, and `your-netlify-site` with your actual Supabase project ID and deployment URLs.
 
-1. **Go to**: [Supabase Auth URL Configuration](https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/auth/url-configuration)
+1. **Go to**: [Supabase Auth URL Configuration](https://supabase.com/dashboard/project/YOUR_PROJECT_ID/auth/url-configuration)
 
 2. **Add Redirect URLs**:
    ```
@@ -194,8 +208,8 @@ netlify status
 
 ## 📞 **Quick Support:**
 
-- **Supabase Dashboard**: [mxtsdgkwzjzlttpotole](https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole)
+- **Supabase Dashboard**: [YOUR_PROJECT_ID](https://supabase.com/dashboard/project/YOUR_PROJECT_ID)
 - **Vercel Dashboard**: [Your Projects](https://vercel.com/dashboard)
 - **Netlify Dashboard**: [Your Sites](https://app.netlify.com)
 
-**Bottom Line**: Run `./fix-magic-link-redirects.sh` and manually configure Supabase redirect URLs. This will fix the localhost redirect issues you're seeing.
+**Bottom Line**: Run `./scripts/fix-magic-link-redirects.sh` and manually configure Supabase redirect URLs. This will fix the localhost redirect issues you're seeing.

@@ -185,6 +185,14 @@ Planned target in later phases:
 - Add CI checks for forbidden root doc/script additions.
 - Archive obsolete documents and scripts.
 
+### Controls
+- Enforced naming/location conventions via CI lint checks
+- Contribution docs explain where files belong
+- CI checks block additions to root that are not in approved categories
+- Archival approval workflow: proposed archival to go through PR review
+- Periodic reviews (quarterly) to verify ownership and relevance of docs/scripts
+- Rollback/exception process: create a `docs/archive/EXCEPTIONS.md` to document deviations
+
 ### Risk
 - Medium (process adoption).
 

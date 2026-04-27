@@ -5,8 +5,8 @@
 
 ## 🛡️ Executive Summary
 
-**SECURITY STATUS: ✅ SECURE**  
-All critical security vulnerabilities have been addressed and proper safeguards implemented.
+**SECURITY STATUS: ✅ SECURE (pending credential updates)**
+All critical security vulnerabilities have been addressed and proper safeguards implemented. However, some secrets in this document are placeholders that must be replaced with real credentials before production use.
 
 ## 🔍 Key Findings
 
@@ -84,14 +84,18 @@ Project: mxtsdgkwzjzlttpotole
 ## 🚨 Immediate Actions Required
 
 ### **Update Placeholder Secrets**
-The following secrets were added with placeholder values and **MUST** be updated:
+The following secrets were added with placeholder values and **MUST** be updated within 24 hours:
 
-1. **VERCEL_TOKEN** - Get from Vercel Dashboard → Settings → Tokens
-2. **VERCEL_ORG_ID** - Get from Vercel project settings
-3. **VERCEL_PROJECT_ID** - Get from Vercel project settings  
-4. **TEST_USER_A_JWT** - Generate test user JWT for RLS testing
-5. **TEST_USER_B_JWT** - Generate second test user JWT for RLS testing
-6. **SUPABASE_DB_CONNECTION_STRING** - Replace [password] with real DB password
+| Secret | Owner | Risk/Impact | Deadline |
+|--------|-------|-------------|----------|
+| VERCEL_TOKEN | DevOps | Production deployment access | 24 hours |
+| VERCEL_ORG_ID | DevOps | Production deployment access | 24 hours |
+| VERCEL_PROJECT_ID | DevOps | Production deployment access | 24 hours |
+| TEST_USER_A_JWT | QA | RLS testing only, non-production | 48 hours |
+| TEST_USER_B_JWT | QA | RLS testing only, non-production | 48 hours |
+| SUPABASE_DB_CONNECTION_STRING | Backend | **PRODUCTION RISK** — real DB password exposure | 24 hours |
+
+**Context:** These placeholders were added during the security audit setup and await credential provisioning.
 
 **Command to update:**
 ```bash

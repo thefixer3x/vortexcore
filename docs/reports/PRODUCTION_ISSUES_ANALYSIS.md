@@ -106,9 +106,12 @@ Response body: The page could not be found
 
 1. **Disable Biometric Button in Production**:
    ```typescript
-   // Add environment check
-   const isProduction = window.location.hostname !== 'localhost';
-   if (isProduction) {
+   // Use a build-time environment variable or feature flag instead of hostname check
+   const ENABLE_BIOMETRIC = import.meta.env.VITE_ENABLE_BIOMETRIC === 'true';
+   // Or: process.env.REACT_APP_ENABLE_BIOMETRIC for Create React App
+   // Or: process.env.NODE_ENV === 'production' for Next.js
+
+   if (!ENABLE_BIOMETRIC) {
      // Hide or disable biometric button
      return null;
    }
@@ -125,7 +128,12 @@ Response body: The page could not be found
 3. **Environment Variable Check**:
    ```bash
    # Verify Supabase function has required environment variables
-   supabase functions deploy ai-router --verify-jwt false
+   # ⚠️ NOTE: --verify-jwt false disables JWT verification (bypasses auth)
+   # This is DEV/TEST ONLY - must NOT be used in production
+   # For production: enable proper JWT validation in the Supabase Function
+   # Alternative: use service-role key or signed tokens for server-to-server calls
+   # Protect endpoints with API gateway or reverse proxy if JWT is disabled
+   supabase functions deploy ai-router  # production-safe deployment
    ```
 
 ---

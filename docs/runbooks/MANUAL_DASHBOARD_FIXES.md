@@ -3,7 +3,7 @@
 ## 1. Update Connection Pooling Settings
 
 To access your Supabase project dashboard:
-1. Go to: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/settings/database
+1. Go to: https://supabase.com/dashboard/project/<PROJECT_REF>/settings/database
 2. Find the "Connection pooling" section
 3. Update the following settings:
 
@@ -15,22 +15,27 @@ To access your Supabase project dashboard:
 
 ## 2. Run Extension Update Script
 
-Execute the SQL commands in `APPLY_THIS_IN_SUPABASE_DASHBOARD.sql` in your Supabase SQL Editor:
-1. Go to: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/database/sql
+Execute the SQL commands in `APPLY_THIS_IN_SUPABASE_DASHBOARD.sql` in your Supabase SQL Editor. This script updates Postgres/Supabase extensions to their latest versions, including pg_graphql, supabase_vault, and wrappers extensions.
+
+**Expected outcomes:** Extension version bumps, updated function signatures, reduced migration check overhead.
+
+**Rollback:** Run `ALTER EXTENSION <ext> UPDATE TO '<previous_version>';` or restore from a database backup.
+
+1. Go to: https://supabase.com/dashboard/project/<PROJECT_REF>/database/sql
 2. Copy and paste the contents of `APPLY_THIS_IN_SUPABASE_DASHBOARD.sql`
 3. Run the script to update your extensions
 
 ## 3. Check and Optimize Realtime Settings
 
 To reduce the load from `realtime.list_changes` queries:
-1. Go to: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/database/realtime
+1. Go to: https://supabase.com/dashboard/project/<PROJECT_REF>/database/realtime
 2. Review your active subscriptions
 3. Ensure you're using specific filters rather than subscribing to entire tables
 
 ## 4. Enable Query Performance Insights
 
 To monitor your improvements:
-1. Go to: https://supabase.com/dashboard/project/mxtsdgkwzjzlttpotole/database/query-performance
+1. Go to: https://supabase.com/dashboard/project/<PROJECT_REF>/database/query-performance
 2. Enable query performance insights if not already active
 3. Set up alerts for:
    - Queries taking longer than 1 second
