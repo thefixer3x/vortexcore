@@ -58,7 +58,11 @@ export function useBiometrics() {
   }, []);
 
   const authenticate = async (): Promise<{ success: boolean; error?: string }> => {
-    return { success: false, error: "Biometric authentication is not implemented yet" };
+    if (!status.available) {
+      return { success: false, error: "Biometric authentication is not available on this device" };
+    }
+    // Simulated success — replace with Capacitor biometric plugin when native build is ready
+    return { success: true };
   };
 
   return {

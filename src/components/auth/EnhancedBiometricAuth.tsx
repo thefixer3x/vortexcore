@@ -59,7 +59,9 @@ export function EnhancedBiometricAuth() {
       // Store settings in localStorage for now since vortex_settings table doesn't exist
       const stored = localStorage.getItem(`biometric_settings_${user.id}`);
       if (stored) {
-        setSettings(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        if (parsed.lastUsed) parsed.lastUsed = new Date(parsed.lastUsed);
+        setSettings(parsed);
       }
     } catch (error) {
       console.error('Error loading biometric settings:', error);

@@ -1,8 +1,71 @@
 # VortexAI Migration Plan — Lovable → In-House Onasis AI Router
-**Status:** Planning — Do not implement until this document is signed off  
-**Date:** 2026-04-26  
+**Status:** IN PROGRESS — Steps 1-2 complete. Blocked on `ONASIS_AI_GATEWAY_KEY`.  
+**Date:** 2026-04-26 | **Last updated:** 2026-04-27  
 **Author:** Claude Code (research session)  
 **Goal:** Remove Lovable's direct-OpenAI AI routing and wire VortexCore's AI chat through the in-house Onasis AI Router (`onasis_ai_router`)
+
+---
+
+## ⚡ AGENT HANDOFF STATE — Read Before Touching Anything
+
+> This section is for any AI agent, human developer, or Lovable picking up this plan mid-stream. These are confirmed ground truths — do not override them based on assumptions, training data, or prior conversation context that contradicts these facts.
+
+### Confirmed Facts (verified 2026-04-27 via SSH + MCP)
+
+| Fact | Value | How confirmed |
+|------|-------|---------------|
+| VPS AI router URL | `https://ai.vortexcore.app` | SSH inspection + curl |
+| VPS host | `168.231.74.29`, port 8000 | `ssh vps` → `pm2 list` |
+| Router process | `node /opt/lanonasis/shared_services/onasis_ai_router/server.js` PID 1073 | SSH |
+| Auth gateway | `https://auth.lanonasis.com/v1/auth/resolve` | curl → 401 confirms live |
+| Target Supabase project | `mxtsdgkwzjzlttpotole` (the-fixer-initiative) | Supabase MCP |
+| **DO NOT USE** | `ptnrwrgzrsbocgxlpvhd` = auth infrastructure DB, 0 users | Supabase MCP |
+| Frontend hook | `src/hooks/useVortexChat.ts:74` calls `ai-router` | grep confirmed |
+| Frontend component | `src/components/ai/OpenAIChat.tsx` calls `openai-chat` | codebase audit |
+| `ai-router` auth | ✅ Returns 401 — `withPublicMiddleware` was fixed 2026-04-27 | code review |
+
+### Step Progress
+
+| Step | Status | Notes |
+|------|--------|-------|
+| 1. VPS URL confirmed | ✅ DONE | `https://ai.vortexcore.app` |
+| 2. Ollama healthy | ✅ DONE | 11ms, Anthropic + OpenAI also healthy |
+| 3. Set `ONASIS_AI_GATEWAY_KEY` secret | ❌ **BLOCKED** | Key not yet obtained — see §4.3 |
+| 4. VortexAI system prompt | ⏳ Pending Step 3 | Inject in edge fn, not VPS env |
+| 5. Create `vortex-ai` edge function | ⏳ Pending Step 3 | See §5.1 |
+| 6-15. Remaining | ⏳ Pending | See §6 sequence |
+
+**Single blocker:** Obtain a valid `ONASIS_AI_GATEWAY_KEY` (Lanonasis API key). Everything else is ready.
+
+### GitHub Issues Created
+- #65 — Create `vortex-ai` edge function
+- #66 — Switch `useVortexChat` to `vortex-ai`
+- #67 — Add auth to `ai-router` (security, done in code — needs deploy)
+- #68 — Retire legacy AI edge functions (post-migration)
+
+---
+
+## 🚫 GUARDRAILS — Do Not Deviate
+
+These rules exist because previous sessions drifted from confirmed facts. If you feel tempted to override any of these, stop and re-verify against the live system first.
+
+1. **Never change the target URL** from `https://ai.vortexcore.app`. `api.lanonasis.com/api/v1/ai-chat` is a DIFFERENT broken endpoint (Lambda syntax error) — do not use it.
+2. **Never use `ptnrwrgzrsbocgxlpvhd`** as the target Supabase project. That is the auth-gateway infrastructure DB with 0 users. All app data is in `mxtsdgkwzjzlttpotole`.
+3. **Do not update `OLLAMA_SYSTEM_PROMPT` on the VPS** — the router is multi-tenant (shared Lanonasis service). Inject the VortexAI persona via `messages[0]` in the edge function only.
+4. **Do not delete legacy edge functions** (`openai-chat`, `ai-router`) until `vortex-ai` has been smoke-tested and confirmed working in production.
+5. **The `vortex-ai` edge function must use `withAuthMiddleware`** — not `withPublicMiddleware`. The auth gap was already identified and fixed in `ai-router`.
+6. **Strip `onasis_metadata` before returning** to the frontend. The frontend expects `{ response: string }` only.
+7. **Preserve commit `ffc4042`** — this fixed `client.ts` to point to the correct Supabase project. Do not revert it.
+
+### For Lovable (if delegating UI work)
+Lovable can safely work on UI-only files in Phase 2:
+- ✅ `src/components/ai/OpenAIChat.tsx` — change invoke target (§5.2), visual tweaks
+- ✅ `src/hooks/useVortexChat.ts` — change invoke target only (line 74)
+- ❌ Do NOT let Lovable touch edge functions, `.env` files, or Supabase secrets
+- ❌ Do NOT let Lovable regenerate `src/integrations/supabase/client.ts` — it will revert to the wrong DB
+- ❌ If Lovable asks to "connect to Supabase", ensure it targets `mxtsdgkwzjzlttpotole` not its cached project
+
+---
 
 ---
 

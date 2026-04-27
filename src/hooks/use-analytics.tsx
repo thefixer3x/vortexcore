@@ -31,14 +31,17 @@ export const useAnalytics = () => {
         },
         (payload) => {
           console.log('Transaction change received:', payload);
-          // Handle the specific transaction change
-          setAnalyticsData((prev: any) => ({
-            ...prev,
-            transactions: {
-              ...prev?.transactions,
-              [(payload.new as any).id]: payload.new
+          setAnalyticsData((prev: any) => {
+            const record = payload.new ?? payload.old;
+            if (!record) return prev;
+            const transactions = { ...prev?.transactions };
+            if (payload.new) {
+              transactions[(record as any).id] = payload.new;
+            } else {
+              delete transactions[(record as any).id];
             }
-          }));
+            return { ...prev, transactions };
+          });
         }
       )
       .subscribe();
@@ -65,13 +68,17 @@ export const useAnalytics = () => {
         },
         (payload) => {
           console.log('Chat message change received:', payload);
-          setAnalyticsData((prev: any) => ({
-            ...prev,
-            chatMessages: {
-              ...prev?.chatMessages,
-              [(payload.new as any).id]: payload.new
+          setAnalyticsData((prev: any) => {
+            const record = payload.new ?? payload.old;
+            if (!record) return prev;
+            const chatMessages = { ...prev?.chatMessages };
+            if (payload.new) {
+              chatMessages[(record as any).id] = payload.new;
+            } else {
+              delete chatMessages[(record as any).id];
             }
-          }));
+            return { ...prev, chatMessages };
+          });
         }
       )
       .subscribe();
@@ -135,13 +142,13 @@ export const useAnalytics = () => {
           .single(),
         
         supabase
-          .from('vortex_wallets')
+          .from('wallets')
           .select('*')
           .eq('user_id', userId)
           .single(),
-        
+
         supabase
-          .from('vortex_transactions')
+          .from('transactions')
           .select('*')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
