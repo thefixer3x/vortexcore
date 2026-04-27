@@ -13,6 +13,7 @@ import { PaymentStatusProvider } from './providers/PaymentStatusProvider'
 // import LogRocket from 'logrocket'
 // import { setupLogRocketErrorTracking, setupNetworkTracking, setupPerformanceTracking } from './lib/logrocket-utils'
 import { AuthProvider } from './contexts/AuthContext'
+import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { CurrencyProvider } from './contexts/CurrencyContext'
 import { logConfigStatus } from './utils/configValidator'
 
@@ -54,11 +55,13 @@ if (import.meta.env.DEV) {
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <CurrencyProvider>
-        <PaymentStatusProvider>
-          <App />
-        </PaymentStatusProvider>
-      </CurrencyProvider>
+      <SubscriptionProvider>
+        <CurrencyProvider>
+          <PaymentStatusProvider>
+            <App />
+          </PaymentStatusProvider>
+        </CurrencyProvider>
+      </SubscriptionProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

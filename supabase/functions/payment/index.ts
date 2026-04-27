@@ -129,7 +129,7 @@ serve(withAuthMiddleware(async (req)=>{
       throw new Error(data.message || 'Failed to initialize payment');
     }
     // Store transaction in database
-    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
       auth: {
         persistSession: false
       }
@@ -175,4 +175,4 @@ serve(withAuthMiddleware(async (req)=>{
       }
     });
   }
-}, ['POST'])));
+}, ['POST']));
