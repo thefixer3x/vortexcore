@@ -42,4 +42,4 @@ serve(withAuthMiddleware(async (req)=>{
     console.error('Error verifying transaction:', error);
     return new Response(JSON.stringify({ success: false, message: 'Internal server error', error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
-}, ['GET'])));
+}, ['GET']));
