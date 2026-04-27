@@ -26,8 +26,8 @@ export const useAnalytics = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'transactions',
-          filter: `user_id=eq.${userId}`, // Only subscribe to specific user's data
+          table: 'vortex_transactions',
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           console.log('Transaction change received:', payload);
@@ -100,8 +100,8 @@ export const useAnalytics = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'wallets',
-          filter: `user_id=eq.${userId}`, // Only subscribe to specific user's wallet
+          table: 'vortex_wallets',
+          filter: `user_id=eq.${userId}`,
         },
         (payload) => {
           console.log('Wallet change received:', payload);
@@ -142,13 +142,13 @@ export const useAnalytics = () => {
           .single(),
         
         supabase
-          .from('wallets')
+          .from('vortex_wallets')
           .select('*')
           .eq('user_id', userId)
           .single(),
 
         supabase
-          .from('transactions')
+          .from('vortex_transactions')
           .select('*')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
