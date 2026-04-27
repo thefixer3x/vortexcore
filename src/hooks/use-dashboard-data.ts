@@ -70,7 +70,7 @@ export const useDashboardData = (): UseDashboardDataResult => {
           .from("vortex_wallets")
           .select("*")
           .eq("user_id", userId)
-          .eq("is_active", true)
+          .eq("is_locked", false)
           .order("created_at", { ascending: true }),
         supabase
           .from("vortex_transactions")
