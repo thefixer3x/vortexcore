@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot serve --port=5173 index.html",
+    "dev": "vite",
     "build": "bun vite build",
     "build:dev": "bun vite build --mode development",
     "lint": "bun eslint .",
