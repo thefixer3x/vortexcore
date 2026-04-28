@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ const TIER_ICONS = {
 };
 
 export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => {
+  const { t } = useTranslation();
   const { tier, subscribed, status, currentPeriodEnd, cancelAt, loading, refresh } = useSubscription();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -72,9 +74,9 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader className="space-y-2 sm:space-y-3">
-          <SheetTitle>Subscription Plan</SheetTitle>
+          <SheetTitle>{t("subscription.title")}</SheetTitle>
           <SheetDescription>
-            {subscribed ? "Manage your active subscription" : "Upgrade to unlock premium features"}
+            {subscribed ? t("subscription.description.active") : t("subscription.description.inactive")}
           </SheetDescription>
         </SheetHeader>
 
@@ -90,21 +92,21 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                 <div className="flex items-center gap-2">
                   {(() => { const Icon = TIER_ICONS[tier]; return <Icon className="h-5 w-5 text-yellow-500" />; })()}
                   <span className="font-semibold text-sm sm:text-base capitalize">
-                    Current Plan: {TIERS[tier].name}
+                    {t("subscription.current_plan", { plan: TIERS[tier].name })}
                   </span>
                 </div>
                 <Badge variant={subscribed ? "default" : "secondary"} className="capitalize text-xs">
-                  {subscribed ? status : "free"}
+                  {subscribed ? t(`subscription.status.${status}`, { defaultValue: status }) : t("subscription.status.free")}
                 </Badge>
               </div>
               {currentPeriodEnd && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Renews {formatDate(currentPeriodEnd)}
+                  {t("subscription.renews", { date: formatDate(currentPeriodEnd) })}
                 </p>
               )}
               {cancelAt && (
                 <p className="text-xs text-destructive mt-1">
-                  Cancels {formatDate(cancelAt)}
+                  {t("subscription.cancels", { date: formatDate(cancelAt) })}
                 </p>
               )}
             </div>
@@ -122,7 +124,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                 ) : (
                   <ExternalLink className="h-4 w-4 mr-2" />
                 )}
-                Manage Subscription
+                {t("subscription.actions.manage")}
               </Button>
             )}
 
@@ -141,7 +143,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                     <div className="flex items-center gap-2">
                       {(() => { const Icon = TIER_ICONS[key]; return <Icon className="h-4 w-4 text-primary" />; })()}
                       <span className="font-semibold text-sm">{plan.name}</span>
-                      {isCurrentPlan && <Badge className="text-xs">Current</Badge>}
+                      {isCurrentPlan && <Badge className="text-xs">{t("subscription.status.active")}</Badge>}
                     </div>
                     <span className="text-sm font-bold">${plan.price}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
                   </div>
@@ -163,9 +165,9 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                       disabled={isLoading || !!checkoutLoading}
                     >
                       {isLoading ? (
-                        <><Loader2 className="h-4 w-4 animate-spin mr-2" />Opening Checkout…</>
+                        <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t("subscription.actions.opening_checkout")}</>
                       ) : (
-                        <>Upgrade to {plan.name}</>
+                        <>{t("subscription.actions.upgrade", { plan: plan.name })}</>
                       )}
                     </Button>
                   )}
@@ -175,7 +177,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
 
             {subscribed && (
               <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={() => void refresh()}>
-                Refresh subscription status
+                {t("subscription.actions.refresh")}
               </Button>
             )}
           </div>

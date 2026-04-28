@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
@@ -11,6 +12,7 @@ interface NotificationSheetProps {
 }
 
 export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetProps) => {
+  const { t } = useTranslation();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
 
@@ -18,17 +20,17 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="w-full md:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Notification Preferences</SheetTitle>
+          <SheetTitle>{t("settings.notifications_preferences.title")}</SheetTitle>
           <SheetDescription>
-            Choose how and when you want to be notified
+            {t("settings.notifications_preferences.description")}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-6">
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <h3 className="font-medium">Email Notifications</h3>
+              <h3 className="font-medium">{t("settings.notifications_preferences.email.title")}</h3>
               <p className="text-sm text-muted-foreground">
-                Receive notifications and updates via email
+                {t("settings.notifications_preferences.email.description")}
               </p>
             </div>
             <Switch
@@ -36,12 +38,12 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
               onCheckedChange={setEmailNotifications}
             />
           </div>
-          
+
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
-              <h3 className="font-medium">Push Notifications</h3>
+              <h3 className="font-medium">{t("settings.notifications_preferences.push.title")}</h3>
               <p className="text-sm text-muted-foreground">
-                Receive notifications on your devices
+                {t("settings.notifications_preferences.push.description")}
               </p>
             </div>
             <Switch
@@ -49,35 +51,35 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
               onCheckedChange={setPushNotifications}
             />
           </div>
-          
+
           <div className="pt-4">
-            <h3 className="font-medium mb-2">Alert Types</h3>
-            
+            <h3 className="font-medium mb-2">{t("settings.notifications_preferences.alert_types.title")}</h3>
+
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
-                <p className="font-medium">Transaction Alerts</p>
+                <p className="font-medium">{t("settings.notifications_preferences.alerts.transaction.title")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Get notified about all transactions
+                  {t("settings.notifications_preferences.alerts.transaction.description")}
                 </p>
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
-                <p className="font-medium">Security Alerts</p>
+                <p className="font-medium">{t("settings.notifications_preferences.alerts.security.title")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Get notified about security events
+                  {t("settings.notifications_preferences.alerts.security.description")}
                 </p>
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
-                <p className="font-medium">Marketing & Promotions</p>
+                <p className="font-medium">{t("settings.notifications_preferences.alerts.marketing.title")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Receive updates about new features and promotions
+                  {t("settings.notifications_preferences.alerts.marketing.description")}
                 </p>
               </div>
               <Switch defaultChecked={false} />
@@ -85,7 +87,7 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
           </div>
         </div>
         <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Save Notification Settings</Button>
+          <Button onClick={onSave} className="w-full">{t("settings.notifications_preferences.actions.save")}</Button>
         </div>
       </SheetContent>
     </Sheet>

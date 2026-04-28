@@ -19,10 +19,10 @@
     "test:e2e:headed": "playwright test --headed",
     "test:smoke": "bun smoke-test.js",
     "i18n:validate": "node scripts/validate-translations.js",
-    "i18n:translate": "npx lingo.dev@latest i18n",
-    "i18n:coverage": "cd ../.. && bun run i18n:coverage",
-    "i18n:quality": "cd ../.. && bun run i18n:quality",
-    "i18n": "npx lingo.dev@latest i18n",
+    "i18n:translate": "npx lingo.dev@latest run --no-interactive",
+    "i18n:status": "npx lingo.dev@latest status",
+    "i18n:cleanup": "npx lingo.dev@latest cleanup --no-interactive",
+    "i18n:auth": "npx lingo.dev@latest auth",
     "i18n:check": "test -f locales/es.json && echo '✅ Translations exist' || echo '❌ Missing translations'"
   },
   "dependencies": {

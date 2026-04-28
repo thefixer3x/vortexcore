@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "i18n:translate": "npx lingo.dev@latest run --no-interactive",
+    "i18n:validate": "node scripts/validate-translations.js",
+    "i18n:status": "npx lingo.dev@latest status",
+    "i18n:cleanup": "npx lingo.dev@latest cleanup --no-interactive",
+    "i18n:auth": "npx lingo.dev@latest auth"
+  },
+  "_devDependencies_note": "Add these to your real package.json under devDependencies: i18next, react-i18next, i18next-browser-languagedetector. Install with: bun add i18next react-i18next i18next-browser-languagedetector"
+}
