@@ -3,6 +3,9 @@
 /**
  * Translation key-coverage validator.
  * Flattens nested keys in en.json and verifies every other locale has the same set.
+ * Exits non-zero on any drift (missing or extra keys).
+ *
+ * Usage: node scripts/validate-translations.js
  */
 
 import fs from 'node:fs';

@@ -3,6 +3,66 @@
     "name": "VortexCore",
     "tagline": "Personal Finance Made Simple"
   },
+  "common": {
+    "actions": {
+      "back": "Back to Dashboard",
+      "save_changes": "Save Changes",
+      "cancel": "Cancel",
+      "verify": "Verify",
+      "skip": "Skip",
+      "close": "Close",
+      "minimize": "Minimize",
+      "retry": "Retry",
+      "start": "Start",
+      "register": "Register",
+      "invite": "Invite",
+      "view_details": "View Details",
+      "explore": "Explore",
+      "sign_out": "Sign Out",
+      "new": "New",
+      "sign_in": "Sign in",
+      "implement": "Implement",
+      "menu": "Menu",
+      "settings": "Settings"
+    },
+    "errors": {
+      "404": {
+        "title": "404",
+        "message": "Oops! Page not found",
+        "action": "Return to Home"
+      }
+    },
+    "language": {
+      "select": "Select Language",
+      "ai_powered_translations": "AI-powered translations"
+    }
+  },
+  "nav": {
+    "main": {
+      "dashboard": "Control Room",
+      "transactions": "Transactions",
+      "vortexai": "VortexAI",
+      "settings": "Settings",
+      "user_management": "User Management"
+    },
+    "secondary": {
+      "notifications": "Notifications",
+      "security": "Security",
+      "help_support": "Help & Support"
+    }
+  },
+  "index": {
+    "hero": {
+      "title": "Take control of your financial ecosystem",
+      "subtitle": "Link all your accounts, manage transactions, and gain AI-powered insights"
+    },
+    "nav": {
+      "ecosystem": "Ecosystem",
+      "features": "Features",
+      "pricing": "Pricing",
+      "support": "Support"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back, {{name}}!",
@@ -10,23 +70,251 @@
     "monthly_income": "Monthly Income",
     "monthly_expenses": "Monthly Expenses",
     "recent_transactions": "Recent Transactions",
-    "quick_actions": "Quick Actions"
+    "quick_actions": "Quick Actions",
+    "badge": {
+      "pro": "Pro"
+    },
+    "greeting": {
+      "time_based": "Good {{timeOfDay}}, {{name}}"
+    },
+    "header": {
+      "subtitle": "Here's your financial overview for today"
+    },
+    "actions": {
+      "new_transaction": "New Transaction"
+    },
+    "balance": {
+      "total": "Total Balance",
+      "tracking_hint": "Track your spending trends in real time",
+      "connect_prompt": "Connect a wallet to start monitoring your balances"
+    },
+    "transactions": {
+      "title": "Recent Transactions",
+      "filters": {
+        "search": "Search",
+        "filter": "Filter",
+        "date": "Date"
+      },
+      "filter_all": "All",
+      "filter_income": "Income",
+      "filter_expenses": "Expenses",
+      "credit": "Credit",
+      "debit": "Debit",
+      "view_all": "View All Transactions",
+      "empty": "No transactions to display yet. Complete an action to see it here."
+    },
+    "quick_actions": {
+      "title": "Quick Actions",
+      "mobile_services": {
+        "label": "Mobile Services",
+        "description": "Airtime & data bundles"
+      },
+      "save_invest": {
+        "label": "Save & Invest",
+        "description": "Automated savings"
+      },
+      "analytics": {
+        "label": "Analytics",
+        "description": "Financial insights"
+      },
+      "premium": {
+        "title": "Premium Features",
+        "upgrade_cta": "Upgrade to Pro"
+      },
+      "ai_advisor": {
+        "label": "AI Financial Advisor",
+        "description": "Personalized recommendations"
+      },
+      "advanced_analytics": {
+        "label": "Advanced Analytics",
+        "description": "Deep financial insights"
+      },
+      "fraud_protection": {
+        "label": "Fraud Protection",
+        "description": "Enhanced security monitoring"
+      },
+      "family_banking": {
+        "label": "Family Banking",
+        "description": "Multi-user account management"
+      }
+    },
+    "shortcuts": {
+      "title": "Smart Shortcuts",
+      "split_bill": {
+        "label": "Split Bill",
+        "description": "Divide expenses with friends"
+      },
+      "auto_save": {
+        "label": "Auto-Save",
+        "description": "Smart savings automation"
+      }
+    },
+    "ai_insights": {
+      "title": "AI Financial Insights",
+      "subtitle": "Powered by Claude AI",
+      "live_badge": "Live",
+      "spending_down": "Spending Down {{value}}",
+      "comparison": "vs last month",
+      "savings_tip": "Save {{amount}}",
+      "savings_category": "on subscriptions",
+      "investment": {
+        "title": "Investment Tip",
+        "subtitle": "Ready for you"
+      }
+    },
+    "ai": {
+      "title": "AI Financial Insights",
+      "subtitle": "Powered by advanced analytics and machine learning",
+      "live_badge": "Live Analysis",
+      "tip_saving": {
+        "title": "Smart Saving Tip",
+        "description": "You could save {{amount}}/month by optimizing your subscriptions"
+      },
+      "budget_alert": {
+        "title": "Budget Alert",
+        "description": "{{percentage}} of your monthly food budget used. Consider meal planning.",
+        "action": "Set Limits"
+      },
+      "investment_ready": {
+        "title": "Investment Ready",
+        "description": "Based on your savings pattern, consider a {{amount}} investment."
+      },
+      "savings": {
+        "on_track": "On Track"
+      }
+    },
+    "analytics": {
+      "spending_trends": {
+        "title": "Spending Trends"
+      },
+      "trends_change": "{{value}} vs last month",
+      "average_monthly": "Average Monthly",
+      "this_month": "This Month",
+      "category_breakdown": {
+        "title": "Spending by Category"
+      },
+      "savings_growth": {
+        "title": "Savings Growth"
+      },
+      "goal_label": "Monthly Goal",
+      "current_month": "Current Month"
+    },
+    "smart_actions": {
+      "title": "Smart Actions",
+      "create_budget": {
+        "label": "Create Budget Plan",
+        "description": "AI-powered suggestions"
+      },
+      "investment_advisor": {
+        "label": "Investment Advisor",
+        "description": "Personalized recommendations"
+      },
+      "health_check": {
+        "label": "Financial Health Check",
+        "description": "Complete analysis"
+      }
+    }
   },
   "transactions": {
     "title": "Transactions",
+    "page_subtitle": "Manage and analyze your financial activities",
     "add_transaction": "Add Transaction",
     "amount": "Amount",
     "description": "Description",
     "category": "Category",
     "date": "Date",
-    "no_transactions": "No transactions found"
+    "no_transactions": "No transactions found",
+    "filters": {
+      "date_range": "Date Range",
+      "export": "Export",
+      "search_placeholder": "Search transactions…"
+    },
+    "actions": {
+      "new": "New Transaction"
+    },
+    "tabs": {
+      "all": "All Transactions",
+      "income": "Income",
+      "expenses": "Expenses",
+      "pending": "Pending",
+      "income_empty": "Income transactions will be displayed here",
+      "expense_empty": "Expense transactions will be displayed here",
+      "pending_empty": "Pending transactions will be displayed here"
+    },
+    "table": {
+      "headers": {
+        "date": "Date",
+        "description": "Description",
+        "category": "Category",
+        "reference": "Reference",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "empty": "No transactions found"
+    },
+    "types": {
+      "deposit": "Deposit",
+      "withdrawal": "Withdrawal",
+      "transfer": "Transfer",
+      "payment": "Payment"
+    }
   },
   "insights": {
-    "title": "Financial Insights",
+    "title": "AI Insights",
+    "description": "Financial analytics and personalized recommendations",
     "spending_trends": "Spending Trends",
     "category_breakdown": "Category Breakdown",
-    "cash_flow": "Cash Flow Analysis",
-    "recommendations": "AI Recommendations"
+    "cash_flow_analysis": "Cash Flow Analysis",
+    "recommendations_summary": "AI Recommendations",
+    "financial_overview": {
+      "title": "Financial Overview",
+      "description": "Track your financial health and trends",
+      "badge": "AI-Powered Insights"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "income": "Income",
+      "expenses": "Expenses",
+      "savings": "Savings",
+      "bank_statements": "Bank Statements",
+      "income_empty": "Income analytics will be displayed here",
+      "expenses_empty": "Expense analytics will be displayed here",
+      "savings_empty": "Savings analytics will be displayed here"
+    },
+    "actions": {
+      "time_period": "Time Period",
+      "filter": "Filter",
+      "export": "Export"
+    },
+    "cash_flow": {
+      "title": "Cash Flow Trend (Last 6 Months)"
+    },
+    "bank_statement": {
+      "invalid_file_type": "Invalid file type",
+      "upload_hint": "Please upload a PDF or CSV bank statement",
+      "coming_soon": "Feature coming soon",
+      "coming_soon_description": "Bank statement analysis will be available in a future update",
+      "title": "Bank Statement Analysis",
+      "upload_title": "Upload Bank Statement",
+      "upload_description": "Upload your bank statement (PDF or CSV) for VortexAI to analyze your spending patterns",
+      "uploading": "Uploading…",
+      "upload_cta": "Upload Statement"
+    },
+    "performance": {
+      "title": "Performance Insights & Recommendations",
+      "trend_title": "Performance Trend",
+      "avg_query_time": "Avg Query Time",
+      "target_ms": "Target: {{value}}",
+      "cache_hit_rate": "Cache Hit Rate",
+      "slow_queries": "Slow Queries",
+      "target_slow_queries": "Target: <{{value}}/hour"
+    },
+    "recommendations": {
+      "title": "AI-Powered Recommendations",
+      "implementation": {
+        "title": "Implementation Guide"
+      }
+    }
   },
   "virtual_cards": {
     "title": "Virtual Cards",
@@ -34,7 +322,88 @@
     "card_number": "Card Number",
     "expiry_date": "Expiry Date",
     "cvv": "CVV",
-    "spending_limit": "Spending Limit"
+    "spending_limit": "Spending Limit",
+    "page_description": "Create and manage virtual cards for secure online payments",
+    "security_banner": "Virtual cards provide enhanced security for online transactions with spending controls and real-time notifications.",
+    "errors": {
+      "load_failed": "Failed to load your virtual cards. Please try again.",
+      "transactions_load_failed": "Failed to load transaction history. Please try again.",
+      "create_failed": "Failed to create virtual card. Please try again.",
+      "toggle_lock_failed": "Failed to update card status. Please try again.",
+      "load_details_failed": "Failed to load card details. Please try again."
+    },
+    "create": {
+      "success": "Virtual card created successfully!",
+      "dialog": {
+        "title": "Create Virtual Card",
+        "description": "Create a new virtual card for secure online payments"
+      }
+    },
+    "card": {
+      "unlock_success": "Card Unlocked",
+      "lock_success": "Card Locked",
+      "unlock_description": "Your virtual card has been unlocked and can now be used for transactions.",
+      "lock_description": "Your virtual card has been locked and cannot be used for new transactions.",
+      "status": {
+        "locked": "Locked",
+        "active": "Active"
+      },
+      "copied": "{{label}} copied to clipboard",
+      "details_title": "Card Details",
+      "description": "Virtual card ending in {{last4}}",
+      "fields": {
+        "number_label": "Card Number",
+        "expiry_label": "Expiry Date",
+        "cvc_label": "CVC",
+        "status_label": "Status",
+        "created_label": "Created"
+      },
+      "security_title": "Security",
+      "security_description": "This virtual card can be locked at any time for added protection.",
+      "actions": {
+        "loading": "Loading…",
+        "hide_details": "Hide Details",
+        "show_details": "Show Details",
+        "unlock": "Unlock Card",
+        "lock": "Lock Card"
+      }
+    },
+    "tabs": {
+      "details": "Card Details",
+      "transactions": "Transactions"
+    },
+    "list": {
+      "title": "Your Virtual Cards"
+    },
+    "transaction_history": {
+      "title": "Transaction History",
+      "description": "Recent transactions for card ending in {{last4}}",
+      "empty": {
+        "title": "No transactions yet",
+        "description": "Transactions will appear here once you start using your card."
+      }
+    },
+    "no_selection": {
+      "title": "No Card Selected",
+      "description": "Select a card from the list or create a new virtual card."
+    },
+    "form": {
+      "fields": {
+        "cardholder_name": "Cardholder Name",
+        "cardholder_name_placeholder": "Enter cardholder name",
+        "currency": "Currency",
+        "currency_placeholder": "Select currency",
+        "spending_limit": "Spending Limit",
+        "limit_amount": "Amount",
+        "limit_amount_placeholder": "Enter amount",
+        "limit_interval": "Interval",
+        "limit_interval_placeholder": "Select interval"
+      },
+      "actions": {
+        "creating": "Creating…",
+        "create": "Create Virtual Card"
+      }
+    }
   },
   "settings": {
     "title": "Settings",
@@ -42,6 +411,300 @@
     "security": "Security",
     "notifications": "Notifications",
     "preferences": "Preferences",
-    "two_factor": "Two-Factor Authentication"
+    "two_factor": "Two-Factor Authentication",
+    "page_description": "Manage your account preferences and settings",
+    "notifications_saved": {
+      "title": "Settings Updated",
+      "description": "Your changes have been saved successfully."
+    },
+    "sections": {
+      "personal": "Personal",
+      "business": "Business Settings",
+      "billing": "Billing & Taxes",
+      "notifications": "Notifications",
+      "global": "Global Settings"
+    },
+    "personal": {
+      "profile": {
+        "label": "Profile Information"
+      },
+      "security": {
+        "label": "Login and Security"
+      },
+      "account_security": {
+        "label": "Account Security"
+      },
+      "cookies": {
+        "label": "Cookies Preferences"
+      }
+    },
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your personal details and profile information",
+      "about_title": "Tell Us About You",
+      "fields": {
+        "full_name": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "occupation": "Occupation",
+        "income_range": "Income Range",
+        "financial_goals": "Primary Financial Goals"
+      },
+      "identity": {
+        "title": "Identity Verification",
+        "description": "Complete KYC to access higher transaction limits",
+        "verify_button": "Verify Your Identity",
+        "action": "Start"
+      }
+    },
+    "security_section": {
+      "title": "Login and Security",
+      "description": "Update your password and security settings",
+      "fields": {
+        "current_password": "Current Password",
+        "new_password": "New Password",
+        "confirm_password": "Confirm New Password"
+      },
+      "two_factor": {
+        "title": "Two-factor authentication",
+        "description": "Enable two-factor authentication for added security"
+      },
+      "biometric": {
+        "title": "Biometric login",
+        "description": "Use fingerprint or facial recognition to login"
+      },
+      "actions": {
+        "update": "Update Security Settings"
+      }
+    },
+    "business": {
+      "title": "Business Registration",
+      "description": "Register and manage your business",
+      "registration": {
+        "label": "Business Registration"
+      },
+      "public_profile": {
+        "label": "Public Profile"
+      },
+      "register": {
+        "title": "Register Your Business",
+        "description": "Set up your business profile for advanced features"
+      },
+      "user_management": {
+        "title": "User Management"
+      },
+      "invite": {
+        "title": "Invite Team Members",
+        "description": "Collaborate and manage access levels"
+      }
+    },
+    "notifications_preferences": {
+      "title": "Notification Preferences",
+      "description": "Choose how and when you want to be notified",
+      "email": {
+        "title": "Email Notifications",
+        "description": "Receive notifications and updates via email"
+      },
+      "push": {
+        "title": "Push Notifications",
+        "description": "Receive notifications on your devices"
+      },
+      "alert_types": {
+        "title": "Alert Types"
+      },
+      "alerts": {
+        "transaction": {
+          "title": "Transaction Alerts",
+          "description": "Get notified about all transactions"
+        },
+        "security": {
+          "title": "Security Alerts",
+          "description": "Get notified about security events"
+        },
+        "marketing": {
+          "title": "Marketing & Promotions",
+          "description": "Receive updates about new features and promotions"
+        }
+      },
+      "actions": {
+        "save": "Save Notification Settings"
+      },
+      "preferences": {
+        "label": "Notification Preferences"
+      }
+    },
+    "billing": {
+      "subscription": {
+        "label": "Subscription Plan"
+      },
+      "tax": {
+        "label": "Tax Information"
+      }
+    },
+    "global": {
+      "currency_language": {
+        "label": "Currency & Language"
+      }
+    },
+    "theme": {
+      "label": "Theme",
+      "options": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "toggle": "Toggle theme"
+    }
+  },
+  "subscription": {
+    "title": "Subscription Plan",
+    "description": {
+      "active": "Manage your active subscription",
+      "inactive": "Upgrade to unlock premium features"
+    },
+    "current_plan": "Current Plan: {{plan}}",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "cancelled": "Cancelled",
+      "past_due": "Past Due",
+      "trialing": "Trial",
+      "free": "Free"
+    },
+    "renews": "Renews {{date}}",
+    "cancels": "Cancels {{date}}",
+    "plans": {
+      "pro": {
+        "name": "Pro",
+        "description": "Full access to all features"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For teams and businesses"
+      }
+    },
+    "actions": {
+      "manage": "Manage Subscription",
+      "upgrade": "Upgrade to {{plan}}",
+      "opening_checkout": "Opening Checkout…",
+      "refresh": "Refresh subscription status"
+    }
+  },
+  "notifications": {
+    "payment_success": {
+      "title": "Payment Successful",
+      "description": "Your transfer of {{amount}} to {{name}} was completed"
+    },
+    "ai_insight_available": {
+      "title": "AI Insight Available",
+      "description": "New spending analysis for {{month}} is ready",
+      "action": "View Insights"
+    },
+    "security_alert": {
+      "title": "Security Alert",
+      "description": "New device login detected from {{location}}"
+    },
+    "panel": {
+      "title": "Notifications",
+      "empty": "No notifications"
+    }
+  },
+  "ai": {
+    "chat": {
+      "welcome": "Welcome to VortexCore! How can I assist you today?",
+      "intro": "I'm VortexAI, your personal financial assistant. I can help you analyze spending, suggest savings, and answer questions about your finances.",
+      "title": "VortexAI Assistant",
+      "input_placeholder": "Type a message…",
+      "input_placeholder_full": "Type a message… (Press Enter to send, Shift+Enter for new line)",
+      "input_placeholder_finance": "Ask VortexAI anything about your finances…",
+      "thinking": "Thinking…",
+      "sending": "Sending…",
+      "enter_hint": "⏎ to send",
+      "shift_enter_hint": "Shift+Enter for new line",
+      "actions": {
+        "clear": "Clear Chat",
+        "market_data": "Market Data"
+      },
+      "cleared": "Chat cleared",
+      "cleared_description": "All messages have been cleared",
+      "error_generic": "I encountered an error while processing your request. Please try again.",
+      "unauthenticated_hint": "Sign in to save your chat history and access advanced features",
+      "new_session": "New Chat",
+      "unsaved": "Unsaved",
+      "history": {
+        "title": "Chat History",
+        "search_placeholder": "Search chats…",
+        "untitled": "Untitled Chat"
+      },
+      "sessions_count": "{{count}} Sessions"
+    },
+    "search": {
+      "placeholder": "Search with VortexAI…",
+      "input_placeholder": "Ask VortexAI…",
+      "suggestions_heading": "Suggestions"
+    }
+  },
+  "auth": {
+    "login": {
+      "welcome_title": "Welcome to VortexCore",
+      "welcome_subtitle": "Sign in to manage your financial ecosystem",
+      "submit": "Sign in",
+      "signing_in": "Signing in…",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot password?",
+      "no_account": "Don't have an account?",
+      "create_account": "Create account",
+      "divider": "Or continue with",
+      "success": "Login Successful",
+      "success_description": "Welcome back to VortexCore!",
+      "fields": {
+        "email": "Email",
+        "email_placeholder": "name@example.com",
+        "password": "Password",
+        "password_placeholder": "••••••••"
+      },
+      "errors": {
+        "invalid_credentials": "Invalid Credentials. Please check your email and password and try again.",
+        "auth_error": "Authentication Error: {{message}}"
+      }
+    },
+    "two_factor": {
+      "title": "Two-Factor Authentication",
+      "setup_instructions": "Scan the QR code with your authenticator app to get started.",
+      "intro_instructions": "Enhance your account security by adding a second layer of authentication.",
+      "qr_code_alt": "QR Code for 2FA",
+      "authenticator_hint": "You'll need an authenticator app (like Google Authenticator or Authy) to complete setup.",
+      "setup_cta": "Set Up 2FA",
+      "setup_error": "2FA Setup Error: {{message}}",
+      "setup_error_generic": "An unexpected error occurred during 2FA setup. Please try again.",
+      "missing_factor_id": "2FA Error: Missing factor ID. Please restart the setup process.",
+      "verification_error": "2FA Verification Error: {{message}}",
+      "verification_error_generic": "An unexpected error occurred during verification. Please try again.",
+      "verified": "2FA Verified",
+      "authentication_success": "Authentication Successful"
+    },
+    "biometric": {
+      "continue": "Continue with Biometrics",
+      "unavailable": {
+        "title": "Biometric Authentication",
+        "description": "Biometric authentication is not yet available on this device. Please use your password instead."
+      }
+    },
+    "social": {
+      "google": "Google",
+      "twitter": "X (Twitter)",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "error": "Authentication Error with {{provider}}: {{message}}",
+      "error_generic": "An unexpected error occurred during social login. Please try again."
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "aria_label": "Sidebar navigation",
+      "expand": "Expand sidebar",
+      "collapse": "Collapse sidebar",
+      "toggle_title": "Collapse sidebar"
+    }
   }
 }

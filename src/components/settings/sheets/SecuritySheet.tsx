@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ interface SecuritySheetProps {
 }
 
 export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => {
+  const { t } = useTranslation();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [biometricEnabled, setBiometricEnabled] = useState(true);
 
@@ -20,31 +22,31 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="w-full md:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Login and Security</SheetTitle>
+          <SheetTitle>{t("settings.security_section.title")}</SheetTitle>
           <SheetDescription>
-            Update your password and security settings
+            {t("settings.security_section.description")}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-6">
           <div className="space-y-2">
-            <Label htmlFor="current-password">Current Password</Label>
+            <Label htmlFor="current-password">{t("settings.security_section.fields.current_password")}</Label>
             <Input id="current-password" type="password" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="new-password">New Password</Label>
+            <Label htmlFor="new-password">{t("settings.security_section.fields.new_password")}</Label>
             <Input id="new-password" type="password" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
+            <Label htmlFor="confirm-password">{t("settings.security_section.fields.confirm_password")}</Label>
             <Input id="confirm-password" type="password" />
           </div>
-          
+
           <div className="pt-4">
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
-                <h3 className="font-medium">Two-factor authentication</h3>
+                <h3 className="font-medium">{t("settings.security_section.two_factor.title")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Enable two-factor authentication for added security
+                  {t("settings.security_section.two_factor.description")}
                 </p>
               </div>
               <Switch
@@ -52,12 +54,12 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
                 onCheckedChange={setTwoFactorEnabled}
               />
             </div>
-            
+
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
-                <h3 className="font-medium">Biometric login</h3>
+                <h3 className="font-medium">{t("settings.security_section.biometric.title")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Use fingerprint or facial recognition to login
+                  {t("settings.security_section.biometric.description")}
                 </p>
               </div>
               <Switch
@@ -68,7 +70,7 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
           </div>
         </div>
         <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Update Security Settings</Button>
+          <Button onClick={onSave} className="w-full">{t("settings.security_section.actions.update")}</Button>
         </div>
       </SheetContent>
     </Sheet>

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard, AddAccountCard } from "@/components/dashboard/ModernAccountCard";
 import { ModernTransactionList, type DashboardTransactionItem } from "@/components/dashboard/ModernTransactionList";
@@ -26,6 +27,7 @@ const ACCOUNT_COLORS = [
 ];
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { wallets, transactions, profile, isLoading, error, refresh } = useDashboardData();
   const { currency } = useCurrency();
   const [selectedAction, setSelectedAction] = useState<DashboardActionType | null>(null);
@@ -124,7 +126,7 @@ const Dashboard = () => {
     <div className="animate-fade-in space-y-8">
       {error && (
         <Alert variant="destructive" className="animate-slide-up">
-          <AlertTitle>Unable to load financial data</AlertTitle>
+          <AlertTitle>{t("dashboard.balance.connect_prompt")}</AlertTitle>
           <AlertDescription>
             {error}
           </AlertDescription>

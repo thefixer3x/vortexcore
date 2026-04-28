@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -133,6 +134,7 @@ const mockTransactions: Transaction[] = [
 ];
 
 const Transactions = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTransactions, setFilteredTransactions] = useState(mockTransactions);
   
@@ -189,30 +191,30 @@ const Transactions = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 my-8">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="text-muted-foreground hover:text-foreground transition-colors"
-              title="Back to Dashboard"
+              title={t("common.actions.back")}
             >
               <Home className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t("transactions.title")}</h1>
           </div>
-          <p className="text-muted-foreground">Manage and analyze your financial activities</p>
+          <p className="text-muted-foreground">{t("transactions.page_subtitle")}</p>
         </div>
-        
+
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2">
             <Calendar className="h-4 w-4" />
-            Date Range
+            {t("transactions.filters.date_range")}
           </Button>
           <Button variant="outline" className="gap-2">
             <Download className="h-4 w-4" />
-            Export
+            {t("transactions.filters.export")}
           </Button>
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            New Transaction
+            {t("transactions.actions.new")}
           </Button>
         </div>
       </div>
@@ -222,10 +224,10 @@ const Transactions = () => {
           <div className="px-6 pt-6 pb-2 border-b">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <TabsList>
-                <TabsTrigger value="all">All Transactions</TabsTrigger>
-                <TabsTrigger value="income">Income</TabsTrigger>
-                <TabsTrigger value="expense">Expenses</TabsTrigger>
-                <TabsTrigger value="pending">Pending</TabsTrigger>
+                <TabsTrigger value="all">{t("transactions.tabs.all")}</TabsTrigger>
+                <TabsTrigger value="income">{t("transactions.tabs.income")}</TabsTrigger>
+                <TabsTrigger value="expense">{t("transactions.tabs.expenses")}</TabsTrigger>
+                <TabsTrigger value="pending">{t("transactions.tabs.pending")}</TabsTrigger>
               </TabsList>
               
               <div className="flex gap-2">
@@ -236,7 +238,7 @@ const Transactions = () => {
                   <Input
                     value={searchTerm}
                     onChange={handleSearch}
-                    placeholder="Search transactions..."
+                    placeholder={t("transactions.filters.search_placeholder")}
                     className="pl-10 w-full md:w-[240px]"
                   />
                 </div>
@@ -252,19 +254,19 @@ const Transactions = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
+                    <TableHead>{t("transactions.table.headers.date")}</TableHead>
+                    <TableHead>{t("transactions.table.headers.description")}</TableHead>
+                    <TableHead>{t("transactions.table.headers.category")}</TableHead>
+                    <TableHead>{t("transactions.table.headers.reference")}</TableHead>
+                    <TableHead className="text-right">{t("transactions.table.headers.amount")}</TableHead>
+                    <TableHead className="text-right">{t("transactions.table.headers.status")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredTransactions.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center h-32">
-                        No transactions found
+                        {t("transactions.table.empty")}
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -318,19 +320,19 @@ const Transactions = () => {
           
           <TabsContent value="income" className="m-0">
             <div className="h-[400px] flex items-center justify-center">
-              <p className="text-muted-foreground">Income transactions will be displayed here</p>
+              <p className="text-muted-foreground">{t("transactions.tabs.income_empty")}</p>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="expense" className="m-0">
             <div className="h-[400px] flex items-center justify-center">
-              <p className="text-muted-foreground">Expense transactions will be displayed here</p>
+              <p className="text-muted-foreground">{t("transactions.tabs.expense_empty")}</p>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="pending" className="m-0">
             <div className="h-[400px] flex items-center justify-center">
-              <p className="text-muted-foreground">Pending transactions will be displayed here</p>
+              <p className="text-muted-foreground">{t("transactions.tabs.pending_empty")}</p>
             </div>
           </TabsContent>
         </Tabs>

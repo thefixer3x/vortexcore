@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { Home, Users } from "lucide-react";
@@ -21,16 +22,17 @@ import { BusinessSheet } from "@/components/settings/sheets/BusinessSheet";
 import { SubscriptionSheet } from "@/components/settings/sheets/SubscriptionSheet";
 
 export default function Settings() {
+  const { t } = useTranslation();
   const [activeSheet, setActiveSheet] = useState<string | null>(null);
   const { toast } = useToast();
-  
+
   const openSheet = (id: string) => setActiveSheet(id);
   const closeSheet = () => setActiveSheet(null);
-  
+
   const showToast = () => {
     toast({
-      title: "Settings Updated",
-      description: "Your changes have been saved successfully.",
+      title: t("settings.notifications_saved.title"),
+      description: t("settings.notifications_saved.description"),
     });
   };
 
@@ -46,10 +48,10 @@ export default function Settings() {
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground">
             <Home className="h-5 w-5" />
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("settings.title")}</h1>
         </div>
         <p className="text-muted-foreground">
-          Manage your account preferences and settings
+          {t("settings.page_description")}
         </p>
       </div>
       

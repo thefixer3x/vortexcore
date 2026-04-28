@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,40 +14,41 @@ interface ProfileSheetProps {
 }
 
 export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="w-full md:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Profile Information</SheetTitle>
+          <SheetTitle>{t("settings.profile.title")}</SheetTitle>
           <SheetDescription>
-            Update your personal details and profile information
+            {t("settings.profile.description")}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{t("settings.profile.fields.full_name")}</Label>
             <Input id="name" defaultValue="Alex Volkov" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">{t("settings.profile.fields.email")}</Label>
             <Input id="email" defaultValue="alex@vortexcore.com" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">{t("settings.profile.fields.phone")}</Label>
             <Input id="phone" defaultValue="+1 (555) 123-4567" />
           </div>
 
           <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">Tell Us About You</h3>
+            <h3 className="text-lg font-medium">{t("settings.profile.about_title")}</h3>
             <div className="space-y-2">
-              <Label htmlFor="occupation">Occupation</Label>
-              <Input id="occupation" placeholder="What do you do?" />
+              <Label htmlFor="occupation">{t("settings.profile.fields.occupation")}</Label>
+              <Input id="occupation" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="income-range">Income Range</Label>
+              <Label htmlFor="income-range">{t("settings.profile.fields.income_range")}</Label>
               <Select>
                 <SelectTrigger id="income-range">
-                  <SelectValue placeholder="Select your income range" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="range1">₦100,000 - ₦500,000</SelectItem>
@@ -57,10 +59,10 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="financial-goals">Primary Financial Goals</Label>
+              <Label htmlFor="financial-goals">{t("settings.profile.fields.financial_goals")}</Label>
               <Select>
                 <SelectTrigger id="financial-goals">
-                  <SelectValue placeholder="Select your primary goal" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="savings">Savings</SelectItem>
@@ -72,23 +74,23 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">Identity Verification</h3>
+            <h3 className="text-lg font-medium">{t("settings.profile.identity.title")}</h3>
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-3">
                 <BadgeCheck className="h-8 w-8 text-primary" />
                 <div>
-                  <h4 className="font-medium">Verify Your Identity</h4>
-                  <p className="text-sm text-muted-foreground">Complete KYC to access higher transaction limits</p>
+                  <h4 className="font-medium">{t("settings.profile.identity.verify_button")}</h4>
+                  <p className="text-sm text-muted-foreground">{t("settings.profile.identity.description")}</p>
                 </div>
               </div>
-              <Button>Start</Button>
+              <Button>{t("common.actions.start")}</Button>
             </div>
           </div>
         </div>
         <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Save Changes</Button>
+          <Button onClick={onSave} className="w-full">{t("common.actions.save_changes")}</Button>
         </div>
       </SheetContent>
     </Sheet>

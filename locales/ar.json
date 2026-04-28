@@ -3,6 +3,66 @@
     "name": "VortexCore",
     "tagline": "إدارة الأموال الشخصية ببساطة"
   },
+  "common": {
+    "actions": {
+      "back": "العودة إلى لوحة التحكم",
+      "save_changes": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "verify": "تحقق",
+      "skip": "تخطي",
+      "close": "إغلاق",
+      "minimize": "تصغير",
+      "retry": "إعادة المحاولة",
+      "start": "ابدأ",
+      "register": "تسجيل",
+      "invite": "دعوة",
+      "view_details": "عرض التفاصيل",
+      "explore": "استكشف",
+      "sign_out": "تسجيل الخروج",
+      "new": "جديد",
+      "sign_in": "تسجيل الدخول",
+      "implement": "تنفيذ",
+      "menu": "القائمة",
+      "settings": "الإعدادات"
+    },
+    "errors": {
+      "404": {
+        "title": "404",
+        "message": "عذراً! الصفحة غير موجودة",
+        "action": "العودة إلى الصفحة الرئيسية"
+      }
+    },
+    "language": {
+      "select": "اختر اللغة",
+      "ai_powered_translations": "ترجمات مدعومة بالذكاء الاصطناعي"
+    }
+  },
+  "nav": {
+    "main": {
+      "dashboard": "غرفة التحكم",
+      "transactions": "المعاملات",
+      "vortexai": "VortexAI",
+      "settings": "الإعدادات",
+      "user_management": "إدارة المستخدمين"
+    },
+    "secondary": {
+      "notifications": "الإشعارات",
+      "security": "الأمان",
+      "help_support": "المساعدة والدعم"
+    }
+  },
+  "index": {
+    "hero": {
+      "title": "تحكم في نظامك المالي بالكامل",
+      "subtitle": "اربط جميع حساباتك، وأدِر معاملاتك، واحصل على رؤى مدعومة بالذكاء الاصطناعي"
+    },
+    "nav": {
+      "ecosystem": "النظام البيئي",
+      "features": "المميزات",
+      "pricing": "الأسعار",
+      "support": "الدعم"
+    }
+  },
   "dashboard": {
     "title": "لوحة التحكم",
     "welcome": "مرحبًا بعودتك، {{name}}!",
@@ -10,23 +70,250 @@
     "monthly_income": "الدخل الشهري",
     "monthly_expenses": "المصروفات الشهرية",
     "recent_transactions": "المعاملات الأخيرة",
-    "quick_actions": "إجراءات سريعة"
+    "quick_actions": {
+      "title": "الإجراءات السريعة",
+      "mobile_services": {
+        "label": "خدمات الهاتف المحمول",
+        "description": "رصيد المكالمات وباقات البيانات"
+      },
+      "save_invest": {
+        "label": "ادخر واستثمر",
+        "description": "مدخرات تلقائية"
+      },
+      "analytics": {
+        "label": "التحليلات",
+        "description": "رؤى مالية"
+      },
+      "premium": {
+        "title": "المميزات المتقدمة",
+        "upgrade_cta": "الترقية إلى النسخة الاحترافية"
+      },
+      "ai_advisor": {
+        "label": "مستشار مالي بالذكاء الاصطناعي",
+        "description": "توصيات مخصصة"
+      },
+      "advanced_analytics": {
+        "label": "تحليلات متقدمة",
+        "description": "رؤى مالية معمقة"
+      },
+      "fraud_protection": {
+        "label": "الحماية من الاحتيال",
+        "description": "مراقبة أمنية محسّنة"
+      },
+      "family_banking": {
+        "label": "الخدمات المصرفية العائلية",
+        "description": "إدارة الحسابات متعددة المستخدمين"
+      }
+    },
+    "badge": {
+      "pro": "احترافي"
+    },
+    "greeting": {
+      "time_based": "{{timeOfDay}} سعيد، {{name}}"
+    },
+    "header": {
+      "subtitle": "إليك نظرة عامة على وضعك المالي اليوم"
+    },
+    "actions": {
+      "new_transaction": "معاملة جديدة"
+    },
+    "balance": {
+      "total": "الرصيد الإجمالي",
+      "tracking_hint": "تتبّع اتجاهات إنفاقك في الوقت الفعلي",
+      "connect_prompt": "اربط محفظة لبدء مراقبة أرصدتك"
+    },
+    "transactions": {
+      "title": "المعاملات الأخيرة",
+      "filters": {
+        "search": "بحث",
+        "filter": "تصفية",
+        "date": "التاريخ"
+      },
+      "filter_all": "الكل",
+      "filter_income": "الدخل",
+      "filter_expenses": "المصروفات",
+      "credit": "دائن",
+      "debit": "مدين",
+      "view_all": "عرض جميع المعاملات",
+      "empty": "لا توجد معاملات لعرضها بعد. أكمل إجراءً لتراه هنا."
+    },
+    "shortcuts": {
+      "title": "اختصارات ذكية",
+      "split_bill": {
+        "label": "تقسيم الفاتورة",
+        "description": "قسّم المصروفات مع الأصدقاء"
+      },
+      "auto_save": {
+        "label": "الحفظ التلقائي",
+        "description": "أتمتة ذكية للمدخرات"
+      }
+    },
+    "ai_insights": {
+      "title": "رؤى مالية بالذكاء الاصطناعي",
+      "subtitle": "مدعوم بـ Claude AI",
+      "live_badge": "مباشر",
+      "spending_down": "انخفاض الإنفاق {{value}}",
+      "comparison": "مقارنة بالشهر الماضي",
+      "savings_tip": "وفّر {{amount}}",
+      "savings_category": "من الاشتراكات",
+      "investment": {
+        "title": "نصيحة استثمارية",
+        "subtitle": "جاهزة لك"
+      }
+    },
+    "ai": {
+      "title": "رؤى مالية بالذكاء الاصطناعي",
+      "subtitle": "مدعوم بالتحليلات المتقدمة والتعلم الآلي",
+      "live_badge": "تحليل مباشر",
+      "tip_saving": {
+        "title": "نصيحة ادخار ذكية",
+        "description": "يمكنك توفير {{amount}}/شهر من خلال تحسين اشتراكاتك"
+      },
+      "budget_alert": {
+        "title": "تنبيه الميزانية",
+        "description": "تم استخدام {{percentage}} من ميزانية الطعام الشهرية. فكّر في تخطيط الوجبات.",
+        "action": "تعيين الحدود"
+      },
+      "investment_ready": {
+        "title": "جاهز للاستثمار",
+        "description": "بناءً على نمط مدخراتك، فكّر في استثمار بقيمة {{amount}}."
+      },
+      "savings": {
+        "on_track": "على المسار الصحيح"
+      }
+    },
+    "analytics": {
+      "spending_trends": {
+        "title": "اتجاهات الإنفاق"
+      },
+      "trends_change": "{{value}} مقارنة بالشهر الماضي",
+      "average_monthly": "المتوسط الشهري",
+      "this_month": "هذا الشهر",
+      "category_breakdown": {
+        "title": "الإنفاق حسب الفئة"
+      },
+      "savings_growth": {
+        "title": "نمو المدخرات"
+      },
+      "goal_label": "الهدف الشهري",
+      "current_month": "الشهر الحالي"
+    },
+    "smart_actions": {
+      "title": "الإجراءات الذكية",
+      "create_budget": {
+        "label": "إنشاء خطة الميزانية",
+        "description": "اقتراحات مدعومة بالذكاء الاصطناعي"
+      },
+      "investment_advisor": {
+        "label": "مستشار الاستثمار",
+        "description": "توصيات مخصصة"
+      },
+      "health_check": {
+        "label": "فحص الصحة المالية",
+        "description": "تحليل شامل"
+      }
+    }
   },
   "transactions": {
     "title": "المعاملات",
+    "page_subtitle": "إدارة وتحليل أنشطتك المالية",
     "add_transaction": "إضافة معاملة",
     "amount": "المبلغ",
     "description": "الوصف",
     "category": "الفئة",
     "date": "التاريخ",
-    "no_transactions": "لم يتم العثور على معاملات"
+    "no_transactions": "لم يتم العثور على معاملات",
+    "filters": {
+      "date_range": "النطاق الزمني",
+      "export": "تصدير",
+      "search_placeholder": "البحث في المعاملات..."
+    },
+    "actions": {
+      "new": "معاملة جديدة"
+    },
+    "tabs": {
+      "all": "جميع المعاملات",
+      "income": "الدخل",
+      "expenses": "المصروفات",
+      "pending": "قيد الانتظار",
+      "income_empty": "سيتم عرض معاملات الدخل هنا",
+      "expense_empty": "سيتم عرض معاملات المصروفات هنا",
+      "pending_empty": "سيتم عرض المعاملات قيد الانتظار هنا"
+    },
+    "table": {
+      "headers": {
+        "date": "التاريخ",
+        "description": "الوصف",
+        "category": "الفئة",
+        "reference": "المرجع",
+        "amount": "المبلغ",
+        "status": "الحالة"
+      },
+      "empty": "لا توجد معاملات"
+    },
+    "types": {
+      "deposit": "إيداع",
+      "withdrawal": "سحب",
+      "transfer": "تحويل",
+      "payment": "دفع"
+    }
   },
   "insights": {
-    "title": "رؤى مالية",
+    "title": "رؤى الذكاء الاصطناعي",
+    "description": "تحليلات مالية وتوصيات مخصصة",
     "spending_trends": "اتجاهات الإنفاق",
     "category_breakdown": "تفصيل الفئات",
-    "cash_flow": "تحليل التدفق النقدي",
-    "recommendations": "توصيات الذكاء الاصطناعي"
+    "cash_flow_analysis": "تحليل التدفق النقدي",
+    "recommendations_summary": "توصيات الذكاء الاصطناعي",
+    "financial_overview": {
+      "title": "نظرة عامة مالية",
+      "description": "تتبع صحتك المالية والاتجاهات",
+      "badge": "رؤى مدعومة بالذكاء الاصطناعي"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "income": "الدخل",
+      "expenses": "المصروفات",
+      "savings": "المدخرات",
+      "bank_statements": "كشوف الحساب البنكية",
+      "income_empty": "ستظهر تحليلات الدخل هنا",
+      "expenses_empty": "ستظهر تحليلات المصروفات هنا",
+      "savings_empty": "ستظهر تحليلات المدخرات هنا"
+    },
+    "actions": {
+      "time_period": "الفترة الزمنية",
+      "filter": "تصفية",
+      "export": "تصدير"
+    },
+    "cash_flow": {
+      "title": "اتجاه التدفق النقدي (آخر 6 أشهر)"
+    },
+    "bank_statement": {
+      "invalid_file_type": "نوع ملف غير صالح",
+      "upload_hint": "يرجى تحميل كشف حساب بنكي بصيغة PDF أو CSV",
+      "coming_soon": "الميزة قريباً",
+      "coming_soon_description": "سيتوفر تحليل كشف الحساب البنكي في تحديث مستقبلي",
+      "title": "تحليل كشف الحساب البنكي",
+      "upload_title": "تحميل كشف الحساب البنكي",
+      "upload_description": "قم بتحميل كشف حسابك البنكي (PDF أو CSV) لتحليل أنماط إنفاقك بواسطة VortexAI",
+      "uploading": "جارٍ التحميل…",
+      "upload_cta": "تحميل الكشف"
+    },
+    "performance": {
+      "title": "رؤى الأداء والتوصيات",
+      "trend_title": "اتجاه الأداء",
+      "avg_query_time": "متوسط وقت الاستعلام",
+      "target_ms": "الهدف: {{value}}",
+      "cache_hit_rate": "معدل نجاح ذاكرة التخزين المؤقت",
+      "slow_queries": "الاستعلامات البطيئة",
+      "target_slow_queries": "الهدف: <{{value}}/ساعة"
+    },
+    "recommendations": {
+      "title": "التوصيات المدعومة بالذكاء الاصطناعي",
+      "implementation": {
+        "title": "دليل التنفيذ"
+      }
+    }
   },
   "virtual_cards": {
     "title": "البطاقات الافتراضية",
@@ -34,7 +321,88 @@
     "card_number": "رقم البطاقة",
     "expiry_date": "تاريخ انتهاء الصلاحية",
     "cvv": "رمز التحقق من البطاقة",
-    "spending_limit": "حد الإنفاق"
+    "spending_limit": "حد الإنفاق",
+    "page_description": "أنشئ وأدر البطاقات الافتراضية للمدفوعات الآمنة عبر الإنترنت",
+    "security_banner": "توفر البطاقات الافتراضية أماناً معززاً للمعاملات عبر الإنترنت مع ضوابط الإنفاق والإشعارات الفورية.",
+    "errors": {
+      "load_failed": "فشل تحميل بطاقاتك الافتراضية. يرجى المحاولة مرة أخرى.",
+      "transactions_load_failed": "فشل تحميل سجل المعاملات. يرجى المحاولة مرة أخرى.",
+      "create_failed": "فشل إنشاء البطاقة الافتراضية. يرجى المحاولة مرة أخرى.",
+      "toggle_lock_failed": "فشل تحديث حالة البطاقة. يرجى المحاولة مرة أخرى.",
+      "load_details_failed": "فشل تحميل تفاصيل البطاقة. يرجى المحاولة مرة أخرى."
+    },
+    "create": {
+      "success": "تم إنشاء البطاقة الافتراضية بنجاح!",
+      "dialog": {
+        "title": "إنشاء بطاقة افتراضية",
+        "description": "أنشئ بطاقة افتراضية جديدة لعمليات الدفع الآمنة عبر الإنترنت"
+      }
+    },
+    "card": {
+      "unlock_success": "تم إلغاء قفل البطاقة",
+      "lock_success": "تم قفل البطاقة",
+      "unlock_description": "تم إلغاء قفل بطاقتك الافتراضية ويمكن الآن استخدامها في المعاملات.",
+      "lock_description": "تم قفل بطاقتك الافتراضية ولا يمكن استخدامها في معاملات جديدة.",
+      "status": {
+        "locked": "مقفلة",
+        "active": "نشطة"
+      },
+      "copied": "تم نسخ {{label}} إلى الحافظة",
+      "details_title": "تفاصيل البطاقة",
+      "description": "بطاقة افتراضية تنتهي بـ {{last4}}",
+      "fields": {
+        "number_label": "رقم البطاقة",
+        "expiry_label": "تاريخ الانتهاء",
+        "cvc_label": "رمز الأمان",
+        "status_label": "الحالة",
+        "created_label": "تاريخ الإنشاء"
+      },
+      "security_title": "الأمان",
+      "security_description": "يمكن قفل هذه البطاقة الافتراضية في أي وقت لمزيد من الحماية.",
+      "actions": {
+        "loading": "جارٍ التحميل…",
+        "hide_details": "إخفاء التفاصيل",
+        "show_details": "عرض التفاصيل",
+        "unlock": "إلغاء قفل البطاقة",
+        "lock": "قفل البطاقة"
+      }
+    },
+    "tabs": {
+      "details": "تفاصيل البطاقة",
+      "transactions": "المعاملات"
+    },
+    "list": {
+      "title": "بطاقاتك الافتراضية"
+    },
+    "transaction_history": {
+      "title": "سجل المعاملات",
+      "description": "المعاملات الأخيرة للبطاقة المنتهية بـ {{last4}}",
+      "empty": {
+        "title": "لا توجد معاملات بعد",
+        "description": "ستظهر المعاملات هنا بمجرد البدء في استخدام بطاقتك."
+      }
+    },
+    "no_selection": {
+      "title": "لم يتم اختيار بطاقة",
+      "description": "اختر بطاقة من القائمة أو أنشئ بطاقة افتراضية جديدة."
+    },
+    "form": {
+      "fields": {
+        "cardholder_name": "اسم حامل البطاقة",
+        "cardholder_name_placeholder": "أدخل اسم حامل البطاقة",
+        "currency": "العملة",
+        "currency_placeholder": "اختر العملة",
+        "spending_limit": "حد الإنفاق",
+        "limit_amount": "المبلغ",
+        "limit_amount_placeholder": "أدخل المبلغ",
+        "limit_interval": "الفترة الزمنية",
+        "limit_interval_placeholder": "اختر الفترة الزمنية"
+      },
+      "actions": {
+        "creating": "جارٍ الإنشاء…",
+        "create": "إنشاء بطاقة افتراضية"
+      }
+    }
   },
   "settings": {
     "title": "الإعدادات",
@@ -42,6 +410,300 @@
     "security": "الأمان",
     "notifications": "الإشعارات",
     "preferences": "التفضيلات",
-    "two_factor": "المصادقة الثنائية"
+    "two_factor": "المصادقة الثنائية",
+    "page_description": "إدارة تفضيلات وإعدادات حسابك",
+    "notifications_saved": {
+      "title": "تم تحديث الإعدادات",
+      "description": "تم حفظ التغييرات بنجاح."
+    },
+    "sections": {
+      "personal": "الشخصية",
+      "business": "إعدادات الأعمال",
+      "billing": "الفواتير والضرائب",
+      "notifications": "الإشعارات",
+      "global": "الإعدادات العامة"
+    },
+    "personal": {
+      "profile": {
+        "label": "معلومات الملف الشخصي"
+      },
+      "security": {
+        "label": "تسجيل الدخول والأمان"
+      },
+      "account_security": {
+        "label": "أمان الحساب"
+      },
+      "cookies": {
+        "label": "تفضيلات ملفات تعريف الارتباط"
+      }
+    },
+    "profile": {
+      "title": "معلومات الملف الشخصي",
+      "description": "قم بتحديث بياناتك الشخصية ومعلومات ملفك الشخصي",
+      "about_title": "أخبرنا عن نفسك",
+      "fields": {
+        "full_name": "الاسم الكامل",
+        "email": "عنوان البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "occupation": "المهنة",
+        "income_range": "نطاق الدخل",
+        "financial_goals": "الأهداف المالية الأساسية"
+      },
+      "identity": {
+        "title": "التحقق من الهوية",
+        "description": "أكمل إجراءات اعرف عميلك (KYC) للوصول إلى حدود معاملات أعلى",
+        "verify_button": "تحقق من هويتك",
+        "action": "ابدأ"
+      }
+    },
+    "security_section": {
+      "title": "تسجيل الدخول والأمان",
+      "description": "قم بتحديث كلمة المرور وإعدادات الأمان الخاصة بك",
+      "fields": {
+        "current_password": "كلمة المرور الحالية",
+        "new_password": "كلمة المرور الجديدة",
+        "confirm_password": "تأكيد كلمة المرور الجديدة"
+      },
+      "two_factor": {
+        "title": "المصادقة الثنائية",
+        "description": "قم بتفعيل المصادقة الثنائية لمزيد من الأمان"
+      },
+      "biometric": {
+        "title": "تسجيل الدخول البيومتري",
+        "description": "استخدم بصمة الإصبع أو التعرف على الوجه لتسجيل الدخول"
+      },
+      "actions": {
+        "update": "تحديث إعدادات الأمان"
+      }
+    },
+    "business": {
+      "title": "تسجيل الأعمال",
+      "description": "قم بتسجيل وإدارة أعمالك",
+      "registration": {
+        "label": "تسجيل الأعمال"
+      },
+      "public_profile": {
+        "label": "الملف الشخصي العام"
+      },
+      "register": {
+        "title": "سجّل أعمالك",
+        "description": "قم بإعداد ملف أعمالك للحصول على ميزات متقدمة"
+      },
+      "user_management": {
+        "title": "إدارة المستخدمين"
+      },
+      "invite": {
+        "title": "دعوة أعضاء الفريق",
+        "description": "تعاون وأدر مستويات الوصول"
+      }
+    },
+    "notifications_preferences": {
+      "title": "تفضيلات الإشعارات",
+      "description": "اختر كيف ومتى تريد أن تتلقى الإشعارات",
+      "email": {
+        "title": "إشعارات البريد الإلكتروني",
+        "description": "تلقَّ الإشعارات والتحديثات عبر البريد الإلكتروني"
+      },
+      "push": {
+        "title": "الإشعارات الفورية",
+        "description": "تلقَّ الإشعارات على أجهزتك"
+      },
+      "alert_types": {
+        "title": "أنواع التنبيهات"
+      },
+      "alerts": {
+        "transaction": {
+          "title": "تنبيهات المعاملات",
+          "description": "احصل على إشعارات حول جميع المعاملات"
+        },
+        "security": {
+          "title": "تنبيهات الأمان",
+          "description": "احصل على إشعارات حول الأحداث الأمنية"
+        },
+        "marketing": {
+          "title": "التسويق والعروض الترويجية",
+          "description": "تلقَّ تحديثات حول الميزات الجديدة والعروض الترويجية"
+        }
+      },
+      "actions": {
+        "save": "حفظ إعدادات الإشعارات"
+      },
+      "preferences": {
+        "label": "تفضيلات الإشعارات"
+      }
+    },
+    "billing": {
+      "subscription": {
+        "label": "خطة الاشتراك"
+      },
+      "tax": {
+        "label": "المعلومات الضريبية"
+      }
+    },
+    "global": {
+      "currency_language": {
+        "label": "العملة واللغة"
+      }
+    },
+    "theme": {
+      "label": "المظهر",
+      "options": {
+        "light": "فاتح",
+        "dark": "داكن",
+        "system": "النظام"
+      },
+      "toggle": "تبديل المظهر"
+    }
+  },
+  "subscription": {
+    "title": "خطة الاشتراك",
+    "description": {
+      "active": "إدارة اشتراكك النشط",
+      "inactive": "قم بالترقية لفتح الميزات المميزة"
+    },
+    "current_plan": "الخطة الحالية: {{plan}}",
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "cancelled": "ملغى",
+      "past_due": "متأخر الدفع",
+      "trialing": "تجريبي",
+      "free": "مجاني"
+    },
+    "renews": "يتجدد في {{date}}",
+    "cancels": "يُلغى في {{date}}",
+    "plans": {
+      "pro": {
+        "name": "برو",
+        "description": "وصول كامل لجميع الميزات"
+      },
+      "enterprise": {
+        "name": "للمؤسسات",
+        "description": "للفرق والشركات"
+      }
+    },
+    "actions": {
+      "manage": "إدارة الاشتراك",
+      "upgrade": "الترقية إلى {{plan}}",
+      "opening_checkout": "جارٍ فتح صفحة الدفع…",
+      "refresh": "تحديث حالة الاشتراك"
+    }
+  },
+  "notifications": {
+    "payment_success": {
+      "title": "تمت عملية الدفع بنجاح",
+      "description": "تم إتمام تحويلك بمبلغ {{amount}} إلى {{name}}"
+    },
+    "ai_insight_available": {
+      "title": "رؤية ذكية متاحة",
+      "description": "تحليل إنفاق جديد لشهر {{month}} جاهز الآن",
+      "action": "عرض الرؤى"
+    },
+    "security_alert": {
+      "title": "تنبيه أمني",
+      "description": "تم اكتشاف تسجيل دخول من جهاز جديد من {{location}}"
+    },
+    "panel": {
+      "title": "الإشعارات",
+      "empty": "لا توجد إشعارات"
+    }
+  },
+  "ai": {
+    "chat": {
+      "welcome": "مرحباً بك في VortexCore! كيف يمكنني مساعدتك اليوم؟",
+      "intro": "أنا VortexAI، مساعدك المالي الشخصي. يمكنني مساعدتك في تحليل الإنفاق واقتراح المدخرات والإجابة على أسئلتك المالية.",
+      "title": "مساعد VortexAI",
+      "input_placeholder": "اكتب رسالة…",
+      "input_placeholder_full": "اكتب رسالة… (اضغط Enter للإرسال، Shift+Enter لسطر جديد)",
+      "input_placeholder_finance": "اسأل VortexAI عن أي شيء يتعلق بأموالك…",
+      "thinking": "جارٍ التفكير…",
+      "sending": "جارٍ الإرسال…",
+      "enter_hint": "⏎ للإرسال",
+      "shift_enter_hint": "Shift+Enter لسطر جديد",
+      "actions": {
+        "clear": "مسح المحادثة",
+        "market_data": "بيانات السوق"
+      },
+      "cleared": "تم مسح المحادثة",
+      "cleared_description": "تم مسح جميع الرسائل",
+      "error_generic": "واجهت خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.",
+      "unauthenticated_hint": "سجّل دخولك لحفظ سجل محادثاتك والوصول إلى الميزات المتقدمة",
+      "new_session": "محادثة جديدة",
+      "unsaved": "غير محفوظة",
+      "history": {
+        "title": "سجل المحادثات",
+        "search_placeholder": "البحث في المحادثات…",
+        "untitled": "محادثة بدون عنوان"
+      },
+      "sessions_count": "{{count}} جلسة"
+    },
+    "search": {
+      "placeholder": "البحث باستخدام VortexAI…",
+      "input_placeholder": "اسأل VortexAI…",
+      "suggestions_heading": "اقتراحات"
+    }
+  },
+  "auth": {
+    "login": {
+      "welcome_title": "مرحبًا بك في VortexCore",
+      "welcome_subtitle": "سجّل دخولك لإدارة نظامك المالي",
+      "submit": "تسجيل الدخول",
+      "signing_in": "جارٍ تسجيل الدخول…",
+      "remember_me": "تذكرني",
+      "forgot_password": "هل نسيت كلمة المرور؟",
+      "no_account": "ليس لديك حساب؟",
+      "create_account": "إنشاء حساب",
+      "divider": "أو المتابعة باستخدام",
+      "success": "تم تسجيل الدخول بنجاح",
+      "success_description": "مرحباً بعودتك إلى VortexCore!",
+      "fields": {
+        "email": "البريد الإلكتروني",
+        "email_placeholder": "name@example.com",
+        "password": "كلمة المرور",
+        "password_placeholder": "••••••••"
+      },
+      "errors": {
+        "invalid_credentials": "بيانات اعتماد غير صحيحة. يرجى التحقق من بريدك الإلكتروني وكلمة المرور والمحاولة مرة أخرى.",
+        "auth_error": "خطأ في المصادقة: {{message}}"
+      }
+    },
+    "two_factor": {
+      "title": "المصادقة الثنائية",
+      "setup_instructions": "امسح رمز الاستجابة السريعة باستخدام تطبيق المصادقة الخاص بك للبدء.",
+      "intro_instructions": "عزز أمان حسابك بإضافة طبقة ثانية من المصادقة.",
+      "qr_code_alt": "رمز الاستجابة السريعة للمصادقة الثنائية",
+      "authenticator_hint": "ستحتاج إلى تطبيق مصادقة (مثل Google Authenticator أو Authy) لإكمال الإعداد.",
+      "setup_cta": "إعداد المصادقة الثنائية",
+      "setup_error": "خطأ في إعداد المصادقة الثنائية: {{message}}",
+      "setup_error_generic": "حدث خطأ غير متوقع أثناء إعداد المصادقة الثنائية. يرجى المحاولة مرة أخرى.",
+      "missing_factor_id": "خطأ في المصادقة الثنائية: معرّف العامل مفقود. يرجى إعادة بدء عملية الإعداد.",
+      "verification_error": "خطأ في التحقق من المصادقة الثنائية: {{message}}",
+      "verification_error_generic": "حدث خطأ غير متوقع أثناء التحقق. يرجى المحاولة مرة أخرى.",
+      "verified": "تم التحقق من المصادقة الثنائية",
+      "authentication_success": "تمت المصادقة بنجاح"
+    },
+    "biometric": {
+      "continue": "المتابعة باستخدام البيانات البيومترية",
+      "unavailable": {
+        "title": "المصادقة البيومترية",
+        "description": "المصادقة البيومترية غير متوفرة بعد على هذا الجهاز. يرجى استخدام كلمة المرور بدلاً من ذلك."
+      }
+    },
+    "social": {
+      "google": "Google",
+      "twitter": "X (Twitter)",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "error": "خطأ في المصادقة مع {{provider}}: {{message}}",
+      "error_generic": "حدث خطأ غير متوقع أثناء تسجيل الدخول عبر وسائل التواصل الاجتماعي. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "aria_label": "التنقل في الشريط الجانبي",
+      "expand": "توسيع الشريط الجانبي",
+      "collapse": "طي الشريط الجانبي",
+      "toggle_title": "طي الشريط الجانبي"
+    }
   }
 }
