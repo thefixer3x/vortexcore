@@ -15,64 +15,83 @@ When continuing this work, start with:
 
 ## Documentation Guidelines
 
-### ADR Format
-- Filename: `adr-XXX-title.md`
-- Sections: Context, Decision, Alternatives Considered, Consequences
-- Include file paths for reference
-
-### Project Overview
-- Master navigation file: `docs/context/project-overview.md`
-- Tech stack, key patterns, directory structure, coding standards
-- Quick reference tables for task → doc mapping
+### File Structure
+```
+docs/context/
+├── project-overview.md           # Master navigation (start here)
+├── context-engineering-progress.md  # This file
+├── database-schema.md              # Database summary
+├── architecture/decisions/        # ADRs
+│   ├── adr-001-ai-router.md
+│   ├── adr-002-stripe-billing.md
+│   ├── adr-003-edge-functions.md
+│   └── adr-004-obf-integration.md
+├── components/                    # Component documentation
+│   ├── dashboard-page.md
+│   ├── obf-components.md
+│   ├── ai-chat-components.md
+│   ├── auth-components.md
+│   └── custom-hooks.md
+└── workflows/                     # Process documentation
+    ├── development.md
+    ├── deployment.md
+    └── testing.md
+```
 
 ### Naming Conventions
-- ADRs: `adr-001-title.md`, `adr-002-title.md`, etc.
-- Component contexts: `component-name-context.md`
+- ADRs: `adr-XXX-title.md`
+- Component contexts: `component-name.md`
 - Workflows: `workflow-name.md`
 
 ## Completed Phases
 
 ### Phase 1: Discovery & Core Documentation ✓
+**Created:**
+- `project-overview.md` — Master navigation with tech stack, patterns, coding standards
+- 4 ADRs documenting key architectural decisions
+- `context-engineering-progress.md` — Workflow state for new sessions
 
-**Completed:**
-- Project structure analysis (src/, supabase/functions/, docs/)
-- Key architectural decisions identified:
-  1. AI Router pattern (ai-router/index.ts)
-  2. Stripe subscription system (stripe-webhook, check-subscription)
-  3. Edge function middleware conventions
-  4. OBF Providus integration
-
-**Created files:**
-```
-docs/context/
-├── project-overview.md           # Master navigation + AI collaboration guide
-├── context-engineering-progress.md  # This file
-└── architecture/decisions/
-    ├── adr-001-ai-router.md     # AI provider routing
-    ├── adr-002-stripe-billing.md  # Subscription tiers
-    ├── adr-003-edge-functions.md  # Middleware conventions
-    └── adr-004-obf-integration.md  # Providus integration
-```
+### Phase 2: Extended Context ✓
+**Created:**
+- Component documentation: dashboard, OBF, AI chat, auth, custom hooks
+- Database schema summary with key tables and relationships
+- Workflow documentation: development, deployment, testing
 
 ## Current Status
 
-**Phase 1 complete.** Core ADRs document the four major architectural decisions:
-1. AI Router (OpenAI → Perplexity fallback, PII stripping, brand voice)
-2. Stripe Billing (webhook-driven, tier tables, pro/enterprise/freemium)
-3. Edge Function Conventions (shared middleware, security headers, auth)
-4. OBF Providus Integration (feature flag gating, no data model merge, credential isolation)
+**Phase 1 + Phase 2 complete.** Context system includes:
+
+**Architecture Decisions (4):**
+- AI Router (OpenAI → Perplexity fallback, PII stripping, brand voice)
+- Stripe Billing (webhook-driven, tier tables, pro/enterprise/freemium)
+- Edge Function Conventions (shared middleware, security headers, auth)
+- OBF Providus Integration (feature flag gating, no data model merge)
+
+**Component Documentation (5):**
+- Dashboard page + hooks
+- OBF components (AccountPanel, AccountCard, TransactionList)
+- AI chat components (VortexAIChat, EnhancedVortexAIChat, providers)
+- Auth components (LoginForm, biometric, 2FA, OAuth)
+- Custom hooks (useDashboardData, useOBFAccounts, useAnalytics, etc.)
+
+**Database Schema:**
+- vortex_wallets, vortex_transactions (financial core)
+- stripe_customers → stripe_subscriptions → user_tiers (billing)
+- agent_banks_* (AI memory system)
+- Amount normalization pattern
+
+**Workflows (3):**
+- Development: Bun setup, Supabase local, git workflow
+- Deployment: Netlify/Vercel, Supabase functions, secrets management
+- Testing: Bun test framework, smoke scripts, Playwright E2E
 
 ## Next Steps
 
-### Phase 2: Component Context (optional)
-- Document key React components if requested
-- Document database schema in more detail
-- Add workflow documentation (deployment, testing)
-
 ### Phase 3: Integration & Maintenance (optional)
-- Set up automated context updates on architectural changes
-- Create template for new ADRs
+- Set up ADR template for new architectural decisions
 - Document i18n/Lingo pipeline
+- Add more component documentation as patterns emerge
+- Create maintenance checklist for keeping context current
 
 ## Key Discovery Notes
 
@@ -81,6 +100,7 @@ docs/context/
 3. **Shared middleware pattern** — all edge functions use `_shared/middleware.ts`
 4. **Feature flag pattern** — React layer controls whether to call edge functions
 5. **OBF integration is isolated** — internal wallets and Providus accounts are separate
+6. **Amount normalization needed** — `vortex_transactions.amount` can be number|string
 
 ## File Locations
 
@@ -93,4 +113,3 @@ Recent commits showing architectural evolution:
 - `ea5df50` Fix: decode JSON-wrapped src/integrations/supabase/types.ts
 - `bc09c3b` Phase 4: i18n wiring + Lingo pipeline + reusable template
 - `4bae456` Phase 3: Stripe subscription billing — edge functions + frontend context
-- `9ab64ca` Add app_vortexcore schema, public facades, and regenerate types

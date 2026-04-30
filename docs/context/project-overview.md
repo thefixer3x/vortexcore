@@ -10,6 +10,15 @@
 | Stripe billing/subscription flow | `architecture/decisions/adr-002-stripe-billing.md` |
 | Supabase Edge Function conventions | `architecture/decisions/adr-003-edge-functions.md` |
 | OBF/Providus integration | `architecture/decisions/adr-004-obf-integration.md` |
+| Dashboard page | `components/dashboard-page.md` |
+| OBF components | `components/obf-components.md` |
+| AI chat components | `components/ai-chat-components.md` |
+| Auth components | `components/auth-components.md` |
+| Custom hooks | `components/custom-hooks.md` |
+| Database schema | `database-schema.md` |
+| Development workflow | `workflows/development.md` |
+| Deployment workflow | `workflows/deployment.md` |
+| Testing workflow | `workflows/testing.md` |
 | Development setup | `CLAUDE.md` (root) |
 
 ## Project Essentials
@@ -57,8 +66,16 @@ Providus bank integration via `onasis-gateway`:
 - Schema validation via zod; 502 on violation
 
 ## Supabase Schema
-Database types auto-generated in `src/integrations/supabase/types.ts` (Database type).
-Key tables: `stripe_subscriptions`, `stripe_customers`, `user_tiers`, `agent_banks_*`
+
+**Key Tables:**
+- `vortex_wallets` — user wallets with balance/currency
+- `vortex_transactions` — transaction history with metadata
+- `stripe_customers` → `stripe_subscriptions` → `user_tiers` — billing chain
+- `agent_banks_sessions` / `agent_banks_memories` — AI memory system
+
+**Amount normalization:** `vortex_transactions.amount` can be number|string — normalize on read.
+
+Full schema: `database-schema.md`
 
 ## Environment Variables
 
@@ -71,25 +88,23 @@ Key tables: `stripe_subscriptions`, `stripe_customers`, `user_tiers`, `agent_ban
 - `STRIPE_ENT_PRICE_ID`
 - `ONASIS_GATEWAY_URL`
 - `ONASIS_GATEWAY_TOKEN`
+- `ALLOWED_ORIGINS`
 
 ### Required for Frontend (.env)
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_OBF_LIVE` (boolean, default false)
-- `VITE_OPENAI_API_KEY` (only if not using edge function)
 
 ## Directory Structure
 
 ```
 ├── src/
-│   ├── components/       # React components
-│   ├── contexts/         # React contexts
-│   ├── hooks/            # Custom React hooks
-│   ├── integrations/     # Supabase client + types
-│   ├── layouts/          # Page layouts
-│   ├── pages/            # Route pages
-│   ├── services/         # Business logic (obf/, stripe/)
-│   ├── providers/        # Context providers
+│   ├── components/       # React components (ai/, auth/, dashboard/, obf/, ui/)
+│   ├── contexts/         # React contexts (Auth, Currency)
+│   ├── hooks/            # Custom hooks (use-dashboard-data, use-obf-accounts, etc.)
+│   ├── integrations/     # Supabase client + types (types auto-generated)
+│   ├── pages/            # Route pages (Dashboard, Transactions, Settings, etc.)
+│   ├── services/         # Business logic (obf/accounts, stripe/, chatSessionService)
 │   └── lib/              # Utilities
 ├── supabase/
 │   └── functions/        # Edge functions
@@ -112,6 +127,7 @@ Key tables: `stripe_subscriptions`, `stripe_customers`, `user_tiers`, `agent_ban
 - Use `bun:sqlite` for SQLite, `Bun.sql` for Postgres via Supabase
 - WebSocket built-in via `Bun.serve({ websocket: ... })`
 - React components: functional with hooks, TypeScript strict mode
+- Test with `bun test`
 
 ## AI Collaboration Notes
 
@@ -119,3 +135,4 @@ Key tables: `stripe_subscriptions`, `stripe_customers`, `user_tiers`, `agent_ban
 - Edge functions never expose raw upstream responses; they normalize/error-wrap
 - PII stripping happens server-side before any external API call
 - All AI responses processed through `formatResponse()` for brand voice consistency
+- Use `normalizedAmount()` for transaction amounts (handle string|number)
