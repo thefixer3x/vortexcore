@@ -1,11 +1,13 @@
-
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { BadgeCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileSheetProps {
   open: boolean;
@@ -15,82 +17,104 @@ interface ProfileSheetProps {
 
 export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+
+  useEffect(() => {
+    if (!open || !user?.id) return;
+    let cancelled = false;
+    setLoading(true);
+    (async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("first_name,last_name,email,company_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error) {
+        toast({ title: "Couldn't load profile", description: error.message, variant: "destructive" });
+      } else if (data) {
+        setFirstName(data.first_name ?? "");
+        setLastName(data.last_name ?? "");
+        setEmail(data.email ?? user.email ?? "");
+        setCompanyName(data.company_name ?? "");
+      } else {
+        setEmail(user.email ?? "");
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [open, user?.id]);
+
+  const handleSave = async () => {
+    if (!user?.id) {
+      toast({ title: "Sign in required", description: "Please sign in to update your profile.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        company_name: companyName || null,
+        updated_at: new Date().toISOString(),
+      });
+    setSaving(false);
+    if (error) {
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    onSave();
+  };
+
   return (
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="w-full md:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>{t("settings.profile.title")}</SheetTitle>
-          <SheetDescription>
-            {t("settings.profile.description")}
-          </SheetDescription>
+          <SheetTitle>{t("settings.profile.title", "Profile")}</SheetTitle>
+          <SheetDescription>{t("settings.profile.description", "Manage your personal information")}</SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">{t("settings.profile.fields.full_name")}</Label>
-            <Input id="name" defaultValue="Alex Volkov" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("settings.profile.fields.email")}</Label>
-            <Input id="email" defaultValue="alex@vortexcore.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">{t("settings.profile.fields.phone")}</Label>
-            <Input id="phone" defaultValue="+1 (555) 123-4567" />
-          </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">{t("settings.profile.about_title")}</h3>
-            <div className="space-y-2">
-              <Label htmlFor="occupation">{t("settings.profile.fields.occupation")}</Label>
-              <Input id="occupation" />
+          {loading ? (
+            <div className="flex items-center justify-center py-8 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading…
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="income-range">{t("settings.profile.fields.income_range")}</Label>
-              <Select>
-                <SelectTrigger id="income-range">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="range1">₦100,000 - ₦500,000</SelectItem>
-                  <SelectItem value="range2">₦500,001 - ₦1,000,000</SelectItem>
-                  <SelectItem value="range3">₦1,000,001 - ₦5,000,000</SelectItem>
-                  <SelectItem value="range4">₦5,000,001+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="financial-goals">{t("settings.profile.fields.financial_goals")}</Label>
-              <Select>
-                <SelectTrigger id="financial-goals">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="savings">Savings</SelectItem>
-                  <SelectItem value="investing">Investing</SelectItem>
-                  <SelectItem value="retirement">Retirement Planning</SelectItem>
-                  <SelectItem value="business">Business Growth</SelectItem>
-                  <SelectItem value="debt">Debt Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">{t("settings.profile.identity.title")}</h3>
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <BadgeCheck className="h-8 w-8 text-primary" />
-                <div>
-                  <h4 className="font-medium">{t("settings.profile.identity.verify_button")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("settings.profile.identity.description")}</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="first_name">First name</Label>
+                  <Input id="first_name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="last_name">Last name</Label>
+                  <Input id="last_name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </div>
               </div>
-              <Button>{t("common.actions.start")}</Button>
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="company">Company</Label>
+                <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+              </div>
+            </>
+          )}
         </div>
         <div className="mt-6">
-          <Button onClick={onSave} className="w-full">{t("common.actions.save_changes")}</Button>
+          <Button onClick={handleSave} className="w-full" disabled={saving || loading}>
+            {saving ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving…</> : t("common.actions.save_changes", "Save changes")}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
