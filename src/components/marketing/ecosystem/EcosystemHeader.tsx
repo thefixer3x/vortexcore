@@ -17,17 +17,16 @@ export const EcosystemHeader = () => {
           <RouterLink to="/ecosystem" className="text-sm font-medium hover:text-primary transition-colors">
             Ecosystem
           </RouterLink>
-          <RouterLink to="#ecosystem" className="text-sm font-medium hover:text-primary transition-colors">
+          <RouterLink to="/ecosystem#ecosystem" className="text-sm font-medium hover:text-primary transition-colors">
             Features
           </RouterLink>
-          <RouterLink to="#enterprise" className="text-sm font-medium hover:text-primary transition-colors">
+          <RouterLink to="/ecosystem#enterprise" className="text-sm font-medium hover:text-primary transition-colors">
             Enterprise
           </RouterLink>
-          <RouterLink to="#premium-services" className="text-sm font-medium hover:text-primary transition-colors">
+          <RouterLink to="/ecosystem#premium-services" className="text-sm font-medium hover:text-primary transition-colors">
             Services
           </RouterLink>
-          
-          <RouterLink to="#partner" className="text-sm font-medium hover:text-primary transition-colors">
+          <RouterLink to="/ecosystem#partner" className="text-sm font-medium hover:text-primary transition-colors">
             Early Access
           </RouterLink>
         </div>
@@ -36,8 +35,8 @@ export const EcosystemHeader = () => {
           <RouterLink to="/" className="text-sm font-medium hover:text-primary transition-colors">
             Login
           </RouterLink>
-          <Button size="sm" className="rounded-full">
-            Request Demo
+          <Button size="sm" className="rounded-full" asChild>
+            <RouterLink to="/ecosystem#partner">Request Demo</RouterLink>
           </Button>
         </div>
       </div>
