@@ -4269,6 +4269,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_brainbox_connections: {
+        Row: {
+          account_label: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          last_synced_at: string | null
+          metadata: Json | null
+          provider: string | null
+          scopes: string[] | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          account_label?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          metadata?: Json | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          account_label?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          metadata?: Json | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_brainbox_imported_data: {
         Row: {
           content: string | null
@@ -4392,6 +4434,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_brainbox_sync_jobs: {
+        Row: {
+          connection_id: string | null
+          created_at: string | null
+          cursor: string | null
+          error: string | null
+          finished_at: string | null
+          id: string | null
+          started_at: string | null
+          stats: Json | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          connection_id?: string | null
+          created_at?: string | null
+          cursor?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string | null
+          started_at?: string | null
+          stats?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          connection_id?: string | null
+          created_at?: string | null
+          cursor?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string | null
+          started_at?: string | null
+          stats?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_brainbox_vortex_items: {
         Row: {
           company_id: string | null
@@ -4437,6 +4521,39 @@ export type Database = {
           updated_at?: string | null
           url?: string | null
           writer?: string | null
+        }
+        Relationships: []
+      }
+      ai_chat_messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          role: string | null
+          session_id: string | null
+          tokens: number | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          metadata?: Json | null
+          role?: string | null
+          session_id?: string | null
+          tokens?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          metadata?: Json | null
+          role?: string | null
+          session_id?: string | null
+          tokens?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -5869,6 +5986,204 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           voyage_embedding?: string | null
+        }
+        Relationships: []
+      }
+      memory_inference_batches: {
+        Row: {
+          created_at: string | null
+          last_flushed_at: string | null
+          last_job_id: string | null
+          organization_id: string | null
+          pending_memory_count: number | null
+          pending_token_count: number | null
+          source_memory_ids: string[] | null
+          subject_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          last_flushed_at?: string | null
+          last_job_id?: string | null
+          organization_id?: string | null
+          pending_memory_count?: number | null
+          pending_token_count?: number | null
+          source_memory_ids?: string[] | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          last_flushed_at?: string | null
+          last_job_id?: string | null
+          organization_id?: string | null
+          pending_memory_count?: number | null
+          pending_token_count?: number | null
+          source_memory_ids?: string[] | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      memory_inference_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error: string | null
+          id: string | null
+          metadata: Json | null
+          organization_id: string | null
+          pending_token_count: number | null
+          source_event: string | null
+          source_memory_ids: string[] | null
+          started_at: string | null
+          status: string | null
+          subject_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          pending_token_count?: number | null
+          source_event?: string | null
+          source_memory_ids?: string[] | null
+          started_at?: string | null
+          status?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          pending_token_count?: number | null
+          source_event?: string | null
+          source_memory_ids?: string[] | null
+          started_at?: string | null
+          status?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      memory_inferred_conclusions: {
+        Row: {
+          conclusion_type: string | null
+          confidence: number | null
+          content: string | null
+          contradiction_group_id: string | null
+          created_at: string | null
+          evidence_memory_ids: string[] | null
+          freshness: string | null
+          id: string | null
+          metadata: Json | null
+          organization_id: string | null
+          scope: string | null
+          source_job_id: string | null
+          subject_id: string | null
+          superseded_by: string | null
+        }
+        Insert: {
+          conclusion_type?: string | null
+          confidence?: number | null
+          content?: string | null
+          contradiction_group_id?: string | null
+          created_at?: string | null
+          evidence_memory_ids?: string[] | null
+          freshness?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          scope?: string | null
+          source_job_id?: string | null
+          subject_id?: string | null
+          superseded_by?: string | null
+        }
+        Update: {
+          conclusion_type?: string | null
+          confidence?: number | null
+          content?: string | null
+          contradiction_group_id?: string | null
+          created_at?: string | null
+          evidence_memory_ids?: string[] | null
+          freshness?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          scope?: string | null
+          source_job_id?: string | null
+          subject_id?: string | null
+          superseded_by?: string | null
+        }
+        Relationships: []
+      }
+      memory_profile_versions: {
+        Row: {
+          created_at: string | null
+          diff: Json | null
+          id: string | null
+          profile_id: string | null
+          source_job_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          diff?: Json | null
+          id?: string | null
+          profile_id?: string | null
+          source_job_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          diff?: Json | null
+          id?: string | null
+          profile_id?: string | null
+          source_job_id?: string | null
+        }
+        Relationships: []
+      }
+      memory_profiles: {
+        Row: {
+          confidence_by_field: Json | null
+          created_at: string | null
+          freshness: string | null
+          head_version_id: string | null
+          last_reasoned_at: string | null
+          organization_id: string | null
+          profile_summary: string | null
+          structured_fields: Json | null
+          subject_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          confidence_by_field?: Json | null
+          created_at?: string | null
+          freshness?: string | null
+          head_version_id?: string | null
+          last_reasoned_at?: string | null
+          organization_id?: string | null
+          profile_summary?: string | null
+          structured_fields?: Json | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          confidence_by_field?: Json | null
+          created_at?: string | null
+          freshness?: string | null
+          head_version_id?: string | null
+          last_reasoned_at?: string | null
+          organization_id?: string | null
+          profile_summary?: string | null
+          structured_fields?: Json | null
+          subject_id?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -8677,6 +8992,18 @@ export type Database = {
         Args: { p_hard_delete?: boolean; p_id: string }
         Returns: Json
       }
+      enqueue_memory_inference_job: {
+        Args: {
+          p_metadata?: Json
+          p_organization_id?: string
+          p_pending_token_count?: number
+          p_source_event?: string
+          p_source_memory_id?: string
+          p_subject_id: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
       execute_safe_query:
         | { Args: { query_text: string }; Returns: Json }
         | { Args: { query_params?: Json; query_text: string }; Returns: Json }
@@ -8800,6 +9127,21 @@ export type Database = {
         }[]
       }
       get_product_image_url: { Args: { image_path: string }; Returns: string }
+      get_ready_reasoning_batches: {
+        Args: { p_limit?: number }
+        Returns: {
+          last_job_id: string
+          organization_id: string
+          pending_memory_count: number
+          pending_token_count: number
+          source_memory_ids: string[]
+          subject_id: string
+        }[]
+      }
+      get_reasoning_token_threshold: {
+        Args: { p_organization_id?: string }
+        Returns: number
+      }
       get_user_service_for_routing: {
         Args: {
           p_environment: string
@@ -9199,6 +9541,17 @@ export type Database = {
           p_voyage_embedding: string
         }
         Returns: boolean
+      }
+      upsert_memory_profile: {
+        Args: {
+          p_confidence_by_field?: Json
+          p_organization_id?: string
+          p_profile_summary?: string
+          p_source_job_id?: string
+          p_structured_fields?: Json
+          p_subject_id: string
+        }
+        Returns: string
       }
       user_has_memory_grant: {
         Args: {
