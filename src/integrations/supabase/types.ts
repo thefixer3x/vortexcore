@@ -9600,6 +9600,11 @@ export type Database = {
               user_id: string
             }[]
           }
+      vortex_get_setting: { Args: { p_key: string }; Returns: Json }
+      vortex_set_setting: {
+        Args: { p_key: string; p_value: Json }
+        Returns: Json
+      }
     }
     Enums: {
       environment_type: "sandbox" | "live"
