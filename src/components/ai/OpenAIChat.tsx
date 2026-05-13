@@ -69,7 +69,27 @@ export function OpenAIChat() {
       });
 
       if (error) throw new Error(error.message || "Failed to get AI response");
-      
+
+      const fallbackNotices: Record<string, string> = {
+        byok_invalid_key:
+          "Your connected OpenAI key was rejected (invalid or revoked). I've marked it inactive and used the Lovable AI Gateway for this reply. Reconnect it from Settings → Integrations.",
+        byok_decrypt_failed:
+          "I couldn't decrypt your stored OpenAI key (encryption key changed or data corrupted). Used the Lovable AI Gateway instead — please reconnect your key in Settings → Integrations.",
+        byok_rate_limited:
+          "Your OpenAI account is rate-limited right now. Falling back to the Lovable AI Gateway for this reply.",
+        byok_network_error:
+          "Couldn't reach OpenAI with your key. Using the Lovable AI Gateway as a fallback.",
+        byok_unknown:
+          "Your OpenAI key couldn't be used for this request. Used the Lovable AI Gateway instead.",
+      };
+
+      if (data?.fallback && data?.fallback_reason) {
+        const msg =
+          fallbackNotices[data.fallback_reason as string] ??
+          `OpenAI request failed (${data.fallback_reason}). Falling back to Lovable AI Gateway.`;
+        toast({ title: "Using fallback AI provider", description: msg });
+      }
+
       setMessages((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
@@ -87,17 +107,30 @@ export function OpenAIChat() {
         if (last?.role === "assistant" && !last.content) return prev.slice(0, -1);
         return prev;
       });
+      const raw = error instanceof Error ? error.message : "An unexpected error occurred";
+      let friendly = raw;
+      if (/decrypt/i.test(raw)) {
+        friendly =
+          "We couldn't decrypt your stored OpenAI key. Please reconnect it in Settings → Integrations.";
+      } else if (/encryption key/i.test(raw)) {
+        friendly =
+          "BYOK is misconfigured on the server (missing encryption key). Contact support.";
+      } else if (/AI gateway not configured/i.test(raw)) {
+        friendly =
+          "AI service is temporarily unavailable (gateway not configured). Please try again later.";
+      } else if (/Unauthorized|Missing auth/i.test(raw)) {
+        friendly = "Your session expired. Please sign in again to continue chatting.";
+      }
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            "I'm sorry, I encountered an error while processing your request. Please try again.",
+          content: friendly,
         },
       ]);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        title: "AI chat error",
+        description: friendly,
         variant: "destructive",
       });
       setRetryCount((prev) => prev + 1);
