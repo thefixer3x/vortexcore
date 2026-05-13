@@ -3869,6 +3869,99 @@ export type Database = {
           },
         ]
       }
+      vortex_obligation_detections: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          obligations_created: number
+          run_completed_at: string | null
+          run_started_at: string
+          status: string
+          transactions_scanned: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          obligations_created?: number
+          run_completed_at?: string | null
+          run_started_at?: string
+          status?: string
+          transactions_scanned?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          obligations_created?: number
+          run_completed_at?: string | null
+          run_started_at?: string
+          status?: string
+          transactions_scanned?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vortex_obligations: {
+        Row: {
+          amount: number | null
+          category: string
+          confidence: number | null
+          created_at: string
+          currency: string
+          description: string | null
+          due_date: string | null
+          id: string
+          metadata: Json
+          recurrence: string
+          source: string
+          source_ref: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          category?: string
+          confidence?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          recurrence?: string
+          source?: string
+          source_ref?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          category?: string
+          confidence?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          recurrence?: string
+          source?: string
+          source_ref?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallets: {
         Row: {
           account_name: string | null
