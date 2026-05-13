@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 import { SettingItem } from "../SettingItem";
 import { SettingSection } from "../SettingSection";
-import { Inbox, Lock, ShieldCheck, Cookie } from "lucide-react";
+import { Inbox, Lock, ShieldCheck, Cookie, Plug } from "lucide-react";
 
 interface PersonalSettingsProps {
   onOpen: (id: string) => void;
@@ -31,6 +31,11 @@ export const PersonalSettings = ({ onOpen }: PersonalSettingsProps) => {
         icon={<Cookie className="h-6 w-6 text-primary" />}
         label={t("settings.personal.cookies.label")}
         onClick={() => onOpen("cookies")}
+      />
+      <SettingItem
+        icon={<Plug className="h-6 w-6 text-primary" />}
+        label="Integrations"
+        onClick={() => onOpen("integrations")}
       />
     </SettingSection>
   );
