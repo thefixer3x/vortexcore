@@ -20,6 +20,7 @@ import { CurrencySheet } from "@/components/settings/sheets/CurrencySheet";
 import { NotificationSheet } from "@/components/settings/sheets/NotificationSheet";
 import { BusinessSheet } from "@/components/settings/sheets/BusinessSheet";
 import { SubscriptionSheet } from "@/components/settings/sheets/SubscriptionSheet";
+import { IntegrationsSheet } from "@/components/settings/sheets/IntegrationsSheet";
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -101,6 +102,11 @@ export default function Settings() {
       
       <SubscriptionSheet 
         open={activeSheet === "subscription"} 
+        onClose={closeSheet}
+      />
+
+      <IntegrationsSheet
+        open={activeSheet === "integrations"}
         onClose={closeSheet}
       />
       

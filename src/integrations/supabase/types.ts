@@ -9600,6 +9600,21 @@ export type Database = {
               user_id: string
             }[]
           }
+      vortex_delete_ai_credential: {
+        Args: { _provider: string }
+        Returns: boolean
+      }
+      vortex_get_ai_credential_status: {
+        Args: { _provider: string }
+        Returns: {
+          connected: boolean
+          key_hint: string
+          label: string
+          last_verified_at: string
+          provider: string
+          status: string
+        }[]
+      }
       vortex_get_setting: { Args: { p_key: string }; Returns: Json }
       vortex_set_setting: {
         Args: { p_key: string; p_value: Json }
