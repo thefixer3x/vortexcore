@@ -62,11 +62,10 @@ export function OpenAIChat() {
 
       const history = messages.map((m) => ({ role: m.role, content: m.content }));
 
-      const { data, error } = await supabase.functions.invoke('openai-chat', {
+      const { data, error } = await supabase.functions.invoke('vortex-ai-byok', {
         body: {
-          prompt: userMessage.content,
-          history
-        }
+          messages: [...history, { role: 'user', content: userMessage.content }],
+        },
       });
 
       if (error) throw new Error(error.message || "Failed to get AI response");
