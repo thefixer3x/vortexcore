@@ -69,8 +69,15 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (cred?.encrypted_key && cred.status === 'active') {
+      let decryptFailed = false;
       try {
-        const apiKey = await decrypt(cred.encrypted_key);
+        let apiKey: string;
+        try {
+          apiKey = await decrypt(cred.encrypted_key);
+        } catch (e) {
+          decryptFailed = true;
+          throw e;
+        }
         const oaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -95,9 +102,15 @@ Deno.serve(async (req) => {
             .update({ status: 'invalid' })
             .eq('user_id', userId)
             .eq('provider', 'openai');
+          var fallbackReason = 'byok_invalid_key';
+        } else if (oaiRes.status === 429) {
+          var fallbackReason = 'byok_rate_limited';
+        } else {
+          var fallbackReason = `byok_openai_${oaiRes.status}`;
         }
       } catch (e) {
         console.error('BYOK decrypt/call error', e);
+        var fallbackReason = decryptFailed ? 'byok_decrypt_failed' : 'byok_network_error';
       }
     }
 
@@ -114,6 +127,8 @@ Deno.serve(async (req) => {
         response: data?.choices?.[0]?.message?.content ?? '',
         provider: 'lovable-ai',
         model: 'google/gemini-2.5-flash',
+        fallback: cred?.encrypted_key ? true : false,
+        fallback_reason: cred?.encrypted_key ? (typeof fallbackReason !== 'undefined' ? fallbackReason : 'byok_unknown') : undefined,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
