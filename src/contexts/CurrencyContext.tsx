@@ -32,17 +32,15 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
 
       try {
         setIsLoading(true);
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("default_currency, language")
-          .eq("id", user.id)
-          .single();
-
+        const { data, error } = await (supabase.rpc as any)("vortex_get_setting", {
+          p_key: "locale",
+        });
         if (error) {
           console.error("Error fetching user preferences:", error);
         } else if (data) {
-          setCurrencyState((data.default_currency as Currency) || "USD");
-          setLanguageState((data.language as Language) || "en");
+          const v = data as { currency?: Currency; language?: Language };
+          if (v.currency) setCurrencyState(v.currency);
+          if (v.language) setLanguageState(v.language);
         }
       } catch (error) {
         console.error("Error fetching user preferences:", error);
@@ -63,11 +61,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ default_currency: newCurrency })
-        .eq("id", user.id);
-
+      const { error } = await (supabase.rpc as any)("vortex_set_setting", {
+        p_key: "locale",
+        p_value: { currency: newCurrency, language },
+      });
       if (error) {
         console.error("Error updating currency preference:", error);
         throw error;
@@ -78,7 +75,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       console.error("Failed to update currency:", error);
       throw error;
     }
-  }, [user?.id, isAuthenticated]);
+  }, [user?.id, isAuthenticated, language]);
 
   // Update language in database and state
   const setLanguage = useCallback(async (newLanguage: Language) => {
@@ -89,11 +86,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ language: newLanguage })
-        .eq("id", user.id);
-
+      const { error } = await (supabase.rpc as any)("vortex_set_setting", {
+        p_key: "locale",
+        p_value: { currency, language: newLanguage },
+      });
       if (error) {
         console.error("Error updating language preference:", error);
         throw error;
@@ -104,7 +100,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       console.error("Failed to update language:", error);
       throw error;
     }
-  }, [user?.id, isAuthenticated]);
+  }, [user?.id, isAuthenticated, currency]);
 
   // Format currency with user's preference or override
   const formatCurrency = useCallback((value: number, currencyOverride?: Currency): string => {
