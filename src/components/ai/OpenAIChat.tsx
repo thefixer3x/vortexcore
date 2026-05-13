@@ -156,13 +156,17 @@ export function OpenAIChat() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-      <div className="mb-2 w-80 md:w-96 bg-card rounded-lg shadow-lg border border-border overflow-hidden flex flex-col max-h-[500px]">
-        <div className="bg-primary p-3 text-primary-foreground flex items-center justify-between">
+      <div className="mb-2 w-80 md:w-96 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[500px]">
+        <div className="bg-gradient-to-r from-primary via-primary to-primary/80 p-3 text-primary-foreground flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10">
-              <img src="/favicon.svg" alt="VortexAI" className="h-5 w-5 text-primary-foreground" />
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 ring-1 ring-primary-foreground/20">
+              <img src="/favicon.svg" alt="VortexAI" className="h-5 w-5" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-primary" />
             </div>
-            <h3 className="font-medium">VortexAI Assistant</h3>
+            <div className="leading-tight">
+              <h3 className="font-semibold text-sm">VortexAI</h3>
+              <p className="text-[10px] uppercase tracking-wider opacity-80">Your digital banker</p>
+            </div>
           </div>
           <div className="flex items-center">
             <Button
