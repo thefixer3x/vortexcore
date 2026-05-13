@@ -152,21 +152,26 @@ export function PerplexityAIChat() {
   const selectedModelLabel = PERPLEXITY_MODELS.find(m => m.value === model)?.label || "VortexAI Realtime";
 
   return (
-    <Card className="border shadow-md">
-      <CardHeader className="pb-3">
+    <Card className="border-0 shadow-2xl overflow-hidden rounded-2xl">
+      <CardHeader className="pb-4 bg-gradient-to-r from-primary via-primary to-primary/80 text-primary-foreground">
         <div className="flex justify-between items-center">
-          <div>
-            <CardTitle className="text-xl font-semibold flex items-center">
-              <Globe className="h-5 w-5 mr-2 text-primary" />
-              VortexAI Realtime
-            </CardTitle>
-            <CardDescription>
-              Powered by Perplexity with real-time information
-            </CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="relative h-10 w-10 rounded-xl bg-primary-foreground/15 ring-1 ring-primary-foreground/20 flex items-center justify-center">
+              <Globe className="h-5 w-5" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold leading-tight">
+                VortexAI Realtime
+              </CardTitle>
+              <CardDescription className="text-primary-foreground/80 text-xs uppercase tracking-wider">
+                Live market intelligence
+              </CardDescription>
+            </div>
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                 <Settings className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
