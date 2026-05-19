@@ -5,6 +5,7 @@
  * Last updated: 2023-06-30
  */
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import './index.css'
 import './i18n'
@@ -53,6 +54,7 @@ if (import.meta.env.DEV) {
   console.log('About to render React app...');
 }
 createRoot(document.getElementById("root")!).render(
+  <HelmetProvider>
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <SubscriptionProvider>
@@ -64,6 +66,7 @@ createRoot(document.getElementById("root")!).render(
       </SubscriptionProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </HelmetProvider>
 );
 if (import.meta.env.DEV) {
   console.log('React app render called');

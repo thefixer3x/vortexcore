@@ -1,21 +1,22 @@
-# Robots.txt for Lan Onasis
-# https://lanonasis.com
-
-# Allow all robots
+# Robots.txt for VortexCore
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /transactions
+Disallow: /insights
+Disallow: /settings
+Disallow: /users
+Disallow: /virtual-cards
+Disallow: /notifications
+Disallow: /security
+Disallow: /help
+Disallow: /profile/
+Disallow: /auth/
 
-# Disallow admin or private areas (if any)
-# Disallow: /admin/
-# Disallow: /api/
-
-# Crawl-delay for respectful crawling
 Crawl-delay: 1
 
-# Sitemap location
-Sitemap: https://lanonasis.com/sitemap.xml
+Sitemap: https://vortexcore.lovable.app/sitemap.xml
 
-# Allow social media crawlers for better social sharing
 User-agent: facebookexternalhit/*
 Allow: /
 
@@ -25,7 +26,6 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-# Block bad bots (optional)
 User-agent: AhrefsBot
 Disallow: /
 

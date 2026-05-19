@@ -3,10 +3,19 @@ import { GeminiAIChat } from "@/components/ai/GeminiAIChat";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
 
 const GeminiDemo = () => {
   return (
     <div className="container mx-auto py-8 animate-fade-in">
+      <Helmet>
+        <title>VortexCore AI — Gemini Assistant Demo</title>
+        <meta name="description" content="Try the VortexCore AI assistant powered by Gemini for intelligent financial analysis and recommendations." />
+        <link rel="canonical" href="https://vortexcore.lovable.app/ecosystem/gemini" />
+        <meta property="og:title" content="VortexCore AI — Gemini Assistant Demo" />
+        <meta property="og:description" content="Intelligent financial analysis and recommendations powered by Gemini." />
+        <meta property="og:url" content="https://vortexcore.lovable.app/ecosystem/gemini" />
+      </Helmet>
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" asChild>

@@ -1,0 +1,10 @@
+# VortexCore
+
+> Modern banking and financial management platform with AI-powered insights, transaction tracking, and multi-account aggregation.
+
+## Pages
+
+- [Home](/): Overview, login, and product introduction.
+- [Ecosystem](/ecosystem): VortexCore enterprise security and ecosystem modules.
+- [Gemini Demo](/ecosystem/gemini): Gemini AI assistant demo.
+- [Perplexity Demo](/ecosystem/perplexity): Perplexity AI assistant demo.
