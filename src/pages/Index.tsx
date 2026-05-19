@@ -4,10 +4,19 @@ import { SecurityBadges } from "@/components/marketing/SecurityBadges";
 import { ValueAddedServices } from "@/components/marketing/ValueAddedServices";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>VortexCore — Modern Banking & Financial Insights</title>
+        <meta name="description" content="Link all your accounts, manage transactions, and get AI-powered financial insights with secure banking aggregation." />
+        <link rel="canonical" href="https://vortexcore.lovable.app/" />
+        <meta property="og:title" content="VortexCore — Modern Banking & Financial Insights" />
+        <meta property="og:description" content="Secure banking aggregation with AI-powered financial insights." />
+        <meta property="og:url" content="https://vortexcore.lovable.app/" />
+      </Helmet>
       <header className="w-full py-6 px-4 md:px-8 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between md:hidden">
           <div className="flex items-center gap-2">

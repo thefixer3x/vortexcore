@@ -8,13 +8,19 @@ import { EnterpriseFeatures } from "@/components/marketing/ecosystem/EnterpriseF
 import { PremiumServices } from "@/components/marketing/ecosystem/PremiumServices";
 import { VortexAIDemo } from "@/components/marketing/ecosystem/VortexAIDemo";
 import { EcosystemHeader } from "@/components/marketing/ecosystem/EcosystemHeader";
+import { Helmet } from "react-helmet-async";
 
 const Ecosystem = () => {
-  // Update document title for SEO
-  document.title = "VortexCore | Enterprise Security Solutions";
-  
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Helmet>
+        <title>VortexCore Ecosystem — Enterprise Security Solutions</title>
+        <meta name="description" content="Explore the VortexCore ecosystem: compliance, risk, AI, and shield modules for enterprise-grade security." />
+        <link rel="canonical" href="https://vortexcore.lovable.app/ecosystem" />
+        <meta property="og:title" content="VortexCore Ecosystem — Enterprise Security Solutions" />
+        <meta property="og:description" content="Compliance, risk, AI, and shield modules for enterprise-grade security." />
+        <meta property="og:url" content="https://vortexcore.lovable.app/ecosystem" />
+      </Helmet>
       {/* Header with transparent background */}
       <EcosystemHeader />
 
