@@ -2,10 +2,19 @@ import { PerplexityAIChat } from "@/components/ai/PerplexityAIChat";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet-async";
 
 const PerplexityDemo = () => {
   return (
     <div className="container mx-auto py-8 animate-fade-in">
+      <Helmet>
+        <title>VortexCore AI Realtime — Perplexity Demo</title>
+        <meta name="description" content="Real-time market intelligence and financial news powered by Perplexity inside VortexCore." />
+        <link rel="canonical" href="https://vortexcore.lovable.app/ecosystem/perplexity" />
+        <meta property="og:title" content="VortexCore AI Realtime — Perplexity Demo" />
+        <meta property="og:description" content="Up-to-date market intelligence and financial news powered by Perplexity." />
+        <meta property="og:url" content="https://vortexcore.lovable.app/ecosystem/perplexity" />
+      </Helmet>
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
