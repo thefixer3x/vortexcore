@@ -6,9 +6,20 @@
       "mcp__ide__getDiagnostics",
       "Bash(bun:*)",
       "Bash(curl:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(npx lingo.dev@latest --version)",
+      "Bash(npx lingo.dev@latest config --help)",
+      "Bash(npx lingo.dev@latest config set llm.lingodotdev.apiKey lingo_sk_YyLyQhnaNhNtxn1PME1aXuNK5rAJcVqNs8BhqstKpwc)",
+      "Bash(npx lingo.dev@latest auth)",
+      "Bash(npx lingo.dev@latest cleanup --no-interactive)",
+      "Bash(mkdir -p /Users/onasis/dev-hub/projects/the-fixer-initiative/docs/architecture)",
+      "Read(//Users/onasis/dev-hub/projects/the-fixer-initiative/docs/**)",
+      "Bash(claude mcp *)"
     ],
     "deny": [],
     "ask": []
+  },
+  "remote": {
+    "defaultEnvironmentId": "env_011CUwZf4VXtkKu3eeH14FMa"
   }
 }
