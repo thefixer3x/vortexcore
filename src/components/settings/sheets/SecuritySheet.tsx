@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 
 import { useTranslation } from "react-i18next";
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
 
-=======
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,15 +19,10 @@ interface SecuritySheetProps {
 }
 
 export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => {
-<<<<<<< HEAD
-  const { t } = useTranslation();
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
-=======
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [twoFactorStatus, setTwoFactorStatus] = useState<"off" | "setup" | "verify" | "enabled">("off");
   const [pendingFactorId, setPendingFactorId] = useState<string | null>(null);
@@ -220,7 +211,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
             {t("settings.security_section.description")}
           </SheetDescription>
         </SheetHeader>
-<<<<<<< HEAD
         <div className="space-y-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="current-password">{t("settings.security_section.fields.current_password")}</Label>
@@ -234,7 +224,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
             <Label htmlFor="confirm-password">{t("settings.security_section.fields.confirm_password")}</Label>
             <Input id="confirm-password" type="password" />
           </div>
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
         <div className="space-y-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="current-password">Current Password</Label>
@@ -248,10 +237,7 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
             <Label htmlFor="confirm-password">Confirm New Password</Label>
             <Input id="confirm-password" type="password" />
           </div>
-=======
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
 
-<<<<<<< HEAD
           <div className="pt-4">
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
@@ -259,7 +245,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
                 <p className="text-sm text-muted-foreground">
                   {t("settings.security_section.two_factor.description")}
                 </p>
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
           <div className="pt-4">
             <div className="flex items-center justify-between py-2">
               <div className="space-y-0.5">
@@ -267,21 +252,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
                 <p className="text-sm text-muted-foreground">
                   Enable two-factor authentication for added security
                 </p>
-=======
-        {isFetching ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : (
-          <div className="space-y-6 py-6">
-            {/* Password Section */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Password</h3>
-                <Button variant="outline" size="sm" onClick={() => setShowPasswordFields(!showPasswordFields)}>
-                  {showPasswordFields ? "Hide" : "Change"}
-                </Button>
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
               </div>
 
               {showPasswordFields && (
@@ -334,21 +304,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
               )}
             </div>
 
-<<<<<<< HEAD
-            <div className="flex items-center justify-between py-2">
-              <div className="space-y-0.5">
-                <h3 className="font-medium">{t("settings.security_section.biometric.title")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("settings.security_section.biometric.description")}
-                </p>
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
-            <div className="flex items-center justify-between py-2">
-              <div className="space-y-0.5">
-                <h3 className="font-medium">Biometric login</h3>
-                <p className="text-sm text-muted-foreground">
-                  Use fingerprint or facial recognition to login
-                </p>
-=======
             {/* 2FA Section */}
             <div className="space-y-4 pt-4">
               <div className="flex items-center justify-between py-2">
@@ -386,7 +341,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
                     disabled={isLoading}
                   />
                 )}
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
               </div>
 
               {/* Verification Code Input (when setting up 2FA) */}
@@ -440,15 +394,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
               )}
             </div>
           </div>
-<<<<<<< HEAD
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">{t("settings.security_section.actions.update")}</Button>
-||||||| parent of e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Update Security Settings</Button>
-=======
         )}
 
         <div className="mt-6 flex gap-3">
@@ -461,7 +406,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
           }}>
             Done
           </Button>
->>>>>>> e900326 (Wire 2FA toggle to existing auth hooks in SecuritySheet)
         </div>
       </SheetContent>
     </Sheet>

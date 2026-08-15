@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 
-import { useTranslation } from "react-i18next";
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
-
-=======
 import { useState, useEffect } from "react";
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
+import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,10 +19,6 @@ interface ProfileSheetProps {
 }
 
 export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
-<<<<<<< HEAD
-  const { t } = useTranslation();
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
-=======
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -218,7 +210,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
     }
   };
 
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
   return (
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className="w-full md:max-w-md overflow-y-auto">
@@ -228,7 +219,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
             {t("settings.profile.description")}
           </SheetDescription>
         </SheetHeader>
-<<<<<<< HEAD
         <div className="space-y-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="name">{t("settings.profile.fields.full_name")}</Label>
@@ -242,7 +232,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
             <Label htmlFor="phone">{t("settings.profile.fields.phone")}</Label>
             <Input id="phone" defaultValue="+1 (555) 123-4567" />
           </div>
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
         <div className="space-y-6 py-6">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
@@ -256,10 +245,7 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
             <Label htmlFor="phone">Phone Number</Label>
             <Input id="phone" defaultValue="+1 (555) 123-4567" />
           </div>
-=======
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
 
-<<<<<<< HEAD
           <div className="space-y-4 pt-4">
             <h3 className="text-lg font-medium">{t("settings.profile.about_title")}</h3>
             <div className="space-y-2">
@@ -295,7 +281,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 </SelectContent>
               </Select>
             </div>
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
           <div className="space-y-4 pt-4">
             <h3 className="text-lg font-medium">Tell Us About You</h3>
             <div className="space-y-2">
@@ -331,13 +316,7 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 </SelectContent>
               </Select>
             </div>
-=======
-        {isFetching ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
           </div>
-<<<<<<< HEAD
 
           <div className="space-y-4 pt-4">
             <h3 className="text-lg font-medium">{t("settings.profile.identity.title")}</h3>
@@ -347,7 +326,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 <div>
                   <h4 className="font-medium">{t("settings.profile.identity.verify_button")}</h4>
                   <p className="text-sm text-muted-foreground">{t("settings.profile.identity.description")}</p>
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
           
           <div className="space-y-4 pt-4">
             <h3 className="text-lg font-medium">Identity Verification</h3>
@@ -357,21 +335,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 <div>
                   <h4 className="font-medium">Verify Your Identity</h4>
                   <p className="text-sm text-muted-foreground">Complete KYC to access higher transaction limits</p>
-=======
-        ) : (
-          <div className="space-y-6 py-6">
-            {/* Avatar */}
-            <div className="flex flex-col items-center gap-4 p-4 rounded-xl border border-dashed border-muted">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt="Avatar"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-primary"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
-                  {name.charAt(0).toUpperCase() || "?"}
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
                 </div>
               )}
               <div className="flex gap-2">
@@ -493,23 +456,10 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 </div>
                 <Button>Start</Button>
               </div>
-<<<<<<< HEAD
               <Button>{t("common.actions.start")}</Button>
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
               <Button>Start</Button>
-=======
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
             </div>
           </div>
-<<<<<<< HEAD
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">{t("common.actions.save_changes")}</Button>
-||||||| parent of 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Save Changes</Button>
-=======
         )}
 
         <div className="mt-6 flex gap-3">
@@ -530,7 +480,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
               "Save Changes"
             )}
           </Button>
->>>>>>> 936459d (Wire ProfileSheet to Supabase — fully functional profile editing)
         </div>
       </SheetContent>
     </Sheet>
