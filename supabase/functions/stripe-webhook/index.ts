@@ -16,6 +16,16 @@ function resolveTier(priceId: string | null): string {
   return "free";
 }
 
+function downgradeTier(userId: string) {
+  return supabase.from("user_tiers").upsert({
+    user_id: userId,
+    tier_name: "free",
+    max_queries_per_day: 10,
+    can_use_advanced_models: false,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: "user_id" });
+}
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -51,6 +61,25 @@ Deno.serve(async (req: Request) => {
         await handleDeletion(event.data.object as Stripe.Subscription);
         break;
       }
+      case "invoice.payment_failed": {
+        // Handle payment failure - subscription goes past_due
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = invoice.subscription as string;
+        
+        // Get subscription details
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        await handlePaymentFailure(subscription);
+        break;
+      }
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = invoice.subscription as string;
+        
+        // Get subscription details
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        await handlePaymentSucceeded(subscription);
+        break;
+      }
     }
     return new Response(JSON.stringify({ ok: true, type: event.type }), {
       headers: { ...CORS, "Content-Type": "application/json" },
@@ -67,14 +96,16 @@ Deno.serve(async (req: Request) => {
 
 async function handleChange(sub: Stripe.Subscription) {
   const priceId = sub.items.data[0]?.price?.id ?? null;
+  const status = sub.status;
 
   const { error: e1 } = await supabase.from("stripe_subscriptions").upsert({
     stripe_subscription_id: sub.id,
     customer_id: sub.customer as string,
-    status: sub.status,
+    status: status,
     price_id: priceId,
     current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
     cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
+    trial_end: sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null,
     updated_at: new Date().toISOString(),
   }, { onConflict: "stripe_subscription_id" });
   if (e1) { console.error("[stripe-webhook] sub upsert:", e1.message); throw e1; }
@@ -114,5 +145,55 @@ async function handleDeletion(sub: Stripe.Subscription) {
       can_use_advanced_models: false,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" });
+  }
+}
+
+async function handlePaymentFailure(sub: Stripe.Subscription) {
+  // Update subscription status to past_due
+  await supabase.from("stripe_subscriptions")
+    .update({ 
+      status: "past_due",
+      updated_at: new Date().toISOString()
+    })
+    .eq("stripe_subscription_id", sub.id);
+
+  // Downgrade tier - user loses premium access
+  const { data: cr } = await supabase
+    .from("stripe_customers").select("user_id")
+    .eq("customer_id", sub.customer as string).maybeSingle();
+
+  if (cr?.user_id) {
+    await downgradeTier(cr.user_id);
+    console.error(`[stripe-webhook] payment failed for user ${cr.user_id}, downgraded to free`);
+  }
+}
+
+async function handlePaymentSucceeded(sub: Stripe.Subscription) {
+  const priceId = sub.items.data[0]?.price?.id ?? null;
+  const tier = resolveTier(priceId);
+  const isActive = ["active", "trialing"].includes(sub.status);
+
+  // Update subscription status to active
+  await supabase.from("stripe_subscriptions")
+    .update({ 
+      status: "active",
+      updated_at: new Date().toISOString()
+    })
+    .eq("stripe_subscription_id", sub.id);
+
+  // Restore premium access
+  const { data: cr } = await supabase
+    .from("stripe_customers").select("user_id")
+    .eq("customer_id", sub.customer as string).maybeSingle();
+
+  if (cr?.user_id) {
+    await supabase.from("user_tiers").upsert({
+      user_id: cr.user_id,
+      tier_name: tier,
+      max_queries_per_day: tier === "enterprise" ? 500 : tier === "pro" ? 100 : 10,
+      can_use_advanced_models: isActive && tier !== "free",
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+    console.log(`[stripe-webhook] payment succeeded for user ${cr.user_id}, restored ${tier} access`);
   }
 }
