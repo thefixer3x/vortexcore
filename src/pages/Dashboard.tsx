@@ -11,6 +11,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import LogRocket from "logrocket"; // Temporarily disabled
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { DashboardActionDialog } from "@/components/dashboard/DashboardActionDialog";
 import {
   type DashboardActionType,
@@ -205,6 +207,9 @@ const Dashboard = () => {
         wallets={wallets}
         onSuccess={() => refresh()}
       />
+
+      {/* Onboarding Flow - shows for new users with no transactions */}
+      <OnboardingFlow />
     </div>
   );
 };
