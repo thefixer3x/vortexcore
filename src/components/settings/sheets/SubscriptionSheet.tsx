@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { CrownIcon, Zap, Building2, Check, Loader2, ExternalLink } from "lucide-react";
+import { AlertTriangle, CrownIcon, Zap, Building2, Check, Loader2, ExternalLink, CreditCard, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { TIERS } from "@/lib/subscription-tiers";
@@ -27,6 +27,9 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
   const [portalLoading, setPortalLoading] = useState(false);
   const { toast } = useToast();
 
+  const isPastDue = status === "past_due";
+  const isTrialing = status === "trialing";
+
   const handleSubscribe = async (priceId: string, tierKey: string) => {
     setCheckoutLoading(tierKey);
     try {
@@ -45,6 +48,25 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
       });
     } finally {
       setCheckoutLoading(null);
+    }
+  };
+
+  const handleUpdatePaymentMethod = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal", { body: {} });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      toast({
+        title: "Portal unavailable",
+        description: err instanceof Error ? err.message : "Unable to open billing portal",
+        variant: "destructive",
+      });
+    } finally {
+      setPortalLoading(false);
     }
   };
 
@@ -86,6 +108,50 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
           </div>
         ) : (
           <div className="space-y-4 py-4 sm:py-6">
+            {/* Past Due Warning Banner */}
+            {isPastDue && (
+              <div className="flex items-start gap-3 p-4 border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    Payment Failed
+                  </p>
+                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                    We couldn't process your last payment. Your subscription is temporarily suspended until the payment is resolved.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs border-amber-500/50 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/30"
+                    onClick={handleUpdatePaymentMethod}
+                    disabled={portalLoading}
+                  >
+                    {portalLoading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                    ) : (
+                      <CreditCard className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    Update Payment Method
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Trial Banner */}
+            {isTrialing && (
+              <div className="flex items-start gap-3 p-4 border border-blue-500/30 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    Trial Active
+                  </p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    You're currently on a trial period. Your trial will end on {formatDate(currentPeriodEnd)}.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Current plan banner */}
             <div className="p-3 sm:p-4 border rounded-lg bg-muted/30">
               <div className="flex items-center justify-between mb-1">
@@ -96,7 +162,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                   </span>
                 </div>
                 <Badge variant={subscribed ? "default" : "secondary"} className="capitalize text-xs">
-                  {subscribed ? t(`subscription.status.${status}`, { defaultValue: status }) : t("subscription.status.free")}
+                  {subscribed ? (isPastDue ? "payment_failed" : t(`subscription.status.${status}`, { defaultValue: status })) : t("subscription.status.free")}
                 </Badge>
               </div>
               {currentPeriodEnd && (
