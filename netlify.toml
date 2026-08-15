@@ -11,11 +11,12 @@
 env = { }
 
 # Single-page app rewrite so deep links resolve to index.html
+# NOTE: force = true is intentionally omitted — it would override static files
+# (robots.txt, sitemap.xml, etc.) and serve index.html to crawlers instead.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
 
 # Edge Functions (if any) can be mapped here
 # [[edge_functions]]

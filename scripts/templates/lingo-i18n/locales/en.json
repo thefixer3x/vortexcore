@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "Your App",
+    "tagline": "What it does in one line"
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "back": "Back",
+      "retry": "Retry"
+    },
+    "status": {
+      "loading": "Loading…",
+      "error": "Something went wrong",
+      "success": "Done"
+    }
+  }
+}

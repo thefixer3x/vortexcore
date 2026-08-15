@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,6 +16,7 @@ import { TwoFactorVerification } from "./TwoFactorVerification";
 import { useAuth } from "@/contexts/AuthContext";
 import LogRocket from "logrocket";
 export function LoginForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -58,13 +60,13 @@ export function LoginForm() {
         // Handle specific error cases
         if (error.message.includes('Invalid login credentials')) {
           toast({
-            title: "Invalid Credentials",
-            description: "Please check your email and password and try again",
+            title: t("auth.login.errors.invalid_credentials"),
+            description: t("auth.login.errors.invalid_credentials"),
             variant: "destructive"
           });
         } else {
           toast({
-            title: "Authentication Error",
+            title: t("auth.login.errors.auth_error", { message: error.message }),
             description: error.message,
             variant: "destructive"
           });
@@ -88,8 +90,8 @@ export function LoginForm() {
         });
         
         toast({
-          title: "Login Successful",
-          description: "Welcome back to VortexCore!"
+          title: t("auth.login.success"),
+          description: t("auth.login.success_description")
         });
         navigate("/dashboard");
       } else {
@@ -105,8 +107,8 @@ export function LoginForm() {
       });
       
       toast({
-        title: "Authentication Error",
-        description: "An unexpected error occurred during login",
+        title: t("auth.login.errors.auth_error", { message: err instanceof Error ? err.message : "unknown" }),
+        description: err instanceof Error ? err.message : "unknown",
         variant: "destructive"
       });
     } finally {
@@ -126,7 +128,7 @@ export function LoginForm() {
           <div className="flex items-center space-x-2">
             <Checkbox id="remember" checked={rememberMe} onCheckedChange={() => setRememberMe(!rememberMe)} />
             <label htmlFor="remember" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Remember me
+              {t("auth.login.remember_me")}
             </label>
           </div>
           <div>
@@ -136,7 +138,7 @@ export function LoginForm() {
         
         <div className="flex items-center justify-center gap-2">
           <Button type="submit" className="w-full relative overflow-hidden" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? t("auth.login.signing_in") : t("auth.login.submit")}
             {isLoading && <span className="absolute inset-0 flex items-center justify-center">
                 <span className="h-4 w-4 rounded-full border-2 border-r-transparent animate-spin" />
               </span>}
@@ -153,7 +155,7 @@ export function LoginForm() {
           <div className="w-full border-t"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          <span className="bg-background px-2 text-muted-foreground">{t("auth.login.divider")}</span>
         </div>
       </div>
       

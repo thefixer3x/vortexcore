@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Fingerprint } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export function BiometricAuthButton() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleBiometricLogin = async () => {
@@ -11,8 +13,8 @@ export function BiometricAuthButton() {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       toast({
-        title: "Biometric Authentication",
-        description: "Biometric authentication is not yet available. Please use email and password.",
+        title: t("auth.biometric.unavailable.title"),
+        description: t("auth.biometric.unavailable.description"),
         variant: "destructive",
       });
     } finally {
@@ -33,7 +35,7 @@ export function BiometricAuthButton() {
       ) : (
         <Fingerprint className="h-4 w-4" />
       )}
-      <span>Continue with Biometrics</span>
+      <span>{t("auth.biometric.continue")}</span>
     </Button>
   );
 }

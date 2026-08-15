@@ -1,4 +1,10 @@
 import { useMemo, useState } from "react";
+<<<<<<< HEAD
+import { useTranslation } from "react-i18next";
+||||||| parent of f930387 (Add wallet-ready state for new users on dashboard)
+=======
+import { Send, ArrowDownRight } from "lucide-react";
+>>>>>>> f930387 (Add wallet-ready state for new users on dashboard)
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard, AddAccountCard } from "@/components/dashboard/ModernAccountCard";
 import { ModernTransactionList, type DashboardTransactionItem } from "@/components/dashboard/ModernTransactionList";
@@ -10,6 +16,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import LogRocket from "logrocket"; // Temporarily disabled
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { DashboardActionDialog } from "@/components/dashboard/DashboardActionDialog";
 import {
   type DashboardActionType,
@@ -26,6 +34,7 @@ const ACCOUNT_COLORS = [
 ];
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { wallets, transactions, profile, isLoading, error, refresh } = useDashboardData();
   const { currency } = useCurrency();
   const [selectedAction, setSelectedAction] = useState<DashboardActionType | null>(null);
@@ -124,7 +133,7 @@ const Dashboard = () => {
     <div className="animate-fade-in space-y-8">
       {error && (
         <Alert variant="destructive" className="animate-slide-up">
-          <AlertTitle>Unable to load financial data</AlertTitle>
+          <AlertTitle>{t("dashboard.balance.connect_prompt")}</AlertTitle>
           <AlertDescription>
             {error}
           </AlertDescription>
@@ -185,6 +194,53 @@ const Dashboard = () => {
         />
       </div>
 
+      {/* Wallet Ready State — shown for new users with no transactions yet */}
+      {!isLoading && hasWallets && transactionItems.length === 0 && (
+        <div className="animate-scale-in my-6">
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 p-6 space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold">Your wallet is ready! 🎉</h3>
+                <p className="text-muted-foreground text-sm mt-1">
+                  You have {wallets.length} wallet{wallets.length > 1 ? "s" : ""} set up. Start by connecting a bank or adding your first transaction.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                size="sm"
+                className="gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                onClick={() => setSelectedAction("send")}
+              >
+                <Send className="w-4 h-4" />
+                Send Money
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => setSelectedAction("request")}
+              >
+                <ArrowDownRight className="w-4 h-4" />
+                Request Payment
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => window.location.href = "/transactions"}
+              >
+                <Plus className="w-4 h-4" />
+                Add Transaction
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* AI Insights - Now placed below transactions */}
       <div className="animate-fade-in [animation-delay:0.3s]">
         <AIInsightsDashboard />
@@ -203,6 +259,9 @@ const Dashboard = () => {
         wallets={wallets}
         onSuccess={() => refresh()}
       />
+
+      {/* Onboarding Flow - shows for new users with no transactions */}
+      <OnboardingFlow />
     </div>
   );
 };
