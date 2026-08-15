@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 
@@ -11,6 +10,9 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_URL") || "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
 );
+
+// Free trial configuration (in days, 0 = no trial)
+const TRIAL_PERIOD_DAYS = parseInt(Deno.env.get("STRIPE_TRIAL_PERIOD_DAYS") || "7");
 
 serve(withAuthMiddleware(async (req, { auth }) => {
   try {
@@ -46,14 +48,29 @@ serve(withAuthMiddleware(async (req, { auth }) => {
     }
 
     const origin = req.headers.get("origin") || "https://vortexcore.app";
-    const session = await stripe.checkout.sessions.create({
+    
+    // Build session params
+    const sessionParams: Stripe.Checkout.SessionCreateParams & {
+      subscription_data?: {
+        trial_period_days?: number;
+      };
+    } = {
       customer: customerId,
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/settings?tab=billing&checkout=success`,
       cancel_url: `${origin}/settings?tab=billing&checkout=cancelled`,
-    });
+    };
+
+    // Add trial period if configured
+    if (TRIAL_PERIOD_DAYS > 0) {
+      sessionParams.subscription_data = {
+        trial_period_days: TRIAL_PERIOD_DAYS,
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { "Content-Type": "application/json" },
