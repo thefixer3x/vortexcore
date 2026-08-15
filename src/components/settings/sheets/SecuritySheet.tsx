@@ -1,4 +1,3 @@
-
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ interface SecuritySheetProps {
 export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -211,33 +211,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
             {t("settings.security_section.description")}
           </SheetDescription>
         </SheetHeader>
-        <div className="space-y-6 py-6">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">{t("settings.security_section.fields.current_password")}</Label>
-            <Input id="current-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="new-password">{t("settings.security_section.fields.new_password")}</Label>
-            <Input id="new-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">{t("settings.security_section.fields.confirm_password")}</Label>
-            <Input id="confirm-password" type="password" />
-          </div>
-        <div className="space-y-6 py-6">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">Current Password</Label>
-            <Input id="current-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="new-password">New Password</Label>
-            <Input id="new-password" type="password" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
-            <Input id="confirm-password" type="password" />
-          </div>
-
         {isFetching ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
