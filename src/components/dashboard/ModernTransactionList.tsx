@@ -15,10 +15,14 @@ import {
   Utensils,
   Coffee,
   Gamepad2,
-  Zap
+  Zap,
+  TrendingUp,
+  Wallet,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
 
 export interface DashboardTransactionItem {
   id: string;
@@ -258,8 +262,32 @@ export const ModernTransactionList = ({ transactions, isLoading = false }: Moder
         </div>
 
         {showEmptyState && (
-          <div className="py-8 text-center text-muted-foreground text-sm">
-            No transactions to display yet. Complete an action to see it here.
+          <div className="py-12 text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 flex items-center justify-center">
+                <Wallet className="w-8 h-8 text-muted-foreground/60" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-lg font-medium text-foreground">No transactions yet</p>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Start tracking your finances by connecting a bank, sending money, or adding a transaction manually.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button asChild variant="default" className="gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                <Link to="/transactions">
+                  <Plus className="w-4 h-4" />
+                  Add Transaction
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="gap-2">
+                <Link to="/settings?tab=billing">
+                  <TrendingUp className="w-4 h-4" />
+                  Upgrade for More Features
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
