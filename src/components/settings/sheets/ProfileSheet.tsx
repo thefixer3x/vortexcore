@@ -1,7 +1,7 @@
 
-import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ interface ProfileSheetProps {
 }
 
 export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -316,6 +317,9 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 </SelectContent>
               </Select>
             </div>
+        {isFetching ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
 
           <div className="space-y-4 pt-4">
@@ -335,6 +339,19 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 <div>
                   <h4 className="font-medium">Verify Your Identity</h4>
                   <p className="text-sm text-muted-foreground">Complete KYC to access higher transaction limits</p>
+        ) : (
+          <div className="space-y-6 py-6">
+            {/* Avatar */}
+            <div className="flex flex-col items-center gap-4 p-4 rounded-xl border border-dashed border-muted">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-primary"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                  {name.charAt(0).toUpperCase() || "?"}
                 </div>
               )}
               <div className="flex gap-2">
@@ -460,6 +477,12 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
               <Button>Start</Button>
             </div>
           </div>
+        </div>
+        <div className="mt-6">
+          <Button onClick={onSave} className="w-full">{t("common.actions.save_changes")}</Button>
+        </div>
+        <div className="mt-6">
+          <Button onClick={onSave} className="w-full">Save Changes</Button>
         )}
 
         <div className="mt-6 flex gap-3">

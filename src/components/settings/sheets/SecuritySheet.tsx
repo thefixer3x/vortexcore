@@ -19,6 +19,7 @@ interface SecuritySheetProps {
 }
 
 export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -252,6 +253,19 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
                 <p className="text-sm text-muted-foreground">
                   Enable two-factor authentication for added security
                 </p>
+        {isFetching ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="space-y-6 py-6">
+            {/* Password Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium">Password</h3>
+                <Button variant="outline" size="sm" onClick={() => setShowPasswordFields(!showPasswordFields)}>
+                  {showPasswordFields ? "Hide" : "Change"}
+                </Button>
               </div>
 
               {showPasswordFields && (
@@ -304,6 +318,18 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
               )}
             </div>
 
+            <div className="flex items-center justify-between py-2">
+              <div className="space-y-0.5">
+                <h3 className="font-medium">{t("settings.security_section.biometric.title")}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {t("settings.security_section.biometric.description")}
+                </p>
+            <div className="flex items-center justify-between py-2">
+              <div className="space-y-0.5">
+                <h3 className="font-medium">Biometric login</h3>
+                <p className="text-sm text-muted-foreground">
+                  Use fingerprint or facial recognition to login
+                </p>
             {/* 2FA Section */}
             <div className="space-y-4 pt-4">
               <div className="flex items-center justify-between py-2">
@@ -394,6 +420,12 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
               )}
             </div>
           </div>
+        </div>
+        <div className="mt-6">
+          <Button onClick={onSave} className="w-full">{t("settings.security_section.actions.update")}</Button>
+        </div>
+        <div className="mt-6">
+          <Button onClick={onSave} className="w-full">Update Security Settings</Button>
         )}
 
         <div className="mt-6 flex gap-3">
