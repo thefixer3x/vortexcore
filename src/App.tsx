@@ -15,7 +15,7 @@ import VirtualCards from "./pages/VirtualCards";
 import GeminiDemo from "./pages/GeminiDemo";
 import PerplexityDemo from "./pages/PerplexityDemo";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
-import { SignupPage } from "./components/auth/SignupPage";
+import { SignupForm } from "./components/auth/SignupPage";
 import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryManager";
 import BulkUpload from "./components/payments/beneficiaries/BulkUpload";
 import CategoryManager from "./components/payments/beneficiaries/CategoryManager";
@@ -95,7 +95,7 @@ const App = () => {
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/ecosystem/gemini" element={<GeminiDemo />} />
             <Route path="/ecosystem/perplexity" element={<PerplexityDemo />} />
-            <Route path="/auth" element={<SignupPage />} />
+            <Route path="/auth" element={<SignupForm />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
 
             {/* Protected app routes */}
