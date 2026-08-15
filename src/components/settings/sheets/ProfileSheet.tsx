@@ -1,7 +1,5 @@
-
-import { useTranslation } from "react-i18next";
-
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,9 +17,9 @@ interface ProfileSheetProps {
 }
 
 export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
-  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -247,98 +245,10 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
             <Input id="phone" defaultValue="+1 (555) 123-4567" />
           </div>
 
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">{t("settings.profile.about_title")}</h3>
-            <div className="space-y-2">
-              <Label htmlFor="occupation">{t("settings.profile.fields.occupation")}</Label>
-              <Input id="occupation" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="income-range">{t("settings.profile.fields.income_range")}</Label>
-              <Select>
-                <SelectTrigger id="income-range">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="range1">₦100,000 - ₦500,000</SelectItem>
-                  <SelectItem value="range2">₦500,001 - ₦1,000,000</SelectItem>
-                  <SelectItem value="range3">₦1,000,001 - ₦5,000,000</SelectItem>
-                  <SelectItem value="range4">₦5,000,001+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="financial-goals">{t("settings.profile.fields.financial_goals")}</Label>
-              <Select>
-                <SelectTrigger id="financial-goals">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="savings">Savings</SelectItem>
-                  <SelectItem value="investing">Investing</SelectItem>
-                  <SelectItem value="retirement">Retirement Planning</SelectItem>
-                  <SelectItem value="business">Business Growth</SelectItem>
-                  <SelectItem value="debt">Debt Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">Tell Us About You</h3>
-            <div className="space-y-2">
-              <Label htmlFor="occupation">Occupation</Label>
-              <Input id="occupation" placeholder="What do you do?" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="income-range">Income Range</Label>
-              <Select>
-                <SelectTrigger id="income-range">
-                  <SelectValue placeholder="Select your income range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="range1">₦100,000 - ₦500,000</SelectItem>
-                  <SelectItem value="range2">₦500,001 - ₦1,000,000</SelectItem>
-                  <SelectItem value="range3">₦1,000,001 - ₦5,000,000</SelectItem>
-                  <SelectItem value="range4">₦5,000,001+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="financial-goals">Primary Financial Goals</Label>
-              <Select>
-                <SelectTrigger id="financial-goals">
-                  <SelectValue placeholder="Select your primary goal" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="savings">Savings</SelectItem>
-                  <SelectItem value="investing">Investing</SelectItem>
-                  <SelectItem value="retirement">Retirement Planning</SelectItem>
-                  <SelectItem value="business">Business Growth</SelectItem>
-                  <SelectItem value="debt">Debt Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
         {isFetching ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
-
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">{t("settings.profile.identity.title")}</h3>
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <BadgeCheck className="h-8 w-8 text-primary" />
-                <div>
-                  <h4 className="font-medium">{t("settings.profile.identity.verify_button")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("settings.profile.identity.description")}</p>
-          
-          <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-medium">Identity Verification</h3>
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <BadgeCheck className="h-8 w-8 text-primary" />
-                <div>
-                  <h4 className="font-medium">Verify Your Identity</h4>
-                  <p className="text-sm text-muted-foreground">Complete KYC to access higher transaction limits</p>
         ) : (
           <div className="space-y-6 py-6">
             {/* Avatar */}
@@ -477,12 +387,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
               <Button>Start</Button>
             </div>
           </div>
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">{t("common.actions.save_changes")}</Button>
-        </div>
-        <div className="mt-6">
-          <Button onClick={onSave} className="w-full">Save Changes</Button>
         )}
 
         <div className="mt-6 flex gap-3">

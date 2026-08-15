@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Send, ArrowDownRight } from "lucide-react";
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard, AddAccountCard } from "@/components/dashboard/ModernAccountCard";
