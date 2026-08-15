@@ -34,14 +34,6 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 const SETTINGS_KEY = "notification_preferences";
 
 export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetProps) => {
-<<<<<<< HEAD
-  const { t } = useTranslation();
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-||||||| parent of 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-=======
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -137,7 +129,6 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
       setIsLoading(false);
     }
   };
->>>>>>> 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
 
   return (
     <Sheet open={open} onOpenChange={() => onClose()}>
@@ -145,30 +136,10 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
         <SheetHeader>
           <SheetTitle>{t("settings.notifications_preferences.title")}</SheetTitle>
           <SheetDescription>
-<<<<<<< HEAD
             {t("settings.notifications_preferences.description")}
-||||||| parent of 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
             Choose how and when you want to be notified
-=======
-            Choose how and when you want to be notified about your account activity
->>>>>>> 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
           </SheetDescription>
         </SheetHeader>
-<<<<<<< HEAD
-        <div className="space-y-6 py-6">
-          <div className="flex items-center justify-between py-2">
-            <div className="space-y-0.5">
-              <h3 className="font-medium">{t("settings.notifications_preferences.email.title")}</h3>
-              <p className="text-sm text-muted-foreground">
-                {t("settings.notifications_preferences.email.description")}
-||||||| parent of 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
-        <div className="space-y-6 py-6">
-          <div className="flex items-center justify-between py-2">
-            <div className="space-y-0.5">
-              <h3 className="font-medium">Email Notifications</h3>
-              <p className="text-sm text-muted-foreground">
-                Receive notifications and updates via email
-=======
 
         {isFetching ? (
           <div className="flex justify-center py-12">
@@ -287,11 +258,9 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
                 <span>
                   Security alerts are always enabled and cannot be disabled. You can turn off marketing emails at any time.
                 </span>
->>>>>>> 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
               </p>
             </div>
           </div>
-<<<<<<< HEAD
 
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
@@ -342,7 +311,6 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
         </div>
         <div className="mt-6">
           <Button onClick={onSave} className="w-full">{t("settings.notifications_preferences.actions.save")}</Button>
-||||||| parent of 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
           
           <div className="flex items-center justify-between py-2">
             <div className="space-y-0.5">
@@ -393,28 +361,6 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
         </div>
         <div className="mt-6">
           <Button onClick={onSave} className="w-full">Save Notification Settings</Button>
-=======
-        )}
-
-        <div className="mt-6 flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            className="flex-1"
-            disabled={isLoading || isFetching}
-            onClick={handleSave}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Settings"
-            )}
-          </Button>
->>>>>>> 701e59b (Improve empty-state UX and wire NotificationSheet persistence)
         </div>
       </SheetContent>
     </Sheet>
