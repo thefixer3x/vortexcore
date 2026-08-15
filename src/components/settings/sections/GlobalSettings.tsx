@@ -12,6 +12,7 @@ interface GlobalSettingsProps {
 
 export const GlobalSettings = ({ onOpen }: GlobalSettingsProps) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <SettingSection title={t("settings.sections.global")}>

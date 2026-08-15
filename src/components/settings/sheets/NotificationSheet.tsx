@@ -36,6 +36,7 @@ const SETTINGS_KEY = "notification_preferences";
 export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetProps) => {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [settings, setSettings] = useState<NotificationSettings>(DEFAULT_SETTINGS);
