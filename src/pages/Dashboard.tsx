@@ -1,10 +1,5 @@
 import { useMemo, useState } from "react";
-<<<<<<< HEAD
 import { useTranslation } from "react-i18next";
-||||||| parent of f930387 (Add wallet-ready state for new users on dashboard)
-=======
-import { Send, ArrowDownRight } from "lucide-react";
->>>>>>> f930387 (Add wallet-ready state for new users on dashboard)
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard, AddAccountCard } from "@/components/dashboard/ModernAccountCard";
 import { ModernTransactionList, type DashboardTransactionItem } from "@/components/dashboard/ModernTransactionList";
