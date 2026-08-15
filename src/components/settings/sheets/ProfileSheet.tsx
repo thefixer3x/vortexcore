@@ -218,32 +218,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
             {t("settings.profile.description")}
           </SheetDescription>
         </SheetHeader>
-        <div className="space-y-6 py-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">{t("settings.profile.fields.full_name")}</Label>
-            <Input id="name" defaultValue="Alex Volkov" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("settings.profile.fields.email")}</Label>
-            <Input id="email" defaultValue="alex@vortexcore.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">{t("settings.profile.fields.phone")}</Label>
-            <Input id="phone" defaultValue="+1 (555) 123-4567" />
-          </div>
-        <div className="space-y-6 py-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input id="name" defaultValue="Alex Volkov" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input id="email" defaultValue="alex@vortexcore.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input id="phone" defaultValue="+1 (555) 123-4567" />
-          </div>
 
         {isFetching ? (
           <div className="flex justify-center py-12">
@@ -383,8 +357,6 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
                 </div>
                 <Button>Start</Button>
               </div>
-              <Button>{t("common.actions.start")}</Button>
-              <Button>Start</Button>
             </div>
           </div>
         )}
