@@ -1,22 +1,21 @@
-# Robots.txt for Lan Onasis
-# https://lanonasis.com
+# VortexCore — robots.txt
+# https://vortexcore.app
 
-# Allow all robots
-User-agent: *
+# Allow all legitimate search engines
+User-agent: Googlebot
 Allow: /
 
-# Disallow admin or private areas (if any)
-# Disallow: /admin/
-# Disallow: /api/
+User-agent: Bingbot
+Allow: /
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
+User-agent: DuckDuckBot
+Allow: /
 
-# Sitemap location
-Sitemap: https://lanonasis.com/sitemap.xml
+User-agent: Slurp
+Allow: /
 
-# Allow social media crawlers for better social sharing
-User-agent: facebookexternalhit/*
+# Social media crawlers
+User-agent: facebookexternalhit
 Allow: /
 
 User-agent: Twitterbot
@@ -25,9 +24,45 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-# Block bad bots (optional)
+# AI discovery crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Block aggressive SEO scrapers
 User-agent: AhrefsBot
 Disallow: /
 
 User-agent: SemrushBot
-Crawl-delay: 10
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Generic rules — block sensitive paths for all other bots
+User-agent: *
+Disallow: /.env
+Disallow: /.git/
+Disallow: /api/
+Disallow: /admin/
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://vortexcore.app/sitemap.xml

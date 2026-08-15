@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { InsightsHeader } from "@/components/insights/InsightsHeader";
 import { FinancialOverviewTabs } from "@/components/insights/FinancialOverviewTabs";
 import { InsightWidget } from "@/components/dashboard/InsightWidget";
@@ -74,13 +75,14 @@ const aiSuggestions = [
 ];
 
 const Insights = () => {
+  const { t } = useTranslation();
   const { formatCurrency } = useCurrency();
 
   return (
     <div className="animate-fade-in">
       <InsightsHeader
-        title="AI Insights"
-        description="Financial analytics and personalized recommendations"
+        title={t("insights.title")}
+        description={t("insights.description")}
       />
 
       <FinancialOverviewTabs

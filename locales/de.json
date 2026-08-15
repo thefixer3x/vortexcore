@@ -3,6 +3,66 @@
     "name": "VortexCore",
     "tagline": "Persönliche Finanzen leicht gemacht"
   },
+  "common": {
+    "actions": {
+      "back": "Zurück zum Dashboard",
+      "save_changes": "Änderungen speichern",
+      "cancel": "Abbrechen",
+      "verify": "Verifizieren",
+      "skip": "Überspringen",
+      "close": "Schließen",
+      "minimize": "Minimieren",
+      "retry": "Erneut versuchen",
+      "start": "Starten",
+      "register": "Registrieren",
+      "invite": "Einladen",
+      "view_details": "Details anzeigen",
+      "explore": "Erkunden",
+      "sign_out": "Abmelden",
+      "new": "Neu",
+      "sign_in": "Anmelden",
+      "implement": "Implementieren",
+      "menu": "Menü",
+      "settings": "Einstellungen"
+    },
+    "errors": {
+      "404": {
+        "title": "404",
+        "message": "Hoppla! Seite nicht gefunden",
+        "action": "Zurück zur Startseite"
+      }
+    },
+    "language": {
+      "select": "Sprache auswählen",
+      "ai_powered_translations": "KI-gestützte Übersetzungen"
+    }
+  },
+  "nav": {
+    "main": {
+      "dashboard": "Kontrollraum",
+      "transactions": "Transaktionen",
+      "vortexai": "VortexAI",
+      "settings": "Einstellungen",
+      "user_management": "Benutzerverwaltung"
+    },
+    "secondary": {
+      "notifications": "Benachrichtigungen",
+      "security": "Sicherheit",
+      "help_support": "Hilfe & Support"
+    }
+  },
+  "index": {
+    "hero": {
+      "title": "Übernehmen Sie die Kontrolle über Ihr Finanz-Ökosystem",
+      "subtitle": "Verknüpfen Sie alle Ihre Konten, verwalten Sie Transaktionen und erhalten Sie KI-gestützte Einblicke"
+    },
+    "nav": {
+      "ecosystem": "Ökosystem",
+      "features": "Funktionen",
+      "pricing": "Preise",
+      "support": "Support"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Willkommen zurück, {{name}}!",
@@ -10,23 +70,250 @@
     "monthly_income": "Monatliches Einkommen",
     "monthly_expenses": "Monatliche Ausgaben",
     "recent_transactions": "Neueste Transaktionen",
-    "quick_actions": "Schnellaktionen"
+    "quick_actions": {
+      "title": "Schnellaktionen",
+      "mobile_services": {
+        "label": "Mobile Dienste",
+        "description": "Guthaben & Datenpakete"
+      },
+      "save_invest": {
+        "label": "Sparen & Investieren",
+        "description": "Automatisiertes Sparen"
+      },
+      "analytics": {
+        "label": "Analysen",
+        "description": "Finanzielle Einblicke"
+      },
+      "premium": {
+        "title": "Premium-Funktionen",
+        "upgrade_cta": "Auf Pro upgraden"
+      },
+      "ai_advisor": {
+        "label": "KI-Finanzberater",
+        "description": "Personalisierte Empfehlungen"
+      },
+      "advanced_analytics": {
+        "label": "Erweiterte Analysen",
+        "description": "Tiefgreifende finanzielle Einblicke"
+      },
+      "fraud_protection": {
+        "label": "Betrugsschutz",
+        "description": "Erweiterte Sicherheitsüberwachung"
+      },
+      "family_banking": {
+        "label": "Familienbanking",
+        "description": "Kontoverwaltung für mehrere Benutzer"
+      }
+    },
+    "badge": {
+      "pro": "Pro"
+    },
+    "greeting": {
+      "time_based": "Guten {{timeOfDay}}, {{name}}"
+    },
+    "header": {
+      "subtitle": "Hier ist Ihre Finanzübersicht für heute"
+    },
+    "actions": {
+      "new_transaction": "Neue Transaktion"
+    },
+    "balance": {
+      "total": "Gesamtguthaben",
+      "tracking_hint": "Verfolgen Sie Ihre Ausgabentrends in Echtzeit",
+      "connect_prompt": "Verbinden Sie eine Wallet, um Ihre Guthaben zu überwachen"
+    },
+    "transactions": {
+      "title": "Letzte Transaktionen",
+      "filters": {
+        "search": "Suchen",
+        "filter": "Filtern",
+        "date": "Datum"
+      },
+      "filter_all": "Alle",
+      "filter_income": "Einnahmen",
+      "filter_expenses": "Ausgaben",
+      "credit": "Gutschrift",
+      "debit": "Belastung",
+      "view_all": "Alle Transaktionen anzeigen",
+      "empty": "Noch keine Transaktionen vorhanden. Führen Sie eine Aktion aus, um sie hier zu sehen."
+    },
+    "shortcuts": {
+      "title": "Intelligente Shortcuts",
+      "split_bill": {
+        "label": "Rechnung teilen",
+        "description": "Ausgaben mit Freunden aufteilen"
+      },
+      "auto_save": {
+        "label": "Auto-Sparen",
+        "description": "Intelligente Sparautomatisierung"
+      }
+    },
+    "ai_insights": {
+      "title": "KI-Finanzeinblicke",
+      "subtitle": "Unterstützt von Claude AI",
+      "live_badge": "Live",
+      "spending_down": "Ausgaben gesunken um {{value}}",
+      "comparison": "vs. letzter Monat",
+      "savings_tip": "Sparen Sie {{amount}}",
+      "savings_category": "bei Abonnements",
+      "investment": {
+        "title": "Anlagetipp",
+        "subtitle": "Bereit für Sie"
+      }
+    },
+    "ai": {
+      "title": "KI-Finanzeinblicke",
+      "subtitle": "Unterstützt durch fortschrittliche Analysen und maschinelles Lernen",
+      "live_badge": "Live-Analyse",
+      "tip_saving": {
+        "title": "Intelligenter Spartipp",
+        "description": "Sie könnten {{amount}}/Monat sparen, indem Sie Ihre Abonnements optimieren"
+      },
+      "budget_alert": {
+        "title": "Budgetwarnung",
+        "description": "{{percentage}} Ihres monatlichen Lebensmittelbudgets verbraucht. Erwägen Sie Essensplanung.",
+        "action": "Limits festlegen"
+      },
+      "investment_ready": {
+        "title": "Investitionsbereit",
+        "description": "Basierend auf Ihrem Sparmuster empfehlen wir eine Investition von {{amount}}."
+      },
+      "savings": {
+        "on_track": "Auf Kurs"
+      }
+    },
+    "analytics": {
+      "spending_trends": {
+        "title": "Ausgabentrends"
+      },
+      "trends_change": "{{value}} vs. letzter Monat",
+      "average_monthly": "Monatlicher Durchschnitt",
+      "this_month": "Dieser Monat",
+      "category_breakdown": {
+        "title": "Ausgaben nach Kategorie"
+      },
+      "savings_growth": {
+        "title": "Sparzuwachs"
+      },
+      "goal_label": "Monatsziel",
+      "current_month": "Aktueller Monat"
+    },
+    "smart_actions": {
+      "title": "Intelligente Aktionen",
+      "create_budget": {
+        "label": "Budgetplan erstellen",
+        "description": "KI-gestützte Vorschläge"
+      },
+      "investment_advisor": {
+        "label": "Anlageberater",
+        "description": "Personalisierte Empfehlungen"
+      },
+      "health_check": {
+        "label": "Finanzcheck",
+        "description": "Vollständige Analyse"
+      }
+    }
   },
   "transactions": {
     "title": "Transaktionen",
+    "page_subtitle": "Verwalten und analysieren Sie Ihre Finanzaktivitäten",
     "add_transaction": "Transaktion hinzufügen",
     "amount": "Betrag",
     "description": "Beschreibung",
     "category": "Kategorie",
     "date": "Datum",
-    "no_transactions": "Keine Transaktionen gefunden"
+    "no_transactions": "Keine Transaktionen gefunden",
+    "filters": {
+      "date_range": "Zeitraum",
+      "export": "Exportieren",
+      "search_placeholder": "Transaktionen durchsuchen…"
+    },
+    "actions": {
+      "new": "Neue Transaktion"
+    },
+    "tabs": {
+      "all": "Alle Transaktionen",
+      "income": "Einnahmen",
+      "expenses": "Ausgaben",
+      "pending": "Ausstehend",
+      "income_empty": "Einnahmetransaktionen werden hier angezeigt",
+      "expense_empty": "Ausgabentransaktionen werden hier angezeigt",
+      "pending_empty": "Ausstehende Transaktionen werden hier angezeigt"
+    },
+    "table": {
+      "headers": {
+        "date": "Datum",
+        "description": "Beschreibung",
+        "category": "Kategorie",
+        "reference": "Referenz",
+        "amount": "Betrag",
+        "status": "Status"
+      },
+      "empty": "Keine Transaktionen gefunden"
+    },
+    "types": {
+      "deposit": "Einzahlung",
+      "withdrawal": "Auszahlung",
+      "transfer": "Überweisung",
+      "payment": "Zahlung"
+    }
   },
   "insights": {
-    "title": "Finanzielle Einblicke",
+    "title": "KI-Einblicke",
+    "description": "Finanzanalysen und personalisierte Empfehlungen",
     "spending_trends": "Ausgabentrends",
     "category_breakdown": "Kategorieaufschlüsselung",
-    "cash_flow": "Cashflow-Analyse",
-    "recommendations": "KI-Empfehlungen"
+    "cash_flow_analysis": "Cashflow-Analyse",
+    "recommendations_summary": "KI-Empfehlungen",
+    "financial_overview": {
+      "title": "Finanzübersicht",
+      "description": "Verfolgen Sie Ihre finanzielle Gesundheit und Trends",
+      "badge": "KI-gestützte Einblicke"
+    },
+    "tabs": {
+      "overview": "Übersicht",
+      "income": "Einnahmen",
+      "expenses": "Ausgaben",
+      "savings": "Ersparnisse",
+      "bank_statements": "Kontoauszüge",
+      "income_empty": "Einnahmenanalysen werden hier angezeigt",
+      "expenses_empty": "Ausgabenanalysen werden hier angezeigt",
+      "savings_empty": "Ersparnisanalysen werden hier angezeigt"
+    },
+    "actions": {
+      "time_period": "Zeitraum",
+      "filter": "Filtern",
+      "export": "Exportieren"
+    },
+    "cash_flow": {
+      "title": "Cashflow-Trend (letzte 6 Monate)"
+    },
+    "bank_statement": {
+      "invalid_file_type": "Ungültiger Dateityp",
+      "upload_hint": "Bitte laden Sie einen Kontoauszug als PDF oder CSV hoch",
+      "coming_soon": "Funktion in Kürze verfügbar",
+      "coming_soon_description": "Die Kontoauszugsanalyse wird in einem zukünftigen Update verfügbar sein",
+      "title": "Kontoauszugsanalyse",
+      "upload_title": "Kontoauszug hochladen",
+      "upload_description": "Laden Sie Ihren Kontoauszug (PDF oder CSV) hoch, damit VortexAI Ihre Ausgabenmuster analysieren kann",
+      "uploading": "Wird hochgeladen…",
+      "upload_cta": "Kontoauszug hochladen"
+    },
+    "performance": {
+      "title": "Leistungseinblicke & Empfehlungen",
+      "trend_title": "Leistungstrend",
+      "avg_query_time": "Durchschn. Abfragezeit",
+      "target_ms": "Ziel: {{value}}",
+      "cache_hit_rate": "Cache-Trefferquote",
+      "slow_queries": "Langsame Abfragen",
+      "target_slow_queries": "Ziel: <{{value}}/Stunde"
+    },
+    "recommendations": {
+      "title": "KI-gestützte Empfehlungen",
+      "implementation": {
+        "title": "Implementierungsleitfaden"
+      }
+    }
   },
   "virtual_cards": {
     "title": "Virtuelle Karten",
@@ -34,7 +321,88 @@
     "card_number": "Kartennummer",
     "expiry_date": "Ablaufdatum",
     "cvv": "CVV",
-    "spending_limit": "Ausgabenlimit"
+    "spending_limit": "Ausgabenlimit",
+    "page_description": "Erstellen und verwalten Sie virtuelle Karten für sichere Online-Zahlungen",
+    "security_banner": "Virtuelle Karten bieten erhöhte Sicherheit für Online-Transaktionen mit Ausgabenkontrollen und Echtzeit-Benachrichtigungen.",
+    "errors": {
+      "load_failed": "Ihre virtuellen Karten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+      "transactions_load_failed": "Transaktionsverlauf konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+      "create_failed": "Virtuelle Karte konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "toggle_lock_failed": "Kartenstatus konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "load_details_failed": "Kartendetails konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+    },
+    "create": {
+      "success": "Virtuelle Karte erfolgreich erstellt!",
+      "dialog": {
+        "title": "Virtuelle Karte erstellen",
+        "description": "Erstellen Sie eine neue virtuelle Karte für sichere Online-Zahlungen"
+      }
+    },
+    "card": {
+      "unlock_success": "Karte entsperrt",
+      "lock_success": "Karte gesperrt",
+      "unlock_description": "Ihre virtuelle Karte wurde entsperrt und kann nun für Transaktionen verwendet werden.",
+      "lock_description": "Ihre virtuelle Karte wurde gesperrt und kann nicht für neue Transaktionen verwendet werden.",
+      "status": {
+        "locked": "Gesperrt",
+        "active": "Aktiv"
+      },
+      "copied": "{{label}} in die Zwischenablage kopiert",
+      "details_title": "Kartendetails",
+      "description": "Virtuelle Karte endend auf {{last4}}",
+      "fields": {
+        "number_label": "Kartennummer",
+        "expiry_label": "Ablaufdatum",
+        "cvc_label": "CVC",
+        "status_label": "Status",
+        "created_label": "Erstellt"
+      },
+      "security_title": "Sicherheit",
+      "security_description": "Diese virtuelle Karte kann jederzeit für zusätzlichen Schutz gesperrt werden.",
+      "actions": {
+        "loading": "Wird geladen…",
+        "hide_details": "Details ausblenden",
+        "show_details": "Details anzeigen",
+        "unlock": "Karte entsperren",
+        "lock": "Karte sperren"
+      }
+    },
+    "tabs": {
+      "details": "Kartendetails",
+      "transactions": "Transaktionen"
+    },
+    "list": {
+      "title": "Ihre virtuellen Karten"
+    },
+    "transaction_history": {
+      "title": "Transaktionsverlauf",
+      "description": "Aktuelle Transaktionen für Karte mit Endziffer {{last4}}",
+      "empty": {
+        "title": "Noch keine Transaktionen",
+        "description": "Transaktionen werden hier angezeigt, sobald Sie Ihre Karte verwenden."
+      }
+    },
+    "no_selection": {
+      "title": "Keine Karte ausgewählt",
+      "description": "Wählen Sie eine Karte aus der Liste aus oder erstellen Sie eine neue virtuelle Karte."
+    },
+    "form": {
+      "fields": {
+        "cardholder_name": "Name des Karteninhabers",
+        "cardholder_name_placeholder": "Name des Karteninhabers eingeben",
+        "currency": "Währung",
+        "currency_placeholder": "Währung auswählen",
+        "spending_limit": "Ausgabenlimit",
+        "limit_amount": "Betrag",
+        "limit_amount_placeholder": "Betrag eingeben",
+        "limit_interval": "Intervall",
+        "limit_interval_placeholder": "Intervall auswählen"
+      },
+      "actions": {
+        "creating": "Wird erstellt…",
+        "create": "Virtuelle Karte erstellen"
+      }
+    }
   },
   "settings": {
     "title": "Einstellungen",
@@ -42,6 +410,300 @@
     "security": "Sicherheit",
     "notifications": "Benachrichtigungen",
     "preferences": "Präferenzen",
-    "two_factor": "Zwei-Faktor-Authentifizierung"
+    "two_factor": "Zwei-Faktor-Authentifizierung",
+    "page_description": "Verwalten Sie Ihre Kontoeinstellungen und Präferenzen",
+    "notifications_saved": {
+      "title": "Einstellungen aktualisiert",
+      "description": "Ihre Änderungen wurden erfolgreich gespeichert."
+    },
+    "sections": {
+      "personal": "Persönlich",
+      "business": "Unternehmenseinstellungen",
+      "billing": "Abrechnung & Steuern",
+      "notifications": "Benachrichtigungen",
+      "global": "Globale Einstellungen"
+    },
+    "personal": {
+      "profile": {
+        "label": "Profilinformationen"
+      },
+      "security": {
+        "label": "Anmeldung und Sicherheit"
+      },
+      "account_security": {
+        "label": "Kontosicherheit"
+      },
+      "cookies": {
+        "label": "Cookie-Einstellungen"
+      }
+    },
+    "profile": {
+      "title": "Profilinformationen",
+      "description": "Aktualisieren Sie Ihre persönlichen Angaben und Profilinformationen",
+      "about_title": "Erzählen Sie uns von sich",
+      "fields": {
+        "full_name": "Vollständiger Name",
+        "email": "E-Mail-Adresse",
+        "phone": "Telefonnummer",
+        "occupation": "Beruf",
+        "income_range": "Einkommensbereich",
+        "financial_goals": "Primäre finanzielle Ziele"
+      },
+      "identity": {
+        "title": "Identitätsverifizierung",
+        "description": "Schließen Sie die KYC-Prüfung ab, um höhere Transaktionslimits freizuschalten",
+        "verify_button": "Identität verifizieren",
+        "action": "Starten"
+      }
+    },
+    "security_section": {
+      "title": "Anmeldung und Sicherheit",
+      "description": "Aktualisieren Sie Ihr Passwort und Ihre Sicherheitseinstellungen",
+      "fields": {
+        "current_password": "Aktuelles Passwort",
+        "new_password": "Neues Passwort",
+        "confirm_password": "Neues Passwort bestätigen"
+      },
+      "two_factor": {
+        "title": "Zwei-Faktor-Authentifizierung",
+        "description": "Aktivieren Sie die Zwei-Faktor-Authentifizierung für zusätzliche Sicherheit"
+      },
+      "biometric": {
+        "title": "Biometrische Anmeldung",
+        "description": "Nutzen Sie Fingerabdruck oder Gesichtserkennung zur Anmeldung"
+      },
+      "actions": {
+        "update": "Sicherheitseinstellungen aktualisieren"
+      }
+    },
+    "business": {
+      "title": "Unternehmensregistrierung",
+      "description": "Registrieren und verwalten Sie Ihr Unternehmen",
+      "registration": {
+        "label": "Unternehmensregistrierung"
+      },
+      "public_profile": {
+        "label": "Öffentliches Profil"
+      },
+      "register": {
+        "title": "Registrieren Sie Ihr Unternehmen",
+        "description": "Richten Sie Ihr Unternehmensprofil für erweiterte Funktionen ein"
+      },
+      "user_management": {
+        "title": "Benutzerverwaltung"
+      },
+      "invite": {
+        "title": "Teammitglieder einladen",
+        "description": "Arbeiten Sie zusammen und verwalten Sie Zugriffsrechte"
+      }
+    },
+    "notifications_preferences": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "Wählen Sie, wie und wann Sie benachrichtigt werden möchten",
+      "email": {
+        "title": "E-Mail-Benachrichtigungen",
+        "description": "Erhalten Sie Benachrichtigungen und Updates per E-Mail"
+      },
+      "push": {
+        "title": "Push-Benachrichtigungen",
+        "description": "Erhalten Sie Benachrichtigungen auf Ihren Geräten"
+      },
+      "alert_types": {
+        "title": "Benachrichtigungsarten"
+      },
+      "alerts": {
+        "transaction": {
+          "title": "Transaktionsbenachrichtigungen",
+          "description": "Erhalten Sie Benachrichtigungen über alle Transaktionen"
+        },
+        "security": {
+          "title": "Sicherheitswarnungen",
+          "description": "Erhalten Sie Benachrichtigungen über Sicherheitsereignisse"
+        },
+        "marketing": {
+          "title": "Marketing & Aktionen",
+          "description": "Erhalten Sie Updates über neue Funktionen und Aktionen"
+        }
+      },
+      "actions": {
+        "save": "Benachrichtigungseinstellungen speichern"
+      },
+      "preferences": {
+        "label": "Benachrichtigungseinstellungen"
+      }
+    },
+    "billing": {
+      "subscription": {
+        "label": "Abonnementplan"
+      },
+      "tax": {
+        "label": "Steuerinformationen"
+      }
+    },
+    "global": {
+      "currency_language": {
+        "label": "Währung & Sprache"
+      }
+    },
+    "theme": {
+      "label": "Design",
+      "options": {
+        "light": "Hell",
+        "dark": "Dunkel",
+        "system": "System"
+      },
+      "toggle": "Design umschalten"
+    }
+  },
+  "subscription": {
+    "title": "Abonnementplan",
+    "description": {
+      "active": "Verwalten Sie Ihr aktives Abonnement",
+      "inactive": "Upgraden Sie, um Premium-Funktionen freizuschalten"
+    },
+    "current_plan": "Aktueller Plan: {{plan}}",
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "cancelled": "Gekündigt",
+      "past_due": "Überfällig",
+      "trialing": "Testphase",
+      "free": "Kostenlos"
+    },
+    "renews": "Verlängert am {{date}}",
+    "cancels": "Wird gekündigt am {{date}}",
+    "plans": {
+      "pro": {
+        "name": "Pro",
+        "description": "Vollzugriff auf alle Funktionen"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "Für Teams und Unternehmen"
+      }
+    },
+    "actions": {
+      "manage": "Abonnement verwalten",
+      "upgrade": "Auf {{plan}} upgraden",
+      "opening_checkout": "Checkout wird geöffnet…",
+      "refresh": "Abonnementstatus aktualisieren"
+    }
+  },
+  "notifications": {
+    "payment_success": {
+      "title": "Zahlung erfolgreich",
+      "description": "Ihre Überweisung von {{amount}} an {{name}} wurde abgeschlossen"
+    },
+    "ai_insight_available": {
+      "title": "KI-Einblick verfügbar",
+      "description": "Neue Ausgabenanalyse für {{month}} ist bereit",
+      "action": "Einblicke anzeigen"
+    },
+    "security_alert": {
+      "title": "Sicherheitswarnung",
+      "description": "Neue Geräteanmeldung von {{location}} erkannt"
+    },
+    "panel": {
+      "title": "Benachrichtigungen",
+      "empty": "Keine Benachrichtigungen"
+    }
+  },
+  "ai": {
+    "chat": {
+      "welcome": "Willkommen bei VortexCore! Wie kann ich Ihnen heute helfen?",
+      "intro": "Ich bin VortexAI, Ihr persönlicher Finanzassistent. Ich kann Ihnen helfen, Ausgaben zu analysieren, Sparmöglichkeiten vorzuschlagen und Fragen zu Ihren Finanzen zu beantworten.",
+      "title": "VortexAI-Assistent",
+      "input_placeholder": "Nachricht eingeben…",
+      "input_placeholder_full": "Nachricht eingeben… (Enter zum Senden, Umschalt+Enter für neue Zeile)",
+      "input_placeholder_finance": "Fragen Sie VortexAI alles über Ihre Finanzen…",
+      "thinking": "Denkt nach…",
+      "sending": "Wird gesendet…",
+      "enter_hint": "⏎ zum Senden",
+      "shift_enter_hint": "Umschalt+Eingabe für neue Zeile",
+      "actions": {
+        "clear": "Chat löschen",
+        "market_data": "Marktdaten"
+      },
+      "cleared": "Chat gelöscht",
+      "cleared_description": "Alle Nachrichten wurden gelöscht",
+      "error_generic": "Bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "unauthenticated_hint": "Melden Sie sich an, um Ihren Chatverlauf zu speichern und erweiterte Funktionen zu nutzen",
+      "new_session": "Neuer Chat",
+      "unsaved": "Nicht gespeichert",
+      "history": {
+        "title": "Chatverlauf",
+        "search_placeholder": "Chats durchsuchen…",
+        "untitled": "Chat ohne Titel"
+      },
+      "sessions_count": "{{count}} Sitzungen"
+    },
+    "search": {
+      "placeholder": "Mit VortexAI suchen…",
+      "input_placeholder": "VortexAI fragen…",
+      "suggestions_heading": "Vorschläge"
+    }
+  },
+  "auth": {
+    "login": {
+      "welcome_title": "Willkommen bei VortexCore",
+      "welcome_subtitle": "Melden Sie sich an, um Ihr Finanz-Ökosystem zu verwalten",
+      "submit": "Anmelden",
+      "signing_in": "Wird angemeldet…",
+      "remember_me": "Angemeldet bleiben",
+      "forgot_password": "Passwort vergessen?",
+      "no_account": "Sie haben noch kein Konto?",
+      "create_account": "Konto erstellen",
+      "divider": "Oder fortfahren mit",
+      "success": "Anmeldung erfolgreich",
+      "success_description": "Willkommen zurück bei VortexCore!",
+      "fields": {
+        "email": "E-Mail",
+        "email_placeholder": "name@beispiel.de",
+        "password": "Passwort",
+        "password_placeholder": "••••••••"
+      },
+      "errors": {
+        "invalid_credentials": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail-Adresse und Ihr Passwort und versuchen Sie es erneut.",
+        "auth_error": "Authentifizierungsfehler: {{message}}"
+      }
+    },
+    "two_factor": {
+      "title": "Zwei-Faktor-Authentifizierung",
+      "setup_instructions": "Scannen Sie den QR-Code mit Ihrer Authenticator-App, um zu beginnen.",
+      "intro_instructions": "Erhöhen Sie die Sicherheit Ihres Kontos durch eine zusätzliche Authentifizierungsebene.",
+      "qr_code_alt": "QR-Code für 2FA",
+      "authenticator_hint": "Sie benötigen eine Authenticator-App (wie Google Authenticator oder Authy), um die Einrichtung abzuschließen.",
+      "setup_cta": "2FA einrichten",
+      "setup_error": "2FA-Einrichtungsfehler: {{message}}",
+      "setup_error_generic": "Bei der 2FA-Einrichtung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "missing_factor_id": "2FA-Fehler: Faktor-ID fehlt. Bitte starten Sie den Einrichtungsprozess neu.",
+      "verification_error": "2FA-Verifizierungsfehler: {{message}}",
+      "verification_error_generic": "Bei der Verifizierung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "verified": "2FA verifiziert",
+      "authentication_success": "Authentifizierung erfolgreich"
+    },
+    "biometric": {
+      "continue": "Mit Biometrie fortfahren",
+      "unavailable": {
+        "title": "Biometrische Authentifizierung",
+        "description": "Die biometrische Authentifizierung ist auf diesem Gerät noch nicht verfügbar. Bitte verwenden Sie stattdessen Ihr Passwort."
+      }
+    },
+    "social": {
+      "google": "Google",
+      "twitter": "X (Twitter)",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "error": "Authentifizierungsfehler mit {{provider}}: {{message}}",
+      "error_generic": "Bei der Social-Media-Anmeldung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "aria_label": "Seitenleisten-Navigation",
+      "expand": "Seitenleiste erweitern",
+      "collapse": "Seitenleiste einklappen",
+      "toggle_title": "Seitenleiste einklappen"
+    }
   }
 }
