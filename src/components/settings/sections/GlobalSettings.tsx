@@ -11,16 +11,11 @@ interface GlobalSettingsProps {
 }
 
 export const GlobalSettings = ({ onOpen }: GlobalSettingsProps) => {
-  const { t } = useTranslation();
   const { theme } = useTheme();
 
   return (
     <SettingSection title={t("settings.sections.global")}>
       <SettingItem
-        icon={<Globe className="h-6 w-6 text-primary" />}
-        label={t("settings.global.currency_language.label")}
-        icon={<Globe className="h-6 w-6 text-primary" />}
-        label="Currency & Language"
         icon={<Sun className="h-6 w-6 text-primary" />}
         label={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`}
         description="Light, Dark, or System"
