@@ -1,6 +1,6 @@
 {
   "buildCommand": "bun run build",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "bun install",
   "framework": null,
   "outputDirectory": "dist",
   "rewrites": [
