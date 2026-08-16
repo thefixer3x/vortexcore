@@ -41,11 +41,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Set user if session exists
         if (sessionData.session?.user) {
           const supabaseUser = sessionData.session.user;
+          const metadata = supabaseUser.user_metadata || {};
+          // Prefer full_name (written by signup/profile), fall back to name, then email
+          const displayName =
+            metadata.full_name || metadata.name || supabaseUser.email || '';
           const userData: User = {
             id: supabaseUser.id,
             email: supabaseUser.email || undefined,
-            name: supabaseUser.user_metadata?.name,
-            role: supabaseUser.user_metadata?.role || 'user',
+            name: displayName || undefined,
+            role: metadata.role || 'user',
           };
           
           setUser(userData);
