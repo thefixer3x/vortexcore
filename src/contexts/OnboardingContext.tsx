@@ -53,14 +53,13 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // Check if onboarding was already completed
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("onboarding_completed")
-        .eq("id", user.id)
-        .single();
+      // Check if onboarding was already completed. This lives in
+      // app_vortexcore.vortex_settings -- profiles has no such column.
+      const { data: onboardingCompleted } = await supabase.rpc("vortex_get_setting", {
+        p_key: "onboarding_completed",
+      });
 
-      if (profile?.onboarding_completed) {
+      if (onboardingCompleted === true) {
         setState({
           isActive: false,
           step: 1,
@@ -75,7 +74,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       // Check if user has any transactions (if they do, they're active users)
       const { count: transactionCount } = await supabase
-        .from("transactions")
+        .from("vortex_transactions")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
         .limit(1);
@@ -153,10 +152,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
     try {
       // Mark onboarding as completed in the database
-      await supabase
-        .from("profiles")
-        .update({ onboarding_completed: true })
-        .eq("id", user.id);
+      await supabase.rpc("vortex_set_setting", {
+        p_key: "onboarding_completed",
+        p_value: true,
+      });
 
       setState((prev) => ({
         ...prev,
@@ -174,10 +173,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     if (!user?.id) return;
 
     try {
-      await supabase
-        .from("profiles")
-        .update({ onboarding_completed: false })
-        .eq("id", user.id);
+      await supabase.rpc("vortex_set_setting", {
+        p_key: "onboarding_completed",
+        p_value: false,
+      });
 
       setState({
         isActive: true,
