@@ -1,74 +1,71 @@
 #!/bin/bash
 # Migration Verification Script
-# Run this after applying migrations to verify success
+# Run this after applying migrations to verify success.
+#
+# Checks HTTP status codes only -- never greps response bodies for a
+# column/table name, because PostgREST's own "does not exist" error
+# messages echo that name back, which previously produced false "exists"
+# positives on missing columns.
 
 SUPABASE_URL="${SUPABASE_URL:-https://mxtsdgkwzjzlttpotole.supabase.co}"
-API_KEY="${SUPABASE_SERVICE_KEY}"
+API_KEY="${SUPABASE_SERVICE_ROLE_KEY:-${SUPABASE_SERVICE_KEY}}"
+
+if [ -z "$API_KEY" ]; then
+  echo "❌ SUPABASE_SERVICE_ROLE_KEY is not set. Source .env first."
+  exit 1
+fi
 
 echo "🔍 POST-MIGRATION VERIFICATION"
 echo "==============================="
 echo ""
 
-# Check profiles has new columns
-echo "1. Checking profiles table for new columns..."
-profile=$(curl -s \
-  -X GET "${SUPABASE_URL}/rest/v1/profiles?select=default_currency,language&limit=1" \
-  -H "apikey: ${API_KEY}" \
-  -H "Authorization: Bearer ${API_KEY}")
-
-if echo "$profile" | grep -q "default_currency"; then
-  echo "   ✅ default_currency column exists"
-else
-  echo "   ❌ default_currency column MISSING"
-fi
-
-if echo "$profile" | grep -q "language"; then
-  echo "   ✅ language column exists"
-else
-  echo "   ❌ language column MISSING"
-fi
-
-echo ""
-echo "2. Checking new tables exist..."
-tables=("wallets" "transactions")
-
-for table in "${tables[@]}"; do
-  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X GET "${SUPABASE_URL}/rest/v1/${table}?select=*&limit=0" \
-    -H "apikey: ${API_KEY}" \
-    -H "Authorization: Bearer ${API_KEY}")
-
-  if [ "$http_code" = "200" ]; then
-    echo "   ✅ $table"
+check_column() {
+  local table="$1" column="$2"
+  local code
+  code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X GET "${SUPABASE_URL}/rest/v1/${table}?select=${column}&limit=1" \
+    -H "apikey: ${API_KEY}" -H "Authorization: Bearer ${API_KEY}")
+  if [ "$code" = "200" ]; then
+    echo "   ✅ ${table}.${column}"
   else
-    echo "   ❌ $table (HTTP $http_code)"
+    echo "   ❌ ${table}.${column} (HTTP $code)"
   fi
-done
+}
 
-echo ""
-echo "3. Checking existing tables..."
-existing_tables=("chat_conversations" "chat_messages")
-for table in "${existing_tables[@]}"; do
-  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X GET "${SUPABASE_URL}/rest/v1/${table}?select=*&limit=0" \
-    -H "apikey: ${API_KEY}" \
-    -H "Authorization: Bearer ${API_KEY}")
-
-  if [ "$http_code" = "200" ]; then
-    echo "   ✅ $table (already existed)"
+check_table_readable() {
+  local table="$1"
+  local code
+  code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X GET "${SUPABASE_URL}/rest/v1/${table}?select=*&limit=1" \
+    -H "apikey: ${API_KEY}" -H "Authorization: Bearer ${API_KEY}")
+  if [ "$code" = "200" ]; then
+    echo "   ✅ ${table} readable"
   else
-    echo "   ⚠️  $table (HTTP $http_code)"
+    echo "   ❌ ${table} (HTTP $code)"
   fi
-done
+}
+
+echo "1. profiles columns (known gaps -- tracked in issue #88):"
+check_column "profiles" "default_currency"
+check_column "profiles" "language"
 
 echo ""
-echo "4. Testing RLS policies (should only see own data)..."
-echo "   (Requires authenticated user token for full test)"
+echo "2. app_vortexcore facade views (fixed 2026-08-16, issue #89 emergency substep):"
+check_table_readable "vortex_wallets"
+check_table_readable "vortex_transactions"
+check_table_readable "vortex_settings"
 
 echo ""
-echo "✅ Verification complete!"
+echo "3. legacy public base tables (unmigrated -- tracked in t_eed189f3):"
+check_table_readable "wallets"
+check_table_readable "transactions"
+check_table_readable "stripe_customers"
+check_table_readable "stripe_subscriptions"
+
 echo ""
-echo "Next steps:"
-echo "  - Test currency selection in Settings"
-echo "  - Create a test wallet via API"
-echo "  - Verify Dashboard shows correct currency"
+echo "4. RLS cross-user isolation: NOT covered by this script."
+echo "   Requires two distinct authenticated user JWTs -- see acceptance"
+echo "   criteria on issue #89 / #97 for the real test."
+
+echo ""
+echo "✅ Verification complete (status-code based, no body-text matching)."
