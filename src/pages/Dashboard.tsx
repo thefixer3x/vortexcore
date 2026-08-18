@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Send, ArrowDownRight } from "lucide-react";
+import { Send, ArrowDownRight, Wallet, Plus } from "lucide-react";
 import { ModernDashboardHeader } from "@/components/dashboard/ModernDashboardHeader";
 import { ModernAccountCard, AddAccountCard } from "@/components/dashboard/ModernAccountCard";
 import { ModernTransactionList, type DashboardTransactionItem } from "@/components/dashboard/ModernTransactionList";
@@ -9,6 +9,7 @@ import { QuickActionsGrid } from "@/components/dashboard/QuickActionsGrid";
 import { FloatingActionButton } from "@/components/dashboard/FloatingActionButton";
 import { DashboardSkeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 // import LogRocket from "logrocket"; // Temporarily disabled
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { useCurrency } from "@/contexts/CurrencyContext";
