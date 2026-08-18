@@ -7,10 +7,6 @@ import {
   PieChart, 
   Settings, 
   LogOut,
-  Users,
-  Bell,
-  ShieldCheck,
-  HelpCircle,
   ChevronLeft,
   ChevronRight,
   Sun,
@@ -92,13 +88,6 @@ export function EnhancedSideNav() {
     { name: "Transactions", path: "/transactions", icon: CreditCard },
     { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
-    { name: "User Management", path: "/users", icon: Users },
-  ];
-
-  const secondaryNavItems = [
-    { name: "Notifications", path: "/notifications", icon: Bell },
-    { name: "Security", path: "/security", icon: ShieldCheck },
-    { name: "Help & Support", path: "/help", icon: HelpCircle },
   ];
 
   const getThemeIcon = () => {
@@ -186,25 +175,17 @@ export function EnhancedSideNav() {
               !sidebarOpen && !isMobile && "opacity-0 group-hover:opacity-100"
             )}>
               {(sidebarOpen || (!sidebarOpen && !isMobile)) && (
-                <>
-                  <SideNavSection 
-                    items={mainNavItems} 
-                    currentPath={location.pathname} 
-                  />
-                  
-                  <SideNavSection 
-                    title="Additional" 
-                    items={secondaryNavItems} 
-                    currentPath={location.pathname} 
-                  />
-                </>
+                <SideNavSection
+                  items={mainNavItems}
+                  currentPath={location.pathname}
+                />
               )}
             </div>
 
             {/* Collapsed state icons */}
             {!sidebarOpen && !isMobile && (
               <div className="px-3 py-2 space-y-2 group-hover:opacity-0 transition-opacity duration-300">
-                {[...mainNavItems, ...secondaryNavItems].map((item) => (
+                {mainNavItems.map((item) => (
                   <Button
                     key={item.path}
                     variant="ghost"

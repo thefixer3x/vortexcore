@@ -10,7 +10,32 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.15"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -224,12 +249,14 @@ export type Database = {
       api_keys: {
         Row: {
           access_level: string | null
+          binding: Json
           created_at: string | null
           description: string | null
           expires_at: string | null
           id: string
           is_active: boolean | null
           key: string
+          key_context: string | null
           key_hash: string | null
           last_used_at: string | null
           name: string
@@ -241,12 +268,14 @@ export type Database = {
         }
         Insert: {
           access_level?: string | null
+          binding?: Json
           created_at?: string | null
           description?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           key: string
+          key_context?: string | null
           key_hash?: string | null
           last_used_at?: string | null
           name: string
@@ -258,12 +287,14 @@ export type Database = {
         }
         Update: {
           access_level?: string | null
+          binding?: Json
           created_at?: string | null
           description?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
           key?: string
+          key_context?: string | null
           key_hash?: string | null
           last_used_at?: string | null
           name?: string
@@ -1912,28 +1943,46 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          features: Json | null
           id: string
           is_active: boolean | null
+          max_api_calls_per_month: number | null
+          max_memories: number | null
+          max_users: number | null
           name: string
+          plan: string | null
           slug: string
+          storage_limit_mb: number | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
+          features?: Json | null
           id?: string
           is_active?: boolean | null
+          max_api_calls_per_month?: number | null
+          max_memories?: number | null
+          max_users?: number | null
           name: string
+          plan?: string | null
           slug: string
+          storage_limit_mb?: number | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
+          features?: Json | null
           id?: string
           is_active?: boolean | null
+          max_api_calls_per_month?: number | null
+          max_memories?: number | null
+          max_users?: number | null
           name?: string
+          plan?: string | null
           slug?: string
+          storage_limit_mb?: number | null
           updated_at?: string | null
         }
         Relationships: []
@@ -2029,46 +2078,61 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           business_type: string | null
           company_name: string | null
           created_at: string | null
           email: string | null
+          financial_goals: string | null
           first_name: string | null
           full_name: string | null
           id: string
+          income_range: string | null
           is_vendor: boolean | null
           last_name: string | null
+          occupation: string | null
           organization_id: string | null
+          phone: string | null
           stripe_customer_id: string | null
           subscription_tier: string | null
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           business_type?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
+          financial_goals?: string | null
           first_name?: string | null
           full_name?: string | null
           id: string
+          income_range?: string | null
           is_vendor?: boolean | null
           last_name?: string | null
+          occupation?: string | null
           organization_id?: string | null
+          phone?: string | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           business_type?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
+          financial_goals?: string | null
           first_name?: string | null
           full_name?: string | null
           id?: string
+          income_range?: string | null
           is_vendor?: boolean | null
           last_name?: string | null
+          occupation?: string | null
           organization_id?: string | null
+          phone?: string | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           updated_at?: string | null
@@ -3869,6 +3933,99 @@ export type Database = {
           },
         ]
       }
+      vortex_obligation_detections: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          obligations_created: number
+          run_completed_at: string | null
+          run_started_at: string
+          status: string
+          transactions_scanned: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          obligations_created?: number
+          run_completed_at?: string | null
+          run_started_at?: string
+          status?: string
+          transactions_scanned?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          obligations_created?: number
+          run_completed_at?: string | null
+          run_started_at?: string
+          status?: string
+          transactions_scanned?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vortex_obligations: {
+        Row: {
+          amount: number | null
+          category: string
+          confidence: number | null
+          created_at: string
+          currency: string
+          description: string | null
+          due_date: string | null
+          id: string
+          metadata: Json
+          recurrence: string
+          source: string
+          source_ref: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          category?: string
+          confidence?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          recurrence?: string
+          source?: string
+          source_ref?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          category?: string
+          confidence?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          recurrence?: string
+          source?: string
+          source_ref?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallets: {
         Row: {
           account_name: string | null
@@ -4269,6 +4426,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_brainbox_connections: {
+        Row: {
+          account_label: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          last_synced_at: string | null
+          metadata: Json | null
+          provider: string | null
+          scopes: string[] | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          account_label?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          metadata?: Json | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          account_label?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          metadata?: Json | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_brainbox_imported_data: {
         Row: {
           content: string | null
@@ -4392,6 +4591,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_brainbox_sync_jobs: {
+        Row: {
+          connection_id: string | null
+          created_at: string | null
+          cursor: string | null
+          error: string | null
+          finished_at: string | null
+          id: string | null
+          started_at: string | null
+          stats: Json | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          connection_id?: string | null
+          created_at?: string | null
+          cursor?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string | null
+          started_at?: string | null
+          stats?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          connection_id?: string | null
+          created_at?: string | null
+          cursor?: string | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string | null
+          started_at?: string | null
+          stats?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_brainbox_vortex_items: {
         Row: {
           company_id: string | null
@@ -4437,6 +4678,39 @@ export type Database = {
           updated_at?: string | null
           url?: string | null
           writer?: string | null
+        }
+        Relationships: []
+      }
+      ai_chat_messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          role: string | null
+          session_id: string | null
+          tokens: number | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          metadata?: Json | null
+          role?: string | null
+          session_id?: string | null
+          tokens?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          metadata?: Json | null
+          role?: string | null
+          session_id?: string | null
+          tokens?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -5872,6 +6146,204 @@ export type Database = {
         }
         Relationships: []
       }
+      memory_inference_batches: {
+        Row: {
+          created_at: string | null
+          last_flushed_at: string | null
+          last_job_id: string | null
+          organization_id: string | null
+          pending_memory_count: number | null
+          pending_token_count: number | null
+          source_memory_ids: string[] | null
+          subject_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          last_flushed_at?: string | null
+          last_job_id?: string | null
+          organization_id?: string | null
+          pending_memory_count?: number | null
+          pending_token_count?: number | null
+          source_memory_ids?: string[] | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          last_flushed_at?: string | null
+          last_job_id?: string | null
+          organization_id?: string | null
+          pending_memory_count?: number | null
+          pending_token_count?: number | null
+          source_memory_ids?: string[] | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      memory_inference_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error: string | null
+          id: string | null
+          metadata: Json | null
+          organization_id: string | null
+          pending_token_count: number | null
+          source_event: string | null
+          source_memory_ids: string[] | null
+          started_at: string | null
+          status: string | null
+          subject_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          pending_token_count?: number | null
+          source_event?: string | null
+          source_memory_ids?: string[] | null
+          started_at?: string | null
+          status?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          pending_token_count?: number | null
+          source_event?: string | null
+          source_memory_ids?: string[] | null
+          started_at?: string | null
+          status?: string | null
+          subject_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      memory_inferred_conclusions: {
+        Row: {
+          conclusion_type: string | null
+          confidence: number | null
+          content: string | null
+          contradiction_group_id: string | null
+          created_at: string | null
+          evidence_memory_ids: string[] | null
+          freshness: string | null
+          id: string | null
+          metadata: Json | null
+          organization_id: string | null
+          scope: string | null
+          source_job_id: string | null
+          subject_id: string | null
+          superseded_by: string | null
+        }
+        Insert: {
+          conclusion_type?: string | null
+          confidence?: number | null
+          content?: string | null
+          contradiction_group_id?: string | null
+          created_at?: string | null
+          evidence_memory_ids?: string[] | null
+          freshness?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          scope?: string | null
+          source_job_id?: string | null
+          subject_id?: string | null
+          superseded_by?: string | null
+        }
+        Update: {
+          conclusion_type?: string | null
+          confidence?: number | null
+          content?: string | null
+          contradiction_group_id?: string | null
+          created_at?: string | null
+          evidence_memory_ids?: string[] | null
+          freshness?: string | null
+          id?: string | null
+          metadata?: Json | null
+          organization_id?: string | null
+          scope?: string | null
+          source_job_id?: string | null
+          subject_id?: string | null
+          superseded_by?: string | null
+        }
+        Relationships: []
+      }
+      memory_profile_versions: {
+        Row: {
+          created_at: string | null
+          diff: Json | null
+          id: string | null
+          profile_id: string | null
+          source_job_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          diff?: Json | null
+          id?: string | null
+          profile_id?: string | null
+          source_job_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          diff?: Json | null
+          id?: string | null
+          profile_id?: string | null
+          source_job_id?: string | null
+        }
+        Relationships: []
+      }
+      memory_profiles: {
+        Row: {
+          confidence_by_field: Json | null
+          created_at: string | null
+          freshness: string | null
+          head_version_id: string | null
+          last_reasoned_at: string | null
+          organization_id: string | null
+          profile_summary: string | null
+          structured_fields: Json | null
+          subject_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          confidence_by_field?: Json | null
+          created_at?: string | null
+          freshness?: string | null
+          head_version_id?: string | null
+          last_reasoned_at?: string | null
+          organization_id?: string | null
+          profile_summary?: string | null
+          structured_fields?: Json | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          confidence_by_field?: Json | null
+          created_at?: string | null
+          freshness?: string | null
+          head_version_id?: string | null
+          last_reasoned_at?: string | null
+          organization_id?: string | null
+          profile_summary?: string | null
+          structured_fields?: Json | null
+          subject_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       memory_revisions: {
         Row: {
           change_reason: string | null
@@ -6166,6 +6638,82 @@ export type Database = {
           processed_at?: string | null
           retry_count?: number | null
           status?: Database["public"]["Enums"]["payment_status"] | null
+        }
+        Relationships: []
+      }
+      pg_stat_monitor: {
+        Row: {
+          application_name: string | null
+          bucket: number | null
+          bucket_done: boolean | null
+          bucket_start_time: string | null
+          calls: number | null
+          client_ip: unknown
+          cmd_type: number | null
+          cmd_type_text: string | null
+          comments: string | null
+          cpu_sys_time: number | null
+          cpu_user_time: number | null
+          datname: string | null
+          dbid: unknown
+          elevel: number | null
+          jit_deform_count: number | null
+          jit_deform_time: number | null
+          jit_emission_count: number | null
+          jit_emission_time: number | null
+          jit_functions: number | null
+          jit_generation_time: number | null
+          jit_inlining_count: number | null
+          jit_inlining_time: number | null
+          jit_optimization_count: number | null
+          jit_optimization_time: number | null
+          local_blk_read_time: number | null
+          local_blk_write_time: number | null
+          local_blks_dirtied: number | null
+          local_blks_hit: number | null
+          local_blks_read: number | null
+          local_blks_written: number | null
+          max_exec_time: number | null
+          max_plan_time: number | null
+          mean_exec_time: number | null
+          mean_plan_time: number | null
+          message: string | null
+          min_exec_time: number | null
+          min_plan_time: number | null
+          minmax_stats_since: string | null
+          pgsm_query_id: number | null
+          planid: number | null
+          plans: number | null
+          query: string | null
+          query_plan: string | null
+          queryid: number | null
+          relations: string[] | null
+          resp_calls: string[] | null
+          rows: number | null
+          shared_blk_read_time: number | null
+          shared_blk_write_time: number | null
+          shared_blks_dirtied: number | null
+          shared_blks_hit: number | null
+          shared_blks_read: number | null
+          shared_blks_written: number | null
+          sqlcode: string | null
+          stats_since: string | null
+          stddev_exec_time: number | null
+          stddev_plan_time: number | null
+          temp_blk_read_time: number | null
+          temp_blk_write_time: number | null
+          temp_blks_read: number | null
+          temp_blks_written: number | null
+          top_query: string | null
+          top_queryid: number | null
+          toplevel: boolean | null
+          total_exec_time: number | null
+          total_plan_time: number | null
+          userid: unknown
+          username: string | null
+          wal_bytes: number | null
+          wal_fpi: number | null
+          wal_records: number | null
         }
         Relationships: []
       }
@@ -8673,9 +9221,41 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      decode_error_level: { Args: { elevel: number }; Returns: string }
       delete_control_room_app: {
         Args: { p_hard_delete?: boolean; p_id: string }
         Returns: Json
+      }
+      detect_duplicate_memories_voyage: {
+        Args: {
+          filter_organization_id?: string
+          filter_type?: string
+          filter_user_id?: string
+          match_threshold?: number
+          max_memories?: number
+          neighbors_per_memory?: number
+        }
+        Returns: {
+          duplicate_created_at: string
+          duplicate_id: string
+          duplicate_title: string
+          primary_created_at: string
+          primary_id: string
+          primary_title: string
+          similarity: number
+        }[]
+      }
+      enqueue_memory_inference_job: {
+        Args: {
+          p_metadata?: Json
+          p_organization_id?: string
+          p_pending_token_count?: number
+          p_source_event?: string
+          p_source_memory_id?: string
+          p_subject_id: string
+          p_user_id?: string
+        }
+        Returns: string
       }
       execute_safe_query:
         | { Args: { query_text: string }; Returns: Json }
@@ -8756,6 +9336,7 @@ export type Database = {
         }[]
       }
       get_central_mcp_audit_stats: { Args: never; Returns: Json }
+      get_cmd_type: { Args: { cmd_type: number }; Returns: string }
       get_control_room_app: {
         Args: { p_id: string }
         Returns: Database["public"]["Views"]["apps"]["Row"]
@@ -8777,6 +9358,7 @@ export type Database = {
         }
       }
       get_current_org: { Args: never; Returns: string }
+      get_histogram_timings: { Args: never; Returns: string }
       get_key_for_mcp_session: {
         Args: { key_name_param: string; session_id_param: string }
         Returns: {
@@ -8800,6 +9382,21 @@ export type Database = {
         }[]
       }
       get_product_image_url: { Args: { image_path: string }; Returns: string }
+      get_ready_reasoning_batches: {
+        Args: { p_limit?: number }
+        Returns: {
+          last_job_id: string
+          organization_id: string
+          pending_memory_count: number
+          pending_token_count: number
+          source_memory_ids: string[]
+          subject_id: string
+        }[]
+      }
+      get_reasoning_token_threshold: {
+        Args: { p_organization_id?: string }
+        Returns: number
+      }
       get_user_service_for_routing: {
         Args: {
           p_environment: string
@@ -8825,6 +9422,10 @@ export type Database = {
         }[]
       }
       hash_api_key: { Args: { p_key: string }; Returns: string }
+      histogram: {
+        Args: { _bucket: number; _quryid: number }
+        Returns: Record<string, unknown>[]
+      }
       hybrid_search_memories: {
         Args: {
           filter_user_id?: string
@@ -9064,6 +9665,18 @@ export type Database = {
         Args: { filter_organization_id?: string; filter_user_id?: string }
         Returns: Json
       }
+      pg_stat_monitor_internal: {
+        Args: { showtext: boolean }
+        Returns: Record<string, unknown>[]
+      }
+      pg_stat_monitor_reset: { Args: never; Returns: undefined }
+      pg_stat_monitor_version: { Args: never; Returns: string }
+      pgsm_create_11_view: { Args: never; Returns: number }
+      pgsm_create_13_view: { Args: never; Returns: number }
+      pgsm_create_14_view: { Args: never; Returns: number }
+      pgsm_create_15_view: { Args: never; Returns: number }
+      pgsm_create_17_view: { Args: never; Returns: number }
+      pgsm_create_view: { Args: never; Returns: number }
       project_auth_event_to_audit_log: {
         Args: {
           p_aggregate_id: string
@@ -9076,6 +9689,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      range: { Args: never; Returns: string[] }
       request_password_reset: { Args: { email: string }; Returns: boolean }
       reset_intelligence_quota: { Args: never; Returns: undefined }
       scheduled_intelligence_maintenance: { Args: never; Returns: undefined }
@@ -9084,6 +9698,7 @@ export type Database = {
           filter_organization_id?: string
           filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           match_count?: number
           match_threshold?: number
           query_embedding: string
@@ -9105,6 +9720,7 @@ export type Database = {
           filter_organization_id?: string
           filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           match_count?: number
           match_threshold?: number
           query_embedding: string
@@ -9199,6 +9815,17 @@ export type Database = {
           p_voyage_embedding: string
         }
         Returns: boolean
+      }
+      upsert_memory_profile: {
+        Args: {
+          p_confidence_by_field?: Json
+          p_organization_id?: string
+          p_profile_summary?: string
+          p_source_job_id?: string
+          p_structured_fields?: Json
+          p_subject_id: string
+        }
+        Returns: string
       }
       user_has_memory_grant: {
         Args: {
@@ -9436,6 +10063,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       environment_type: ["sandbox", "live"],

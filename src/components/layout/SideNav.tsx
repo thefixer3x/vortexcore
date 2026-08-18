@@ -7,10 +7,6 @@ import {
   PieChart, 
   Settings, 
   LogOut,
-  Users,
-  Bell,
-  ShieldCheck,
-  HelpCircle,
   ChevronRight
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -58,13 +54,6 @@ export function SideNav() {
     { name: "Transactions", path: "/transactions", icon: CreditCard },
     { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
-    { name: "User Management", path: "/users", icon: Users },
-  ];
-
-  const secondaryNavItems = [
-    { name: "Notifications", path: "/notifications", icon: Bell },
-    { name: "Security", path: "/security", icon: ShieldCheck },
-    { name: "Help & Support", path: "/help", icon: HelpCircle },
   ];
 
   return (
@@ -94,13 +83,6 @@ export function SideNav() {
           {/* Main navigation */}
           <SideNavSection 
             items={mainNavItems} 
-            currentPath={location.pathname} 
-          />
-          
-          {/* Secondary navigation */}
-          <SideNavSection 
-            title="Additional" 
-            items={secondaryNavItems} 
             currentPath={location.pathname} 
           />
           

@@ -2,8 +2,6 @@ import { useTranslation } from "react-i18next";
 import { InsightsHeader } from "@/components/insights/InsightsHeader";
 import AIRecommendations from "@/components/insights/AIRecommendations";
 
-const emptySuggestions: { id: number; title: string; description: string; impact: string; type: string }[] = [];
-
 const Insights = () => {
   const { t } = useTranslation();
 
@@ -19,7 +17,7 @@ const Insights = () => {
           <p>No financial data to analyze yet.</p>
         </div>
 
-        <AIRecommendations suggestions={emptySuggestions} />
+        <AIRecommendations />
       </div>
     </div>
   );
