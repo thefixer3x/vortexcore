@@ -17,4 +17,4 @@ major_version = 15
   verify_jwt = false
 
 [functions.openai-chat]
-  verify_jwt = false
+  verify_jwt = true

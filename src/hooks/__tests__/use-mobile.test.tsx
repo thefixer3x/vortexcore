@@ -1,4 +1,6 @@
+import React from 'react'
 import { renderHook, act } from '@testing-library/react'
+import { renderToString } from 'react-dom/server'
 import { useIsMobile } from '../use-mobile'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { testUtils } from '../../test/test-utils'
@@ -81,10 +83,10 @@ describe('useIsMobile - extended coverage (Vitest + Testing Library)', () => {
   }
 
   beforeEach(() => {
+    vi.restoreAllMocks()
     // default mobile setup for baseline
     testUtils.mockMatchMedia(true)
     setViewport(375)
-    vi.restoreAllMocks()
   })
 
   it('returns false for desktop viewport (non-mobile)', () => {
@@ -152,8 +154,9 @@ describe('useIsMobile - extended coverage (Vitest + Testing Library)', () => {
   })
 
   it('falls back gracefully when window.matchMedia is undefined', () => {
-    // @ts-expect-error force undefined
-    delete (globalThis as unknown)['window']
+    const originalMatchMedia = window.matchMedia
+    // @ts-expect-error simulate browsers without matchMedia
+    delete window.matchMedia
 
     setViewport(1024)
     const desktop = renderHook(() => useIsMobile())
@@ -164,6 +167,9 @@ describe('useIsMobile - extended coverage (Vitest + Testing Library)', () => {
     setViewport(500)
     const mobile = renderHook(() => useIsMobile())
     expect(mobile.result.current).toBe(true)
+    mobile.unmount()
+
+    window.matchMedia = originalMatchMedia
   })
 
   it('cleans up window resize listener on unmount', () => {
@@ -172,32 +178,23 @@ describe('useIsMobile - extended coverage (Vitest + Testing Library)', () => {
 
     const { unmount } = renderHook(() => useIsMobile())
 
-    expect(addSpy).toHaveBeenCalledWith('resize', expect.any(Function), expect.anything())
+    expect(addSpy).toHaveBeenCalledWith('resize', expect.any(Function), { passive: true })
     unmount()
-    expect(removeSpy).toHaveBeenCalledWith('resize', expect.any(Function), expect.anything())
+    expect(removeSpy).toHaveBeenCalledWith('resize', expect.any(Function))
   })
 
-  it('does not throw in SSR-like environment (no window)', async () => {
-    // Temporarily remove global window and dynamically import hook to simulate SSR import/run
+  it('does not throw during server rendering without window', () => {
     const realWindow = globalThis.window
     // @ts-expect-error - simulate SSR
     delete (globalThis as unknown)['window']
 
-    let ssrError: unknown = null
+    const Probe = () => React.createElement('span', null, String(useIsMobile()))
     try {
-      const { useIsMobile: useIsMobileSSR } = await import('../use-mobile')
-      // @ts-expect-error - restore a minimal window for renderHook
-      globalThis['window'] = realWindow ?? { innerWidth: 1024 }
-      const { result } = renderHook(() => useIsMobileSSR())
-      expect(typeof result.current).toBe('boolean')
-    } catch (e) {
-      ssrError = e
+      expect(renderToString(React.createElement(Probe))).toContain('false')
     } finally {
       // @ts-expect-error - restore original window
       globalThis['window'] = realWindow
     }
-
-    expect(ssrError).toBeNull()
   })
 
   it('uses legacy addListener/removeListener if addEventListener is unavailable', () => {

@@ -1,242 +1,136 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { OpenAIChat } from '@/components/ai/OpenAIChat'
-import { testUtils } from '../../../setup'
 
-// Mock the auth context
-const mockAuthContext = {
-  user: testUtils.mockUser,
-  isAuthenticated: true,
-  getAccessToken: vi.fn(() => Promise.resolve('mock-token')),
-}
-
-vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => mockAuthContext,
+const mocks = vi.hoisted(() => ({
+  invoke: vi.fn(),
+  toast: vi.fn(),
+  getAccessToken: vi.fn(),
+  auth: {
+    isAuthenticated: true,
+    isLoading: false,
+  },
 }))
 
-// Mock toast hook
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({
-    toast: vi.fn(),
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    ...mocks.auth,
+    getAccessToken: mocks.getAccessToken,
   }),
 }))
 
-// Mock LogRocket
-vi.mock('logrocket', () => ({
-  default: {
-    track: vi.fn(),
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    functions: { invoke: mocks.invoke },
   },
 }))
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({ toast: mocks.toast }),
+}))
+
+vi.mock('logrocket', () => ({
+  default: { track: vi.fn() },
+}))
+
+function openChat() {
+  fireEvent.click(screen.getByRole('button'))
+}
+
+function sendMessage(content: string) {
+  const input = screen.getByPlaceholderText(/Type a message/i)
+  fireEvent.change(input, { target: { value: content } })
+  fireEvent.click(screen.getByRole('button', { name: 'Send message' }))
+}
 
 describe('OpenAIChat', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Reset fetch mock
-    global.fetch = vi.fn()
+    mocks.auth.isAuthenticated = true
+    mocks.auth.isLoading = false
+    mocks.getAccessToken.mockResolvedValue('mock-token')
+    mocks.invoke.mockResolvedValue({
+      data: { response: 'You have no transactions yet.', contextStatus: 'empty' },
+      error: null,
+    })
   })
 
-  it('shows chat button initially', () => {
-    render(<OpenAIChat />)
-    
-    const chatButton = screen.getByRole('button')
-    expect(chatButton).toBeInTheDocument()
-    expect(chatButton).toHaveClass('rounded-full')
+  it('is not exposed while auth is loading or when the user is signed out', () => {
+    mocks.auth.isAuthenticated = false
+    const { rerender } = render(<OpenAIChat />)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+
+    mocks.auth.isAuthenticated = true
+    mocks.auth.isLoading = true
+    rerender(<OpenAIChat />)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('opens chat interface when button is clicked', () => {
+  it('shows a truthful welcome message for authenticated users', () => {
     render(<OpenAIChat />)
-    
-    const chatButton = screen.getByRole('button')
-    fireEvent.click(chatButton)
-    
+    openChat()
+
     expect(screen.getByText('VortexAI Assistant')).toBeInTheDocument()
-    expect(screen.getByText(/Welcome to VortexCore/i)).toBeInTheDocument()
+    expect(screen.getByText(/available to your signed-in account/i)).toBeInTheDocument()
   })
 
-  it('displays initial welcome message', () => {
+  it('sends the current access token, prompt, and bounded UI history', async () => {
     render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    expect(screen.getByText(/Welcome to VortexCore! How can I assist you/i)).toBeInTheDocument()
-  })
+    openChat()
+    sendMessage('Review my spending')
 
-  it('allows user to type and send messages', async () => {
-    render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
-    
-    fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
-    expect(messageInput).toHaveValue('Hello AI')
-    expect(sendButton).not.toBeDisabled()
-  })
-
-  it('sends message and displays user input', async () => {
-    // Mock successful API response
-    global.fetch = vi.fn().mockResolvedValueOnce({
-      ok: true,
-      headers: { get: () => 'application/json' },
-      json: () => Promise.resolve({ response: 'Hello! How can I help you?' })
-    })
-    
-    render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    
-    fireEvent.change(messageInput, { target: { value: 'Hello AI' } })
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
-    
-    // Check user message is displayed
     await waitFor(() => {
-      expect(screen.getByText('Hello AI')).toBeInTheDocument()
-    })
-    
-    // Check API was called
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/functions/v1/ai-router'),
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock-token'
-        })
+      expect(mocks.invoke).toHaveBeenCalledWith('openai-chat', {
+        headers: { Authorization: 'Bearer mock-token' },
+        body: {
+          prompt: 'Review my spending',
+          history: [
+            {
+              role: 'assistant',
+              content: 'Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.',
+            },
+          ],
+        },
       })
-    )
-  })
-
-  it('handles API errors gracefully', async () => {
-    // Mock API error
-    global.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error'))
-    
-    render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    
-    fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
-    
-    await waitFor(() => {
-      expect(screen.getByText(/I'm sorry, I encountered an error/i)).toBeInTheDocument()
     })
+
+    expect(await screen.findByText('You have no transactions yet.')).toBeInTheDocument()
   })
 
-  it('shows loading state while waiting for response', async () => {
-    // Mock delayed response
-    global.fetch = vi.fn().mockImplementationOnce(() =>
-      new Promise(resolve => setTimeout(() => resolve({
-        ok: true,
-        headers: { get: () => 'application/json' },
-        json: () => Promise.resolve({ response: 'Response' })
-      }), 100))
-    )
-    
+  it('does not invoke the backend without an authenticated token', async () => {
+    mocks.getAccessToken.mockResolvedValue(null)
     render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    
-    fireEvent.change(messageInput, { target: { value: 'Test message' } })
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
-    
-    // Check loading state
-    expect(screen.getByText('Thinking...')).toBeInTheDocument()
-    
-    // Wait for response
-    await waitFor(() => {
-      expect(screen.getByText('Response')).toBeInTheDocument()
-    }, { timeout: 1000 })
+    openChat()
+    sendMessage('Show my balance')
+
+    expect(await screen.findByText(/couldn't securely load your financial context/i)).toBeInTheDocument()
+    expect(mocks.invoke).not.toHaveBeenCalled()
+    expect(mocks.toast).toHaveBeenCalledWith(expect.objectContaining({
+      description: 'Your session has expired. Please sign in again.',
+      variant: 'destructive',
+    }))
   })
 
-  it('can be minimized and restored', () => {
+  it('surfaces backend failures without substituting financial claims', async () => {
+    mocks.invoke.mockResolvedValue({ data: null, error: { message: 'context unavailable' } })
     render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    // Minimize
-    const minimizeButton = screen.getByTitle('Minimize')
-    fireEvent.click(minimizeButton)
-    
-    // Check minimized state
+    openChat()
+    sendMessage('What changed this month?')
+
+    expect(await screen.findByText(/couldn't securely load your financial context/i)).toBeInTheDocument()
+    expect(screen.queryByText(/spending down/i)).not.toBeInTheDocument()
+  })
+
+  it('can be minimized, restored, and cleared', () => {
+    render(<OpenAIChat />)
+    openChat()
+
+    fireEvent.click(screen.getByTitle('Minimize'))
     expect(screen.queryByText('VortexAI Assistant')).not.toBeInTheDocument()
-    
-    // Restore
     fireEvent.click(screen.getByRole('button'))
     expect(screen.getByText('VortexAI Assistant')).toBeInTheDocument()
-  })
 
-  it('can clear chat history', () => {
-    render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    // Clear chat
     fireEvent.click(screen.getByText('Clear Chat'))
-    
-    // Should only show welcome message
-    const welcomeMessages = screen.getAllByText(/Welcome to VortexCore/i)
-    expect(welcomeMessages).toHaveLength(1)
-  })
-
-  it('handles streaming responses', async () => {
-    // Mock streaming response
-    const mockReader = {
-      read: vi.fn()
-        .mockResolvedValueOnce({
-          value: new TextEncoder().encode('data: {"choices":[{"delta":{"content":"Hello"}}]}\n'),
-          done: false
-        })
-        .mockResolvedValueOnce({
-          value: new TextEncoder().encode('data: {"choices":[{"delta":{"content":" there!"}}]}\n'),
-          done: false
-        })
-        .mockResolvedValueOnce({
-          value: new TextEncoder().encode('data: [DONE]\n'),
-          done: true
-        })
-    }
-    
-    global.fetch = vi.fn().mockResolvedValueOnce({
-      ok: true,
-      headers: { get: () => 'text/event-stream' },
-      body: { getReader: () => mockReader }
-    })
-    
-    render(<OpenAIChat />)
-    
-    // Open chat
-    fireEvent.click(screen.getByRole('button'))
-    
-    const messageInput = screen.getByPlaceholderText(/Type a message/i)
-    
-    fireEvent.change(messageInput, { target: { value: 'Stream test' } })
-    const allButtons = screen.getAllByRole('button')
-    const sendButton = allButtons.find(button => button.type === 'submit')
-    fireEvent.click(sendButton!)
-    
-    await waitFor(() => {
-      expect(screen.getByText('Hello there!')).toBeInTheDocument()
-    })
+    expect(screen.getAllByText(/available to your signed-in account/i)).toHaveLength(1)
   })
 })

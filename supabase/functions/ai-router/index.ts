@@ -186,6 +186,7 @@ serve(withPublicMiddleware(async (req) => {
         },
         status: 200
       });
+    }
     
     // If OpenAI fails and we have Perplexity API key, try Perplexity as fallback
     if (!openaiResult.success && hasPerplexityKey) {
