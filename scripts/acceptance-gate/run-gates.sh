@@ -77,14 +77,14 @@ if gate_gated 2; then
     fi
   fi
 
-  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_JWT:-}" && -n "${TEST_USER_B_JWT:-}" ]]; then
+  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_EMAIL:-}" && -n "${TEST_USER_A_PASSWORD:-}" && -n "${TEST_USER_B_EMAIL:-}" && -n "${TEST_USER_B_PASSWORD:-}" ]]; then
     if node "$GATES_DIR/rls-rest-check.mjs" >>"$LOG" 2>&1; then
       rest_ok=1
     fi
   fi
 
   if [[ $snapshot_ok -eq 0 && $rest_ok -eq 0 ]]; then
-    if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}${VITE_SUPABASE_URL:-}${TEST_USER_A_JWT:-}${TEST_USER_B_JWT:-}" ]]; then
+    if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}${VITE_SUPABASE_URL:-}${TEST_USER_A_EMAIL:-}${TEST_USER_B_EMAIL:-}" ]]; then
       log "  - no database or REST test environment; SKIP"
       record 2 SKIP
     else
