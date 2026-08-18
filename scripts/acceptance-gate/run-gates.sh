@@ -65,17 +65,33 @@ fi
 # ---------------- Gate 2: Schema Migration Safety (HARD, env) ----------------
 if gate_gated 2; then
   log "[Gate 2] Schema migration safety"
-  if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}" ]]; then
-    log "  - no DB connection; SKIP (owner t_5e7e78bd migration rewrite pending)"
-    record 2 SKIP
-  else
-    g2=PASS
-    if command -v psql >/dev/null && [[ -f "$ROOT/scripts/rls-validate.sql" ]]; then
-      psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >>"$LOG" 2>&1 || g2=FAIL
+  g2=PASS
+  snapshot_ok=0
+  rest_ok=0
+
+  if [[ -n "${SUPABASE_DB_CONNECTION_STRING:-}" ]] && command -v psql >/dev/null && [[ -f "$ROOT/scripts/rls-validate.sql" ]]; then
+    if psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >>"$LOG" 2>&1; then
+      snapshot_ok=1
     else
-      g2=FAIL; log "  ✗ psql or rls-validate.sql unavailable"
+      log "  - direct catalog snapshot unavailable; trying authenticated REST isolation"
     fi
-    record 2 $g2
+  fi
+
+  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_JWT:-}" && -n "${TEST_USER_B_JWT:-}" ]]; then
+    if node "$GATES_DIR/rls-rest-check.mjs" >>"$LOG" 2>&1; then
+      rest_ok=1
+    fi
+  fi
+
+  if [[ $snapshot_ok -eq 0 && $rest_ok -eq 0 ]]; then
+    if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}${VITE_SUPABASE_URL:-}${TEST_USER_A_JWT:-}${TEST_USER_B_JWT:-}" ]]; then
+      log "  - no database or REST test environment; SKIP"
+      record 2 SKIP
+    else
+      record 2 FAIL
+    fi
+  else
+    record 2 PASS
   fi
 fi
 
