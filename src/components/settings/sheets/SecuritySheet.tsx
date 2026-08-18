@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Shield, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface SecuritySheetProps {
   open: boolean;
@@ -23,129 +22,15 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [twoFactorStatus, setTwoFactorStatus] = useState<"off" | "setup" | "verify" | "enabled">("off");
-  const [pendingFactorId, setPendingFactorId] = useState<string | null>(null);
-  const [verificationCode, setVerificationCode] = useState("");
   const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // Load 2FA status from Supabase when sheet opens
+  // Keep loading state consistent when the sheet is opened.
   useEffect(() => {
     if (!open || !isAuthenticated || !user?.id) return;
-
-    const fetch2faStatus = async () => {
-      setIsFetching(true);
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("two_factor_enabled")
-          .eq("id", user.id)
-          .single();
-
-        if (error) {
-          console.error("Error fetching 2FA status:", error);
-          return;
-        }
-
-        if (data?.two_factor_enabled) {
-          setTwoFactorEnabled(true);
-          setTwoFactorStatus("enabled");
-        }
-      } catch (error) {
-        console.error("Error loading 2FA status:", error);
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
-    fetch2faStatus();
+    setIsFetching(false);
   }, [open, isAuthenticated, user?.id]);
-
-  const handleToggle2FA = async () => {
-    if (!isAuthenticated || !user?.email) return;
-
-    setIsLoading(true);
-    try {
-      // Call the auth edge function to set up 2FA
-      const { data, error } = await supabase.functions.invoke("auth", {
-        body: { action: "setup-2fa", email: user.email },
-      });
-
-      if (error) throw new Error(error);
-
-      // Store factorId for verification step
-      if (data?.factorId) {
-        setPendingFactorId(data.factorId);
-        setTwoFactorStatus("verify");
-        toast({
-          title: "Verify 2FA",
-          description: "Check your email for the verification code and enter it below.",
-        });
-      } else {
-        setTwoFactorEnabled(true);
-        setTwoFactorStatus("enabled");
-        toast({
-          title: "2FA enabled",
-          description: "Two-factor authentication has been enabled successfully.",
-        });
-      }
-    } catch (error) {
-      console.error("2FA setup error:", error);
-      toast({
-        title: "2FA Setup Error",
-        description: error instanceof Error ? error.message : "Failed to set up two-factor authentication.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    if (!pendingFactorId || !verificationCode) return;
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("auth", {
-        body: { action: "verify-2fa", factorId: pendingFactorId, code: verificationCode },
-      });
-
-      if (error) throw new Error(error);
-
-      // Update profile to reflect 2FA is enabled
-      await supabase
-        .from("profiles")
-        .update({ two_factor_enabled: true })
-        .eq("id", user?.id);
-
-      setTwoFactorEnabled(true);
-      setTwoFactorStatus("enabled");
-      setPendingFactorId(null);
-      setVerificationCode("");
-      toast({
-        title: "2FA enabled",
-        description: "Two-factor authentication has been enabled successfully.",
-      });
-    } catch (error) {
-      console.error("2FA verification error:", error);
-      toast({
-        title: "Verification Failed",
-        description: error instanceof Error ? error.message : "Invalid verification code.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancelSetup = () => {
-    setTwoFactorStatus("off");
-    setPendingFactorId(null);
-    setVerificationCode("");
-    setTwoFactorEnabled(false);
-  };
 
   const handleSavePassword = async () => {
     if (!passwords.current || !passwords.new || !passwords.confirm) {
@@ -276,95 +161,6 @@ export const SecuritySheet = ({ open, onClose, onSave }: SecuritySheetProps) => 
               )}
             </div>
 
-            {/* 2FA Section */}
-            <div className="space-y-4 pt-4">
-              <div className="flex items-center justify-between py-2">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">Two-factor authentication</h3>
-                    {twoFactorEnabled && (
-                      <ShieldCheck className="h-4 w-4 text-green-500" />
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Enable two-factor authentication for added security
-                  </p>
-                </div>
-                {twoFactorStatus !== "verify" && (
-                  <Switch
-                    checked={twoFactorEnabled}
-                    onCheckedChange={() => {
-                      if (twoFactorEnabled) {
-                        // Turn off
-                        supabase
-                          .from("profiles")
-                          .update({ two_factor_enabled: false })
-                          .eq("id", user?.id)
-                          .then(() => {
-                            setTwoFactorEnabled(false);
-                            setTwoFactorStatus("off");
-                            toast({ title: "2FA disabled" });
-                          });
-                      } else {
-                        // Turn on
-                        handleToggle2FA();
-                      }
-                    }}
-                    disabled={isLoading}
-                  />
-                )}
-              </div>
-
-              {/* Verification Code Input (when setting up 2FA) */}
-              {twoFactorStatus === "verify" && (
-                <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-blue-500 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm text-blue-700 dark:text-blue-300">
-                        Verify your identity
-                      </p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                        We sent a code to {user?.email}. Enter it below to complete setup.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="verification-code">Verification Code</Label>
-                    <Input
-                      id="verification-code"
-                      type="text"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      placeholder="Enter 6-digit code"
-                      maxLength={6}
-                      className="font-mono tracking-widest text-center text-lg"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button className="flex-1" onClick={handleVerifyCode} disabled={isLoading || verificationCode.length < 4}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Verifying...
-                        </>
-                      ) : (
-                        "Verify & Enable"
-                      )}
-                    </Button>
-                    <Button variant="outline" onClick={handleCancelSetup} disabled={isLoading}>
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {twoFactorStatus === "enabled" && (
-                <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/20 text-xs text-green-700 dark:text-green-400">
-                  ✓ Two-factor authentication is active on your account.
-                </div>
-              )}
-            </div>
           </div>
         )}
 

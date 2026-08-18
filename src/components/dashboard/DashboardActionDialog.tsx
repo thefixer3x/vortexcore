@@ -21,6 +21,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DashboardWallet } from "@/hooks/use-dashboard-data";
+import type { Json } from "@/integrations/supabase/types";
 import {
   DASHBOARD_ACTIONS,
   DashboardActionType
@@ -115,7 +116,7 @@ export const DashboardActionDialog = ({
     const wallet = wallets.find((item) => item.id === selectedWallet);
 
     try {
-      const metadata: Record<string, unknown> = {
+      const metadata: Record<string, Json | undefined> = {
         action,
         category: actionConfig.category
       };
@@ -169,7 +170,7 @@ export const DashboardActionDialog = ({
   }
 
   const walletOptions = wallets.map((wallet) => ({
-    id: wallet.id,
+    id: wallet.id ?? "",
     label: `${wallet.currency} Wallet`,
     balance: wallet.balance
   }));
@@ -271,4 +272,3 @@ export const DashboardActionDialog = ({
     </Dialog>
   );
 };
-
