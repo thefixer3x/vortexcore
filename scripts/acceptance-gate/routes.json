@@ -1,0 +1,26 @@
+{
+  "_comment": "Primary route inventory for Gate 6. Generated from src/App.tsx (bf76efd3). 'kind' = functional|placeholder. Placeholder routes violate the no-placeholder-destination rule and block the gate.",
+  "version": "2026-08-16",
+  "routes": [
+    { "path": "/", "kind": "functional", "auth": false, "component": "Index" },
+    { "path": "/ecosystem", "kind": "functional", "auth": false, "component": "Ecosystem" },
+    { "path": "/ecosystem/gemini", "kind": "functional", "auth": false, "component": "GeminiDemo" },
+    { "path": "/ecosystem/perplexity", "kind": "functional", "auth": false, "component": "PerplexityDemo" },
+    { "path": "/auth", "kind": "functional", "auth": false, "component": "SignupForm" },
+    { "path": "/auth/callback", "kind": "functional", "auth": false, "component": "AuthCallbackHandler" },
+    { "path": "/dashboard", "kind": "functional", "auth": true, "component": "Dashboard" },
+    { "path": "/transactions", "kind": "functional", "auth": true, "component": "Transactions" },
+    { "path": "/insights", "kind": "functional", "auth": true, "component": "Insights" },
+    { "path": "/settings", "kind": "functional", "auth": true, "component": "Settings" },
+    { "path": "/users", "kind": "functional", "auth": true, "component": "Users" },
+    { "path": "/virtual-cards", "kind": "functional", "auth": true, "component": "VirtualCards" },
+    { "path": "/profile/payments", "kind": "functional", "auth": true, "component": "ProtectedLayout" },
+    { "path": "/profile/payments/beneficiaries", "kind": "functional", "auth": true, "component": "BeneficiaryManager" },
+    { "path": "/profile/payments/beneficiaries/upload", "kind": "functional", "auth": true, "component": "BulkUpload" },
+    { "path": "/profile/payments/beneficiaries/categories", "kind": "functional", "auth": true, "component": "CategoryManager" },
+    { "path": "/profile/payments/bulk-payments", "kind": "functional", "auth": true, "component": "BulkPaymentDashboard" },
+    { "path": "/notifications", "kind": "placeholder", "auth": true, "component": "ComingSoon(Notifications)" },
+    { "path": "/security", "kind": "placeholder", "auth": true, "component": "ComingSoon(Security)" },
+    { "path": "/help", "kind": "placeholder", "auth": true, "component": "ComingSoon(Help & Support)" }
+  ]
+}
