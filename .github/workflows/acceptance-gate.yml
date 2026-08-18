@@ -1,0 +1,75 @@
+name: Acceptance Gate (Issue #97)
+
+# Hard gate enforcement: this workflow runs the 7 acceptance gates and FAILS
+# (as a required check) when any HARD gate is RED, so no deploy can proceed
+# without all gates passing. Wire it up as a branch-protection required check
+# on main / main-protected (alongside the deploy workflow).
+#
+# Env-gated gates (2,3,7) SKIP when their secrets are absent — they are only
+# RED (blocking) when the environment IS provided but the check fails.
+
+on:
+  push:
+    branches: [main, main-protected]
+  pull_request:
+    branches: [main, main-protected]
+  workflow_dispatch:
+
+concurrency:
+  group: acceptance-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-all-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Gate 3)
+        if: ${{ env.BASE_URL != '' }}
+        run: bunx playwright install --with-deps chromium
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+
+      - name: Run acceptance gates
+        env:
+          CI: "true"
+          BASE_URL: ${{ secrets.BASE_URL }}
+          SUPABASE_DB_CONNECTION_STRING: ${{ secrets.SUPABASE_DB_CONNECTION_STRING }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          TEST_USER_A_JWT: ${{ secrets.TEST_USER_A_JWT }}
+          TEST_USER_B_JWT: ${{ secrets.TEST_USER_B_JWT }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          # Single invocation; runner exits non-zero when any HARD gate is RED,
+          # so the job (a required check) blocks the deploy/merge.
+          bash scripts/acceptance-gate/run-gates.sh
+
+      - name: Upload audit trail
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-gate-results
+          path: audit/acceptance-gate-results.*
+          if-no-files-found: warn
+
+      - name: Emit gate summary
+        if: always()
+        run: |
+          echo "## Acceptance Gate results" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat audit/acceptance-gate-results.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
