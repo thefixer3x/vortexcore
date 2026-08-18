@@ -1,17 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Bell, 
-  X, 
-  TrendingUp, 
-  Shield, 
-  DollarSign,
-  CreditCard,
-  AlertTriangle,
+import {
+  Bell,
+  X,
+  Shield,
   CheckCircle,
-  Info
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,45 +26,16 @@ interface Notification {
 
 export const NotificationCenter = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      type: 'success',
-      title: 'Payment Successful',
-      message: 'Your transfer of ₦50,000 to John Doe was completed',
-      timestamp: new Date(Date.now() - 2 * 60 * 1000),
-      isRead: false
-    },
-    {
-      id: '2', 
-      type: 'info',
-      title: 'AI Insight Available',
-      message: 'New spending analysis for March is ready',
-      timestamp: new Date(Date.now() - 30 * 60 * 1000),
-      isRead: false,
-      action: {
-        label: 'View Insights',
-        href: '/insights'
-      }
-    },
-    {
-      id: '3',
-      type: 'security',
-      title: 'Security Alert',
-      message: 'New device login detected from Lagos',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      isRead: true
-    }
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+        return <Info className="h-4 w-4 text-blue-600" />;
       case 'security':
         return <Shield className="h-4 w-4 text-red-600" />;
       default:
@@ -77,8 +44,8 @@ export const NotificationCenter = () => {
   };
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
+    setNotifications((prev) =>
+      prev.map((notif) =>
         notif.id === id ? { ...notif, isRead: true } : notif
       )
     );
@@ -89,19 +56,14 @@ export const NotificationCenter = () => {
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
-    
-    if (minutes < 60) {
-      return `${minutes}m ago`;
-    } else if (hours < 24) {
-      return `${hours}h ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
+
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return date.toLocaleDateString();
   };
 
   return (
     <div className="relative">
-      {/* Notification Bell */}
       <Button
         variant="outline"
         size="icon"
@@ -116,11 +78,9 @@ export const NotificationCenter = () => {
         )}
       </Button>
 
-      {/* Notification Panel */}
       {isOpen && (
         <Card className="absolute top-12 right-0 w-80 sm:w-96 max-h-96 overflow-hidden z-50 shadow-xl border-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg">
           <CardContent className="p-0">
-            {/* Header */}
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="font-semibold">Notifications</h3>
               <Button
@@ -133,7 +93,6 @@ export const NotificationCenter = () => {
               </Button>
             </div>
 
-            {/* Notifications List */}
             <div className="max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="p-6 text-center text-muted-foreground">
