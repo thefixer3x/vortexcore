@@ -31,7 +31,7 @@ const decodeSubject = (token) => {
     if (typeof payload.sub !== "string" || !payload.sub) throw new Error("missing sub");
     return payload.sub;
   } catch {
-    console.error("A configured test JWT has no valid subject claim");
+    console.error("Token has no valid subject claim");
     process.exit(1);
   }
 };
