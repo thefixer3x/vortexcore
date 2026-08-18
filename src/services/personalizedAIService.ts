@@ -7,13 +7,12 @@ export interface UserFinancialContext {
     id: string;
     balance: number;
     currency: string;
-    wallet_type: string;
   }>;
   recentTransactions: Array<{
     id: string;
     amount: number;
     currency: string;
-    transaction_type: string;
+    type: string;
     description: string;
     created_at: string;
   }>;
@@ -52,10 +51,10 @@ export class PersonalizedAIService {
     try {
       // Fetch user's wallets
       const { data: wallets, error: walletsError } = await supabase
-        .from('wallets')
-        .select('id, balance, currency, wallet_type')
+        .from('vortex_wallets')
+        .select('id, balance, currency')
         .eq('user_id', userId)
-        .eq('is_active', true);
+        .eq('is_locked', false);
 
       if (walletsError) {
         console.error('Error fetching wallets:', walletsError);
@@ -67,8 +66,8 @@ export class PersonalizedAIService {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const { data: transactions, error: transactionsError } = await supabase
-        .from('transactions')
-        .select('id, amount, currency, transaction_type, description, created_at')
+        .from('vortex_transactions')
+        .select('id, amount, currency, type, description, created_at')
         .eq('user_id', userId)
         .gte('created_at', thirtyDaysAgo.toISOString())
         .order('created_at', { ascending: false })
@@ -84,11 +83,11 @@ export class PersonalizedAIService {
       // Fetch user settings and preferences
       const { data: settings } = await supabase
         .from('vortex_settings')
-        .select('setting_key, setting_value')
+        .select('key, value')
         .eq('user_id', userId);
 
       const userSettings = settings?.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {} as Record<string, any>) || {};
 
@@ -190,12 +189,12 @@ Provide personalized, actionable financial advice based on this context.`,
   // Private helper methods
   private static calculateMonthlySpending(transactions: any[]): UserFinancialContext['monthlySpending'] {
     const total = transactions
-      .filter(t => t.transaction_type === 'expense' || t.amount < 0)
+      .filter(t => t.type === 'debit' || t.amount < 0)
       .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
     const categories: Record<string, number> = {};
     transactions
-      .filter(t => t.transaction_type === 'expense' || t.amount < 0)
+      .filter(t => t.type === 'debit' || t.amount < 0)
       .forEach(t => {
         const category = this.categorizeTransaction(t.description);
         categories[category] = (categories[category] || 0) + Math.abs(t.amount);
@@ -298,7 +297,7 @@ Provide personalized, actionable financial advice based on this context.`,
   private static generateBudgetRecommendations(context: UserFinancialContext): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = [];
     const income = context.recentTransactions
-      .filter(t => t.amount > 0 && t.transaction_type === 'income')
+      .filter(t => t.amount > 0 && t.type === 'credit')
       .reduce((sum, t) => sum + t.amount, 0);
 
     if (income > 0 && context.monthlySpending.total > income * 0.8) {

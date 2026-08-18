@@ -39,3 +39,7 @@ supabase/.temp/
 .vercel
 .cache_ggshield
 .env
+
+# Acceptance gate run output (audit trail is uploaded as CI artifacts / attached to board)
+audit/
+*.tsbuildinfo
