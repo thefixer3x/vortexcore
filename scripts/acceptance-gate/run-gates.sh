@@ -15,7 +15,7 @@
 #
 # Env:
 #   SUPABASE_DB_CONNECTION_STRING   Gate 2 (RLS/migration dry-run)
-#   TEST_USER_A_JWT, TEST_USER_B_JWT, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  Gate 2 REST
+#   TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD, TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  Gate 2 REST
 #   BASE_URL                        Gate 3 (playwright) + Gate 6 (live probe)
 #   VERCEL_TOKEN, VERCEL_PROJECT_ID Gate 7
 #   CI                              when set, skip-with-warning on missing env (not failure)

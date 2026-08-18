@@ -5,11 +5,11 @@ FROM pg_tables
 WHERE schemaname = 'public'
 ORDER BY tablename;
 
--- 2) List policies for key tables
+-- 2) List policies for key tables (all have user_id ownership columns)
 SELECT schemaname, tablename, policyname, cmd, roles, qual, with_check
 FROM pg_policies
 WHERE schemaname = 'public'
-  AND tablename IN ('wallets','conversations','child_profiles','transactions','ai_chat_sessions','vortex_settings','stripe_customers')
+  AND tablename IN ('vortex_wallets','vortex_transactions','vortex_settings','ai_chat_sessions','ai_chat_messages','stripe_customers')
 ORDER BY tablename, policyname;
 
 -- 3) Indexes and FK integrity (ensure performant and consistent access)
@@ -17,4 +17,3 @@ SELECT schemaname, tablename, indexname, indexdef FROM pg_indexes WHERE schemana
 
 -- To validate deny‑by‑default isolation, use API calls authenticated as two different users
 -- and attempt cross‑user access to the tables above. See scripts/rls-validate.md for curl examples.
-
