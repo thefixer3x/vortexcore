@@ -71,7 +71,7 @@ if gate_gated 2; then
   else
     g2=PASS
     if command -v psql >/dev/null && [[ -f "$ROOT/scripts/rls-validate.sql" ]]; then
-      psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >/dev/null 2>&1 || g2=FAIL
+      psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >>"$LOG" 2>&1 || g2=FAIL
     else
       g2=FAIL; log "  ✗ psql or rls-validate.sql unavailable"
     fi
@@ -122,7 +122,8 @@ if gate_gated 7; then
     log "  - no Vercel token/project; SKIP (owner t_38b6f77d)"
     record 7 SKIP
   else
-    log "  ✗ provenance correlation not yet implemented (owner t_38b6f77d)"; g7=FAIL
+    g7=PASS
+    GITHUB_SHA="${GITHUB_SHA:-$COMMIT}" node "$GATES_DIR/vercel-provenance-check.mjs" >>"$LOG" 2>&1 || g7=FAIL
     record 7 $g7
   fi
 fi
