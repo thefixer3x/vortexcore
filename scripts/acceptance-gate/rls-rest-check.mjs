@@ -3,15 +3,19 @@
 const {
   VITE_SUPABASE_URL,
   VITE_SUPABASE_ANON_KEY,
-  TEST_USER_A_JWT,
-  TEST_USER_B_JWT,
+  TEST_USER_A_EMAIL,
+  TEST_USER_A_PASSWORD,
+  TEST_USER_B_EMAIL,
+  TEST_USER_B_PASSWORD,
 } = process.env;
 
 const required = {
   VITE_SUPABASE_URL,
   VITE_SUPABASE_ANON_KEY,
-  TEST_USER_A_JWT,
-  TEST_USER_B_JWT,
+  TEST_USER_A_EMAIL,
+  TEST_USER_A_PASSWORD,
+  TEST_USER_B_EMAIL,
+  TEST_USER_B_PASSWORD,
 };
 
 for (const [name, value] of Object.entries(required)) {
@@ -32,9 +36,37 @@ const decodeSubject = (token) => {
   }
 };
 
+const signIn = async (label, email, password) => {
+  const response = await fetch(
+    `${VITE_SUPABASE_URL}/auth/v1/token?grant_type=password`,
+    {
+      method: "POST",
+      headers: {
+        apikey: VITE_SUPABASE_ANON_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    },
+  );
+
+  if (!response.ok) {
+    console.error(`Unable to create a fresh session for ${label} (HTTP ${response.status})`);
+    process.exit(1);
+  }
+
+  const body = await response.json();
+  if (typeof body.access_token !== "string") {
+    console.error(`Supabase returned no access token for ${label}`);
+    process.exit(1);
+  }
+  return body.access_token;
+};
+
+const tokenA = await signIn("userA", TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD);
+const tokenB = await signIn("userB", TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD);
 const users = [
-  { label: "userA", token: TEST_USER_A_JWT, id: decodeSubject(TEST_USER_A_JWT) },
-  { label: "userB", token: TEST_USER_B_JWT, id: decodeSubject(TEST_USER_B_JWT) },
+  { label: "userA", token: tokenA, id: decodeSubject(tokenA) },
+  { label: "userB", token: tokenB, id: decodeSubject(tokenB) },
 ];
 const tables = [
   "vortex_wallets",
