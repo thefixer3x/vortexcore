@@ -25,7 +25,10 @@ export function NavBarMobileMenu() {
     );
   }
   
-  // On dashboard routes, use the sidebar context
+  return <DashboardMobileMenu />;
+}
+
+function DashboardMobileMenu() {
   const { sidebarOpen, toggleSidebar } = useSidebar();
   
   return (

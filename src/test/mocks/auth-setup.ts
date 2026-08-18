@@ -28,6 +28,7 @@ vi.mock('@/contexts/AuthContext', () => ({
     signIn: vi.fn(),
     signOut: vi.fn(),
     signUp: vi.fn(),
+    identifyUser: vi.fn(),
   })
 }))
 
@@ -45,16 +46,19 @@ vi.mock('@/hooks/use-toast', () => ({
   toast: vi.fn(),
 }))
 
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: '/login',
-    search: '',
-    hash: '',
-    state: null,
-  }),
-  useNavigate: () => vi.fn(),
-}))
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return {
+    ...actual,
+    useLocation: () => ({
+      pathname: '/login',
+      search: '',
+      hash: '',
+      state: null,
+    }),
+    useNavigate: () => vi.fn(),
+  }
+})
 
 // Mock SocialLoginButtons component that might cause circular deps
 vi.mock('@/components/auth/SocialLoginButtons', () => ({

@@ -7,25 +7,32 @@ import { mockSupabase } from '@/test/mocks/supabase'
 import { mockLogRocket, mockToast, mockLocation } from '@/test/mocks/external-libs'
 
 // Mock external dependencies
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: mockSupabase,
-}))
+vi.mock('@/integrations/supabase/client', async () => {
+  const { mockSupabase } = await vi.importActual<typeof import('@/test/mocks/supabase')>('@/test/mocks/supabase')
+  return { supabase: mockSupabase }
+})
 
-vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => mockAuthContext,
-}))
+vi.mock('@/contexts/AuthContext', async () => {
+  const { mockAuthContext } = await vi.importActual<typeof import('@/test/mocks/auth-context')>('@/test/mocks/auth-context')
+  return { useAuth: () => mockAuthContext }
+})
 
-vi.mock('logrocket', () => mockLogRocket)
+vi.mock('logrocket', async () => {
+  const { mockLogRocket } = await vi.importActual<typeof import('@/test/mocks/external-libs')>('@/test/mocks/external-libs')
+  return { default: mockLogRocket }
+})
 
-vi.mock('@/hooks/use-toast', () => ({
-  toast: mockToast.toast,
-}))
+vi.mock('@/hooks/use-toast', async () => {
+  const { mockToast } = await vi.importActual<typeof import('@/test/mocks/external-libs')>('@/test/mocks/external-libs')
+  return { toast: mockToast.toast }
+})
 
-vi.mock('@/hooks/use-location', () => ({
-  useLocation: () => mockLocation,
-}))
+vi.mock('@/hooks/use-location', async () => {
+  const { mockLocation } = await vi.importActual<typeof import('@/test/mocks/external-libs')>('@/test/mocks/external-libs')
+  return { useLocation: () => mockLocation }
+})
 
-const mockNavigate = vi.fn()
+const mockNavigate = vi.hoisted(() => vi.fn())
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
   return {
@@ -41,6 +48,10 @@ describe('LoginForm', () => {
     mockAuthContext.isLoading = false
     mockAuthContext.isAuthenticated = false
     mockAuthContext.user = null
+    mockSupabase.auth.signInWithPassword.mockResolvedValue({
+      data: { user: null, session: null },
+      error: null,
+    })
   })
 
   it('renders login form correctly', () => {
@@ -57,23 +68,22 @@ describe('LoginForm', () => {
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
 
     // Check for sign in button
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'auth.login.submit' })).toBeInTheDocument()
   })
 
-  it('displays validation errors for empty fields', async () => {
+  it('uses native validation for empty required fields', () => {
     render(
       <TestWrapper>
         <LoginForm />
       </TestWrapper>
     )
 
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: 'auth.login.submit' })
     fireEvent.click(submitButton)
 
-    await waitFor(() => {
-      expect(screen.getByText(/email is required/i)).toBeInTheDocument()
-      expect(screen.getByText(/password is required/i)).toBeInTheDocument()
-    })
+    expect(screen.getByLabelText(/email/i)).toBeInvalid()
+    expect(screen.getByLabelText(/password/i)).toBeInvalid()
+    expect(mockSupabase.auth.signInWithPassword).not.toHaveBeenCalled()
   })
 
   it('displays validation error for invalid email format', async () => {
@@ -84,14 +94,13 @@ describe('LoginForm', () => {
     )
 
     const emailInput = screen.getByLabelText(/email/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: 'auth.login.submit' })
 
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } })
     fireEvent.click(submitButton)
 
-    await waitFor(() => {
-      expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument()
-    })
+    expect(emailInput).toBeInvalid()
+    expect(mockSupabase.auth.signInWithPassword).not.toHaveBeenCalled()
   })
 
   it('calls signIn with correct credentials on form submission', async () => {
@@ -103,7 +112,7 @@ describe('LoginForm', () => {
 
     const emailInput = screen.getByLabelText(/email/i)
     const passwordInput = screen.getByLabelText(/password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: 'auth.login.submit' })
 
     // Fill out the form
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
@@ -130,8 +139,7 @@ describe('LoginForm', () => {
   })
 
   it('shows loading state during authentication', async () => {
-    // Mock loading state
-    mockAuthContext.isLoading = true
+    mockSupabase.auth.signInWithPassword.mockReturnValueOnce(new Promise(() => {}))
 
     render(
       <TestWrapper>
@@ -139,8 +147,14 @@ describe('LoginForm', () => {
       </TestWrapper>
     )
 
-    const submitButton = screen.getByRole('button')
-    expect(submitButton).toBeDisabled()
+    const emailInput = screen.getByLabelText(/email/i)
+    const passwordInput = screen.getByLabelText(/password/i)
+    const submitButton = screen.getByRole('button', { name: 'auth.login.submit' })
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
+    fireEvent.change(passwordInput, { target: { value: 'password123' } })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => expect(submitButton).toBeDisabled())
   })
 
   it('handles authentication error gracefully', async () => {
@@ -157,7 +171,7 @@ describe('LoginForm', () => {
     )
 
     const emailInput = screen.getByLabelText(/email/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: 'auth.login.submit' })
     const passwordInput = screen.getByLabelText(/password/i)
 
     // Fill out and submit the form
@@ -180,6 +194,6 @@ describe('LoginForm', () => {
     // Should have basic form structure
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'auth.login.submit' })).toBeInTheDocument()
   })
 })
