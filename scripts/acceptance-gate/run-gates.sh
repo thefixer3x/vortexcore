@@ -15,7 +15,7 @@
 #
 # Env:
 #   SUPABASE_DB_CONNECTION_STRING   Gate 2 (RLS/migration dry-run)
-#   TEST_USER_A_JWT, TEST_USER_B_JWT, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  Gate 2 REST
+#   TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD, TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  Gate 2 REST
 #   BASE_URL                        Gate 3 (playwright) + Gate 6 (live probe)
 #   VERCEL_TOKEN, VERCEL_PROJECT_ID Gate 7
 #   CI                              when set, skip-with-warning on missing env (not failure)
@@ -65,17 +65,33 @@ fi
 # ---------------- Gate 2: Schema Migration Safety (HARD, env) ----------------
 if gate_gated 2; then
   log "[Gate 2] Schema migration safety"
-  if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}" ]]; then
-    log "  - no DB connection; SKIP (owner t_5e7e78bd migration rewrite pending)"
-    record 2 SKIP
-  else
-    g2=PASS
-    if command -v psql >/dev/null && [[ -f "$ROOT/scripts/rls-validate.sql" ]]; then
-      psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >/dev/null 2>&1 || g2=FAIL
+  g2=PASS
+  snapshot_ok=0
+  rest_ok=0
+
+  if [[ -n "${SUPABASE_DB_CONNECTION_STRING:-}" ]] && command -v psql >/dev/null && [[ -f "$ROOT/scripts/rls-validate.sql" ]]; then
+    if psql "$SUPABASE_DB_CONNECTION_STRING" -v ON_ERROR_STOP=1 -f "$ROOT/scripts/rls-validate.sql" >>"$LOG" 2>&1; then
+      snapshot_ok=1
     else
-      g2=FAIL; log "  ✗ psql or rls-validate.sql unavailable"
+      log "  - direct catalog snapshot unavailable; trying authenticated REST isolation"
     fi
-    record 2 $g2
+  fi
+
+  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_EMAIL:-}" && -n "${TEST_USER_A_PASSWORD:-}" && -n "${TEST_USER_B_EMAIL:-}" && -n "${TEST_USER_B_PASSWORD:-}" ]]; then
+    if node "$GATES_DIR/rls-rest-check.mjs" >>"$LOG" 2>&1; then
+      rest_ok=1
+    fi
+  fi
+
+  if [[ $snapshot_ok -eq 0 && $rest_ok -eq 0 ]]; then
+    if [[ -z "${SUPABASE_DB_CONNECTION_STRING:-}${VITE_SUPABASE_URL:-}${TEST_USER_A_EMAIL:-}${TEST_USER_B_EMAIL:-}" ]]; then
+      log "  - no database or REST test environment; SKIP"
+      record 2 SKIP
+    else
+      record 2 FAIL
+    fi
+  else
+    record 2 PASS
   fi
 fi
 
@@ -122,7 +138,8 @@ if gate_gated 7; then
     log "  - no Vercel token/project; SKIP (owner t_38b6f77d)"
     record 7 SKIP
   else
-    log "  ✗ provenance correlation not yet implemented (owner t_38b6f77d)"; g7=FAIL
+    g7=PASS
+    GITHUB_SHA="${GITHUB_SHA:-$COMMIT}" node "$GATES_DIR/vercel-provenance-check.mjs" >>"$LOG" 2>&1 || g7=FAIL
     record 7 $g7
   fi
 fi

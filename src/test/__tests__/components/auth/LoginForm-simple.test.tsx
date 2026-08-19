@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { LoginForm } from '@/components/auth/LoginForm'
+import { TestWrapper } from '@/test/test-utils'
 
 // Simple test without complex mocking first
 describe('LoginForm - Simple', () => {
@@ -8,7 +9,7 @@ describe('LoginForm - Simple', () => {
     // This test just checks if the component can render
     // without throwing errors - basic smoke test
     try {
-      render(<LoginForm />)
+      render(<TestWrapper><LoginForm /></TestWrapper>)
       expect(true).toBe(true) // If we get here, it didn't crash
     } catch (error) {
       // If it crashes, we'll see the specific error

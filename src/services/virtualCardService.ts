@@ -90,7 +90,7 @@ export async function getVirtualCardWithDetails(cardId: string) {
       .single();
     
     if (error) throw error;
-    if (!dbCard) throw new Error('Card not found');
+    if (!dbCard?.card_id) throw new Error('Card is missing its Stripe identifier');
     
     // Then get the card details from Stripe
     const stripeCard = await getVirtualCard(dbCard.card_id);
@@ -119,7 +119,7 @@ export async function toggleCardLock(cardId: string, lock: boolean) {
       .single();
     
     if (error) throw error;
-    if (!dbCard) throw new Error('Card not found');
+    if (!dbCard?.card_id) throw new Error('Card is missing its Stripe identifier');
     
     // Update the card status in Stripe
     const newStatus = lock ? 'inactive' : 'active';
@@ -159,7 +159,7 @@ export async function getCardTransactionHistory(cardId: string, limit: number = 
       .single();
     
     if (error) throw error;
-    if (!dbCard) throw new Error('Card not found');
+    if (!dbCard?.card_id) throw new Error('Card is missing its Stripe identifier');
     
     // Get transactions from Stripe
     const transactions = await getCardTransactions(dbCard.card_id, limit);
@@ -185,7 +185,7 @@ export async function getCardSensitiveDetails(cardId: string) {
       .single();
     
     if (error) throw error;
-    if (!dbCard) throw new Error('Card not found');
+    if (!dbCard?.card_id) throw new Error('Card is missing its Stripe identifier');
     
     // Get card details from Stripe
     const cardDetails = await getCardDetails(dbCard.card_id);

@@ -90,8 +90,7 @@ export const ProfileSheet = ({ open, onClose, onSave }: ProfileSheetProps) => {
 
     setIsLoading(true);
     try {
-      const updates: Record<string, unknown> = {
-        id: user.id,
+      const updates = {
         updated_at: new Date().toISOString(),
         full_name: name.trim(),
         phone: phone.trim() || null,

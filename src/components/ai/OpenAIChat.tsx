@@ -13,6 +13,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import LogRocket from "logrocket";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,6 +21,7 @@ interface Message {
 }
 
 export function OpenAIChat() {
+  const { isAuthenticated, isLoading: isAuthLoading, getAccessToken } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState("");
@@ -27,7 +29,7 @@ export function OpenAIChat() {
     {
       role: "assistant",
       content:
-        "Welcome to VortexCore! How can I assist you with your financial needs today?",
+        "Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,8 +56,13 @@ export function OpenAIChat() {
     setIsLoading(true);
 
     try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+
       LogRocket.track("ai_prompt_sent", {
-        provider: "vortex_router",
+        provider: "openai_chat",
         promptLength: userMessage.content.length,
         historyLength: messages.length,
       });
@@ -63,6 +70,7 @@ export function OpenAIChat() {
       const history = messages.map((m) => ({ role: m.role, content: m.content }));
 
       const { data, error } = await supabase.functions.invoke('openai-chat', {
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: {
           prompt: userMessage.content,
           history
@@ -93,7 +101,7 @@ export function OpenAIChat() {
         {
           role: "assistant",
           content:
-            "I'm sorry, I encountered an error while processing your request. Please try again.",
+            "I couldn't securely load your financial context. Please try again; if this continues, contact support.",
         },
       ]);
       toast({
@@ -121,12 +129,14 @@ export function OpenAIChat() {
       {
         role: "assistant",
         content:
-          "Welcome to VortexCore! How can I assist you with your financial needs today?",
+          "Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.",
       },
     ]);
     setRetryCount(0);
     toast({ title: "Chat cleared", description: "All messages have been cleared" });
   };
+
+  if (isAuthLoading || !isAuthenticated) return null;
 
   if (!isOpen) {
     return (
@@ -242,7 +252,7 @@ export function OpenAIChat() {
                 {isLoading ? "Sending..." : "⏎ to send"}
               </span>
             </div>
-            <Button type="submit" size="icon" className="h-10 w-10 self-end" disabled={isLoading || !message.trim()}>
+            <Button type="submit" size="icon" aria-label="Send message" className="h-10 w-10 self-end" disabled={isLoading || !message.trim()}>
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>

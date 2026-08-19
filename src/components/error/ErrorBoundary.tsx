@@ -32,9 +32,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     this.setState({ errorInfo });
 
     // If Sentry is configured, report the error
-    // @ts-ignore - Sentry might not be available
+    // @ts-expect-error - Sentry is injected by optional runtime configuration
     if (typeof window !== 'undefined' && window.Sentry) {
-      // @ts-ignore
+      // @ts-expect-error - Sentry is injected by optional runtime configuration
       window.Sentry.captureException(error, {
         contexts: {
           react: {

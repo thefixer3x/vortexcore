@@ -50,9 +50,9 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
       try {
         const { data, error } = await supabase
           .from("vortex_settings")
-          .select("setting_value")
+          .select("value")
           .eq("user_id", user.id)
-          .eq("setting_key", SETTINGS_KEY)
+          .eq("key", SETTINGS_KEY)
           .maybeSingle();
 
         if (error) {
@@ -60,8 +60,8 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
           return;
         }
 
-        if (data?.setting_value) {
-          const parsed = data.setting_value as Partial<NotificationSettings>;
+        if (data?.value) {
+          const parsed = data.value as unknown as Partial<NotificationSettings>;
           setSettings({ ...DEFAULT_SETTINGS, ...parsed });
         }
       } catch (error) {
@@ -95,11 +95,11 @@ export const NotificationSheet = ({ open, onClose, onSave }: NotificationSheetPr
         .from("vortex_settings")
         .upsert({
           user_id: user.id,
-          setting_key: SETTINGS_KEY,
-          setting_value: settings,
+          key: SETTINGS_KEY,
+          value: { ...settings },
           updated_at: new Date().toISOString(),
         }, {
-          onConflict: "user_id,setting_key",
+          onConflict: "user_id,key",
         });
 
       if (error) {

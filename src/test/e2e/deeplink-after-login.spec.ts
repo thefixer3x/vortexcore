@@ -18,7 +18,11 @@ test.describe('Deep link after login', () => {
     // Inject Supabase session into localStorage and retry
     const storageKey = `sb-${projectRef}-auth-token`
     await page.addInitScript(([key, val]) => {
-      try { localStorage.setItem(key, val as string) } catch {}
+      try {
+        localStorage.setItem(key, val as string)
+      } catch {
+        // Storage can be unavailable in hardened browser contexts.
+      }
     }, [storageKey, sessionJson])
 
     // Reload and try deep link again
@@ -27,4 +31,3 @@ test.describe('Deep link after login', () => {
     await expect(page.getByText(/Control Room|Dashboard|Welcome/i)).toBeVisible()
   })
 })
-
