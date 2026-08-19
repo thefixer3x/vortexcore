@@ -13,6 +13,7 @@
     { "path": "/insights", "kind": "functional", "auth": true, "component": "Insights" },
     { "path": "/settings", "kind": "functional", "auth": true, "component": "Settings" },
     { "path": "/virtual-cards", "kind": "functional", "auth": true, "component": "VirtualCards" },
+    { "path": "/bulk-payments", "kind": "functional", "auth": true, "component": "Navigate(/profile/payments/bulk-payments)" },
     { "path": "/profile/payments", "kind": "functional", "auth": true, "component": "ProtectedLayout" },
     { "path": "/profile/payments/beneficiaries", "kind": "functional", "auth": true, "component": "BeneficiaryManager" },
     { "path": "/profile/payments/beneficiaries/upload", "kind": "functional", "auth": true, "component": "BulkUpload" },
