@@ -74,10 +74,15 @@ Deno.serve(async (req: Request) => {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
         const subscriptionId = invoice.subscription as string;
-        
+
         // Get subscription details
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         await handlePaymentSucceeded(subscription);
+        break;
+      }
+      case "issuing_transaction.created": {
+        const transaction = event.data.object as Stripe.Issuing.Transaction;
+        await handleIssuingTransaction(transaction);
         break;
       }
     }
@@ -165,6 +170,86 @@ async function handlePaymentFailure(sub: Stripe.Subscription) {
   if (cr?.user_id) {
     await downgradeTier(cr.user_id);
     console.error(`[stripe-webhook] payment failed for user ${cr.user_id}, downgraded to free`);
+  }
+}
+
+async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction) {
+  const cardId = typeof transaction.card === "string" ? transaction.card : (transaction.card as { id: string })?.id;
+  if (!cardId) {
+    console.error("[stripe-webhook] issuing transaction missing card id:", transaction.id);
+    return;
+  }
+
+  const { data: virtualCard, error: cardError } = await supabase
+    .from("virtual_cards")
+    .select("user_id")
+    .eq("card_id", cardId)
+    .maybeSingle();
+
+  if (cardError || !virtualCard) {
+    console.error("[stripe-webhook] issuing transaction for unknown card:", cardId, cardError?.message);
+    return;
+  }
+
+  // Idempotency guard: Stripe can redeliver this event, and reference is
+  // unique per stripe transaction id, so a prior successful run means skip.
+  const { data: existing } = await supabase
+    .from("vortex_transactions")
+    .select("id")
+    .eq("reference", transaction.id)
+    .maybeSingle();
+  if (existing) {
+    return;
+  }
+
+  const { data: wallet, error: walletError } = await supabase
+    .from("vortex_wallets")
+    .select("id, currency")
+    .eq("user_id", virtualCard.user_id)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (walletError || !wallet) {
+    console.error("[stripe-webhook] no wallet for card user:", virtualCard.user_id, walletError?.message);
+    return;
+  }
+
+  // `capture` reduces the wallet (money spent); `refund` restores it.
+  const amount = transaction.amount / 100;
+  const delta = transaction.type === "refund" ? Math.abs(amount) : -Math.abs(amount);
+
+  const { error: rpcError } = await supabase.rpc("adjust_wallet_balance", {
+    p_wallet_id: wallet.id,
+    p_delta: delta,
+  });
+  if (rpcError) {
+    console.error("[stripe-webhook] failed to adjust wallet balance:", rpcError.message);
+    return;
+  }
+
+  const { error: insertError } = await supabase.from("vortex_transactions").insert({
+    user_id: virtualCard.user_id,
+    wallet_id: wallet.id,
+    type: "payment",
+    status: "completed",
+    amount: Math.abs(amount),
+    currency: wallet.currency ?? transaction.currency,
+    category: "Card Spend",
+    reference: transaction.id,
+    description: transaction.merchant_data?.name
+      ? `Card ${transaction.type === "refund" ? "refund" : "purchase"}: ${transaction.merchant_data.name}`
+      : `Card ${transaction.type === "refund" ? "refund" : "purchase"}`,
+    completed_at: new Date().toISOString(),
+    metadata: {
+      action: "card_transaction",
+      card_id: cardId,
+      stripe_transaction_id: transaction.id,
+      transaction_type: transaction.type
+    }
+  });
+  if (insertError) {
+    console.error("[stripe-webhook] failed to record card transaction:", insertError.message);
   }
 }
 

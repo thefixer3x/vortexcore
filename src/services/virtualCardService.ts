@@ -1,22 +1,24 @@
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  createCardholder, 
-  createVirtualCard, 
-  getVirtualCard, 
-  updateCardStatus, 
+import {
+  createCardholder,
+  createVirtualCard,
+  getVirtualCard,
+  updateCardStatus,
   getCardTransactions,
   getCardDetails,
   StripeCard,
-  StripeTransaction
+  StripeTransaction,
+  CardholderBillingAddress
 } from "@/lib/stripe";
 
 /**
  * Create a new virtual card for a user
  */
 export async function createUserVirtualCard(
-  userId: string, 
-  name: string, 
+  userId: string,
+  name: string,
   email: string,
+  billing: CardholderBillingAddress,
   currency: string = 'usd',
   spendingLimit?: {
     amount: number;
@@ -25,7 +27,7 @@ export async function createUserVirtualCard(
 ) {
   try {
     // First create a cardholder in Stripe
-    const cardholder = await createCardholder(userId, name, email);
+    const cardholder = await createCardholder(userId, name, email, billing);
     
     // Then create a virtual card for the cardholder
     const card = await createVirtualCard(

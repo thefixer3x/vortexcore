@@ -1,11 +1,36 @@
 import { supabase } from "@/integrations/supabase/client";
 
+export interface CardholderBillingAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  state?: string;
+  postal_code: string;
+  country: string;
+}
+
 /**
- * Create a cardholder in Stripe
+ * Create a cardholder in Stripe. Stripe requires a billing address for
+ * individual cardholders, so it must be provided here.
  */
-export async function createCardholder(userId: string, name: string, email: string) {
+export async function createCardholder(
+  userId: string,
+  name: string,
+  email: string,
+  billing: CardholderBillingAddress,
+  phoneNumber?: string
+) {
   const { data, error } = await supabase.functions.invoke('stripe', {
-    body: { action: 'create_cardholder', data: { name, email, metadata: { user_id: userId } } }
+    body: {
+      action: 'create_cardholder',
+      data: {
+        name,
+        email,
+        phone_number: phoneNumber,
+        billing: { address: billing },
+        metadata: { user_id: userId }
+      }
+    }
   });
   if (error) throw error;
   return data.cardholder as StripeCardholder;
