@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 
@@ -25,11 +26,19 @@ serve(withAuthMiddleware(async (req, { auth }) => {
     }
 
     // Look up or create Stripe customer for this user
-    const { data: customerRow } = await supabase
+    const { data: customerRow, error: lookupError } = await supabase
       .from("stripe_customers")
       .select("customer_id")
       .eq("user_id", auth.userId)
       .maybeSingle();
+
+    if (lookupError) {
+      console.error("[create-checkout-session] stripe_customers lookup failed:", lookupError.message);
+      return new Response(JSON.stringify({ error: "Failed to look up billing customer" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
 
     let customerId: string;
     if (customerRow?.customer_id) {
@@ -41,10 +50,22 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         metadata: { user_id: auth.userId! },
       });
       customerId = customer.id;
-      await supabase.from("stripe_customers").insert({
-        user_id: auth.userId,
-        customer_id: customerId,
-      });
+
+      // Upsert (not insert) so a retry after a transient failure can't race into a
+      // duplicate row, and so we never silently proceed to checkout with a Stripe
+      // customer that isn't mapped back to a user — that mapping is what the webhook
+      // needs to apply entitlements.
+      const { error: persistError } = await supabase
+        .from("stripe_customers")
+        .upsert({ user_id: auth.userId, customer_id: customerId }, { onConflict: "user_id" });
+
+      if (persistError) {
+        console.error("[create-checkout-session] failed to persist stripe_customers row:", persistError.message);
+        return new Response(JSON.stringify({ error: "Failed to record billing customer" }), {
+          headers: { "Content-Type": "application/json" },
+          status: 500,
+        });
+      }
     }
 
     const origin = req.headers.get("origin") || "https://vortexcore.app";
