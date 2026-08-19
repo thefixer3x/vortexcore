@@ -14,6 +14,8 @@ import {
   Zap
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { TIERS } from "@/lib/subscription-tiers";
 import { NotificationCenter } from "./NotificationCenter";
 
 interface ModernDashboardHeaderProps {
@@ -44,6 +46,7 @@ export const ModernDashboardHeader = ({
   hasWallets = false
 }: ModernDashboardHeaderProps) => {
   const { user } = useAuth();
+  const { tier } = useSubscription();
   const [showBalance, setShowBalance] = useState(true);
 
   const currentHour = new Date().getHours();
@@ -74,10 +77,12 @@ export const ModernDashboardHeader = ({
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
               {greeting}, {displayName}
             </h1>
-            <Badge variant="secondary" className="gap-1">
-              <Sparkles className="h-3 w-3" />
-              Pro
-            </Badge>
+            {tier !== "free" && (
+              <Badge variant="secondary" className="gap-1">
+                <Sparkles className="h-3 w-3" />
+                {TIERS[tier].name}
+              </Badge>
+            )}
           </div>
           <p className="text-muted-foreground">Here's your financial overview for today</p>
         </div>

@@ -77,8 +77,27 @@ export class PersonalizedAIService {
         console.error('Error fetching transactions:', transactionsError);
       }
 
+      const normalisedWallets = (wallets || [])
+        .filter((wallet): wallet is typeof wallet & { id: string } => Boolean(wallet.id))
+        .map((wallet) => ({
+          id: wallet.id,
+          balance: wallet.balance ?? 0,
+          currency: wallet.currency ?? 'USD',
+        }));
+
+      const normalisedTransactions = (transactions || [])
+        .filter((transaction): transaction is typeof transaction & { id: string } => Boolean(transaction.id))
+        .map((transaction) => ({
+          id: transaction.id,
+          amount: transaction.amount ?? 0,
+          currency: transaction.currency ?? 'USD',
+          type: transaction.type ?? '',
+          description: transaction.description ?? '',
+          created_at: transaction.created_at ?? new Date().toISOString(),
+        }));
+
       // Calculate monthly spending by category
-      const monthlySpending = this.calculateMonthlySpending(transactions || []);
+      const monthlySpending = this.calculateMonthlySpending(normalisedTransactions);
 
       // Fetch user settings and preferences
       const { data: settings } = await supabase
@@ -87,14 +106,16 @@ export class PersonalizedAIService {
         .eq('user_id', userId);
 
       const userSettings = settings?.reduce((acc, setting) => {
-        acc[setting.key] = setting.value;
+        if (setting.key) {
+          acc[setting.key] = setting.value;
+        }
         return acc;
       }, {} as Record<string, any>) || {};
 
       return {
         userId,
-        wallets: wallets || [],
-        recentTransactions: transactions || [],
+        wallets: normalisedWallets,
+        recentTransactions: normalisedTransactions,
         monthlySpending,
         creditScore: userSettings.credit_score,
         riskProfile: userSettings.risk_profile || 'moderate'
@@ -106,21 +127,23 @@ export class PersonalizedAIService {
   }
 
   /**
-   * Generate personalized financial insights for a user
+   * Generate personalized financial insights from an already-fetched financial context.
+   * `formatCurrency` renders amounts in the user's chosen display currency (see CurrencyContext)
+   * instead of hardcoding '$'.
    */
-  static async generatePersonalizedInsights(userId: string): Promise<PersonalizedInsight[]> {
-    const context = await this.getUserFinancialContext(userId);
-    if (!context) return [];
-
+  static generatePersonalizedInsights(
+    context: UserFinancialContext,
+    formatCurrency: (value: number) => string = (v) => `$${v.toFixed(2)}`
+  ): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = [];
 
     // Spending pattern analysis
     if (context.monthlySpending.total > 0) {
-      insights.push(...this.analyzeSpendingPatterns(context));
+      insights.push(...this.analyzeSpendingPatterns(context, formatCurrency));
     }
 
     // Savings opportunities
-    insights.push(...this.identifySavingsOpportunities(context));
+    insights.push(...this.identifySavingsOpportunities(context, formatCurrency));
 
     // Investment suggestions based on risk profile
     if (context.wallets.some(w => w.balance > 1000)) {
@@ -128,7 +151,7 @@ export class PersonalizedAIService {
     }
 
     // Budget recommendations
-    insights.push(...this.generateBudgetRecommendations(context));
+    insights.push(...this.generateBudgetRecommendations(context, formatCurrency));
 
     return insights.sort((a, b) => {
       const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -216,7 +239,10 @@ Provide personalized, actionable financial advice based on this context.`,
     return 'Other';
   }
 
-  private static analyzeSpendingPatterns(context: UserFinancialContext): PersonalizedInsight[] {
+  private static analyzeSpendingPatterns(
+    context: UserFinancialContext,
+    formatCurrency: (value: number) => string
+  ): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = [];
     const { monthlySpending } = context;
 
@@ -229,7 +255,7 @@ Provide personalized, actionable financial advice based on this context.`,
         type: 'spending_alert',
         priority: 'high',
         title: `High ${topCategory[0]} Spending`,
-        message: `You've spent $${topCategory[1].toFixed(2)} on ${topCategory[0]} this month (${((topCategory[1] / monthlySpending.total) * 100).toFixed(1)}% of total spending). Consider setting a budget limit.`,
+        message: `You've spent ${formatCurrency(topCategory[1])} on ${topCategory[0]} this month (${((topCategory[1] / monthlySpending.total) * 100).toFixed(1)}% of total spending). Consider setting a budget limit.`,
         actionable: true,
         data: { category: topCategory[0], amount: topCategory[1] }
       });
@@ -238,10 +264,17 @@ Provide personalized, actionable financial advice based on this context.`,
     return insights;
   }
 
-  private static identifySavingsOpportunities(context: UserFinancialContext): PersonalizedInsight[] {
+  private static identifySavingsOpportunities(
+    context: UserFinancialContext,
+    formatCurrency: (value: number) => string
+  ): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = [];
     const totalBalance = this.calculateTotalBalance(context.wallets);
     const monthlySpending = context.monthlySpending.total;
+
+    if (monthlySpending <= 0) {
+      return insights;
+    }
 
     if (totalBalance > monthlySpending * 6) {
       insights.push({
@@ -257,7 +290,7 @@ Provide personalized, actionable financial advice based on this context.`,
         type: 'savings_opportunity',
         priority: 'high',
         title: 'Build Emergency Fund',
-        message: `Aim for 3-6 months of expenses in savings. You need $${((monthlySpending * 3) - totalBalance).toFixed(2)} more.`,
+        message: `Aim for 3-6 months of expenses in savings. You need ${formatCurrency((monthlySpending * 3) - totalBalance)} more.`,
         actionable: true,
         data: { target_amount: monthlySpending * 3 - totalBalance }
       });
@@ -294,7 +327,10 @@ Provide personalized, actionable financial advice based on this context.`,
     return insights;
   }
 
-  private static generateBudgetRecommendations(context: UserFinancialContext): PersonalizedInsight[] {
+  private static generateBudgetRecommendations(
+    context: UserFinancialContext,
+    formatCurrency: (value: number) => string
+  ): PersonalizedInsight[] {
     const insights: PersonalizedInsight[] = [];
     const income = context.recentTransactions
       .filter(t => t.amount > 0 && t.type === 'credit')
@@ -305,7 +341,7 @@ Provide personalized, actionable financial advice based on this context.`,
         type: 'budget_recommendation',
         priority: 'high',
         title: 'High Spending to Income Ratio',
-        message: `Your monthly expenses (${context.monthlySpending.total}) are ${((context.monthlySpending.total / income) * 100).toFixed(1)}% of income. Consider the 50/30/20 rule.`,
+        message: `Your monthly expenses (${formatCurrency(context.monthlySpending.total)}) are ${((context.monthlySpending.total / income) * 100).toFixed(1)}% of income. Consider the 50/30/20 rule.`,
         actionable: true,
         data: { spending_ratio: context.monthlySpending.total / income }
       });

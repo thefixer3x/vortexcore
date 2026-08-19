@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { InsightsHeader } from "@/components/insights/InsightsHeader";
-import AIRecommendations from "@/components/insights/AIRecommendations";
+import { AIInsightsDashboard } from "@/components/dashboard/AIInsightsDashboard";
 
 const Insights = () => {
   const { t } = useTranslation();
@@ -12,13 +12,7 @@ const Insights = () => {
         description={t("insights.description")}
       />
 
-      <div className="space-y-6">
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No financial data to analyze yet.</p>
-        </div>
-
-        <AIRecommendations />
-      </div>
+      <AIInsightsDashboard />
     </div>
   );
 };
