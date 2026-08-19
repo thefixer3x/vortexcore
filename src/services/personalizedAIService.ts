@@ -270,7 +270,7 @@ Provide personalized, actionable financial advice based on this context.`,
     const insights: PersonalizedInsight[] = [];
     const { riskProfile } = context;
 
-    let suggestion = '';
+    let suggestion: string;
     switch (riskProfile) {
       case 'conservative':
         suggestion = 'Consider low-risk options like CDs, treasury bonds, or conservative mutual funds.';

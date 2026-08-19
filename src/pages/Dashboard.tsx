@@ -11,7 +11,7 @@ import { DashboardSkeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 // import LogRocket from "logrocket"; // Temporarily disabled
-import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { useDashboardData, type DashboardWallet } from "@/hooks/use-dashboard-data";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
@@ -46,20 +46,24 @@ const Dashboard = () => {
 
   const accountCards = useMemo(
     () =>
-      wallets.map((wallet, index) => ({
+      wallets
+      .filter((wallet): wallet is DashboardWallet & { id: string } => Boolean(wallet.id))
+      .map((wallet, index) => ({
         id: wallet.id,
         name: `${wallet.currency} Wallet`,
         number: wallet.id.slice(-4).toUpperCase(),
         balance: wallet.balance,
-        currency: wallet.currency,
+        currency: wallet.currency ?? currency,
         type: index === 0 ? "Primary" : "Wallet",
         color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length]
       })),
-    [wallets]
+    [currency, wallets]
   );
 
   const transactionItems: DashboardTransactionItem[] = useMemo(() => {
-    return transactions.map((transaction) => {
+    return transactions
+      .filter((transaction): transaction is typeof transaction & { id: string } => Boolean(transaction.id))
+      .map((transaction) => {
       const metadata = (transaction.metadata ?? {}) as Record<string, unknown>;
       const metadataDescription = metadata["description"];
       const metadataCategory = metadata["category"];
@@ -67,7 +71,10 @@ const Dashboard = () => {
       const metadataAction = metadata["action"];
 
       const actionKey = typeof metadataAction === "string" ? metadataAction : undefined;
-      const actionConfig = actionKey && DASHBOARD_ACTIONS[actionKey as DashboardActionType];
+      const actionConfig = actionKey
+        ? DASHBOARD_ACTIONS[actionKey as DashboardActionType]
+        : undefined;
+      const transactionType = transaction.type ?? "";
 
       const typeLabel: Record<string, string> = {
         deposit: "Deposit",
@@ -80,13 +87,13 @@ const Dashboard = () => {
         transaction.description ||
         (typeof metadataDescription === "string" && metadataDescription) ||
         actionConfig?.label ||
-        typeLabel[transaction.type] ||
+        typeLabel[transactionType] ||
         "Transaction";
 
       const category =
         (typeof metadataCategory === "string" && metadataCategory) ||
         actionConfig?.category ||
-        typeLabel[transaction.type] ||
+        typeLabel[transactionType] ||
         "General";
 
       const merchant = typeof metadataCounterparty === "string" ? metadataCounterparty : undefined;
@@ -112,13 +119,13 @@ const Dashboard = () => {
         amount: transaction.amount,
         type,
         category,
-        date: transaction.created_at,
+        date: transaction.created_at ?? "",
         status,
         merchant,
-        currency: transaction.currency
+        currency: transaction.currency ?? currency
       };
     });
-  }, [transactions]);
+  }, [currency, transactions]);
 
   const showSkeleton = isLoading && !hasWallets && transactions.length === 0;
 

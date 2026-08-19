@@ -80,17 +80,6 @@ export function SignupForm({ redirectTo }: SignupFormProps) {
         return;
       }
 
-      // If a session was created (email confirm disabled or user already exists), sign them in
-      // If no session, email confirmation is required — redirect to a confirmation screen
-      if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
       // Check if user was created (email confirmation may be required)
       // On success, Supabase handles the redirect to /auth/callback for OAuth
       // For email/password, redirect to dashboard (email not required for this project)

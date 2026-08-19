@@ -7,6 +7,6 @@ describe('cn', () => {
   })
 
   it('ignores falsy values', () => {
-    expect(cn('foo', false && 'bar', 'baz')).toBe('foo baz')
+    expect(cn('foo', undefined, 'baz')).toBe('foo baz')
   })
 })

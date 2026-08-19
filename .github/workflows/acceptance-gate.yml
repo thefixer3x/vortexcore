@@ -36,6 +36,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Install PostgreSQL client (Gate 2)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
       - name: Install Playwright browsers (Gate 3)
         if: ${{ env.BASE_URL != '' }}
         run: bunx playwright install --with-deps chromium
@@ -49,10 +52,14 @@ jobs:
           SUPABASE_DB_CONNECTION_STRING: ${{ secrets.SUPABASE_DB_CONNECTION_STRING }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          TEST_USER_A_JWT: ${{ secrets.TEST_USER_A_JWT }}
-          TEST_USER_B_JWT: ${{ secrets.TEST_USER_B_JWT }}
+          TEST_USER_A_EMAIL: ${{ secrets.TEST_USER_A_EMAIL }}
+          TEST_USER_A_PASSWORD: ${{ secrets.TEST_USER_A_PASSWORD }}
+          TEST_USER_B_EMAIL: ${{ secrets.TEST_USER_B_EMAIL }}
+          TEST_USER_B_PASSWORD: ${{ secrets.TEST_USER_B_PASSWORD }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: team_IY947R6mFLIOiooblMMEZanL
+          VERCEL_EXPECT_TARGET: ${{ github.ref_name == 'main-protected' && 'production' || 'preview' }}
         run: |
           # Single invocation; runner exits non-zero when any HARD gate is RED,
           # so the job (a required check) blocks the deploy/merge.
