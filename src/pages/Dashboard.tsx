@@ -50,10 +50,10 @@ const Dashboard = () => {
       .filter((wallet): wallet is DashboardWallet & { id: string } => Boolean(wallet.id))
       .map((wallet, index) => ({
         id: wallet.id,
-        name: `${wallet.currency} Wallet`,
+        name: index === 0 ? "Primary Wallet" : "Wallet",
         number: wallet.id.slice(-4).toUpperCase(),
         balance: wallet.balance,
-        currency: wallet.currency ?? currency,
+        currency,
         type: index === 0 ? "Primary" : "Wallet",
         color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length]
       })),
@@ -122,7 +122,7 @@ const Dashboard = () => {
         date: transaction.created_at ?? "",
         status,
         merchant,
-        currency: transaction.currency ?? currency
+        currency
       };
     });
   }, [currency, transactions]);

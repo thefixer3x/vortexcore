@@ -216,9 +216,16 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
 
                   <ul className="space-y-1.5">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <li key={f.label} className="flex items-start gap-2 text-xs text-muted-foreground">
                         <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                        {f}
+                        <span>
+                          {f.label}
+                          {f.comingSoon && (
+                            <Badge variant="outline" className="ml-1.5 text-[10px] px-1 py-0 align-middle">
+                              Coming soon
+                            </Badge>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>

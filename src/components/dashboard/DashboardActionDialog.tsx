@@ -20,6 +20,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { DashboardWallet } from "@/hooks/use-dashboard-data";
 import type { Json } from "@/integrations/supabase/types";
 import {
@@ -35,18 +36,6 @@ interface DashboardActionDialogProps {
   onSuccess: () => Promise<void> | void;
 }
 
-const formatCurrency = (value: number, currency: string) => {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency
-    }).format(value);
-  } catch (error) {
-    console.warn("Unable to format currency", error);
-    return `${currency} ${value.toFixed(2)}`;
-  }
-};
-
 export const DashboardActionDialog = ({
   action,
   open,
@@ -55,6 +44,7 @@ export const DashboardActionDialog = ({
   onSuccess
 }: DashboardActionDialogProps) => {
   const { user } = useAuth();
+  const { currency, formatCurrency } = useCurrency();
   const [selectedWallet, setSelectedWallet] = useState<string>("");
   const [counterparty, setCounterparty] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -135,7 +125,7 @@ export const DashboardActionDialog = ({
         type: actionConfig.transactionType,
         status: actionConfig.defaultStatus,
         amount: numericAmount,
-        currency: wallet?.currency ?? "USD",
+        currency,
         reference: `VC-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         description: notes ? `${actionConfig.label}: ${notes}` : actionConfig.label,
         metadata
@@ -147,7 +137,7 @@ export const DashboardActionDialog = ({
 
       toast({
         title: actionConfig.successMessage,
-        description: `${formatCurrency(numericAmount, wallet?.currency ?? "USD")} processed`
+        description: `${formatCurrency(numericAmount)} processed`
       });
 
       await onSuccess();
@@ -169,9 +159,9 @@ export const DashboardActionDialog = ({
     return null;
   }
 
-  const walletOptions = wallets.map((wallet) => ({
+  const walletOptions = wallets.map((wallet, index) => ({
     id: wallet.id ?? "",
-    label: `${wallet.currency} Wallet`,
+    label: index === 0 ? "Primary Wallet" : "Wallet",
     balance: wallet.balance
   }));
 
@@ -200,7 +190,7 @@ export const DashboardActionDialog = ({
                     <div className="flex flex-col">
                       <span>{wallet.label}</span>
                       <span className="text-xs text-muted-foreground">
-                        Balance: {formatCurrency(wallet.balance, wallets.find((item) => item.id === wallet.id)?.currency ?? "USD")}
+                        Balance: {formatCurrency(wallet.balance)}
                       </span>
                     </div>
                   </SelectItem>

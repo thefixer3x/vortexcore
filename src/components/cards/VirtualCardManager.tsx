@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { 
-  getUserVirtualCards, 
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { TIERS } from "@/lib/subscription-tiers";
+import {
+  getUserVirtualCards,
   createUserVirtualCard,
   toggleCardLock,
   getCardTransactionHistory,
@@ -10,18 +13,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  CreditCard, 
-  Plus, 
-  Lock, 
-  Unlock, 
-  Eye, 
+import {
+  CreditCard,
+  Plus,
+  Lock,
+  Unlock,
+  Eye,
   EyeOff,
   RefreshCw,
   AlertCircle,
   CheckCircle2,
   Clock,
-  ShoppingBag
+  ShoppingBag,
+  Sparkles
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { VirtualCardDetails } from "./VirtualCardDetails";
@@ -30,8 +34,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const FREE_TIER_CARD_LIMIT = 3;
+
 export function VirtualCardManager() {
   const { user } = useAuth();
+  const { tier } = useSubscription();
+  const navigate = useNavigate();
+  const cardLimit = tier === "free" ? FREE_TIER_CARD_LIMIT : Infinity;
   const [cards, setCards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -99,7 +108,16 @@ export function VirtualCardManager() {
       });
       return;
     }
-    
+
+    if (cards.length >= cardLimit) {
+      toast({
+        title: "Card limit reached",
+        description: `The Free plan includes up to ${FREE_TIER_CARD_LIMIT} virtual cards. Upgrade to Pro for unlimited cards.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -190,8 +208,13 @@ export function VirtualCardManager() {
           <p className="text-muted-foreground">
             Create and manage your virtual cards for secure online payments
           </p>
+          {tier === "free" && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {cards.length}/{FREE_TIER_CARD_LIMIT} cards used on the Free plan
+            </p>
+          )}
         </div>
-        
+
         <Dialog open={showCardForm} onOpenChange={setShowCardForm}>
           <DialogTrigger asChild>
             <Button className="gap-2">
@@ -200,13 +223,40 @@ export function VirtualCardManager() {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create Virtual Card</DialogTitle>
-              <DialogDescription>
-                Create a new virtual card for secure online payments. You can set spending limits and lock the card anytime.
-              </DialogDescription>
-            </DialogHeader>
-            <VirtualCardForm onSubmit={handleCreateCard} isLoading={loading} />
+            {cards.length >= cardLimit ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    Upgrade to create more cards
+                  </DialogTitle>
+                  <DialogDescription>
+                    You've reached the {FREE_TIER_CARD_LIMIT}-card limit on the Free plan.
+                    Upgrade to {TIERS.pro.name} for unlimited virtual cards.
+                  </DialogDescription>
+                </DialogHeader>
+                <Button
+                  className="w-full gap-2"
+                  onClick={() => {
+                    setShowCardForm(false);
+                    navigate("/settings");
+                  }}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  View {TIERS.pro.name} plan
+                </Button>
+              </>
+            ) : (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Create Virtual Card</DialogTitle>
+                  <DialogDescription>
+                    Create a new virtual card for secure online payments. You can set spending limits and lock the card anytime.
+                  </DialogDescription>
+                </DialogHeader>
+                <VirtualCardForm onSubmit={handleCreateCard} isLoading={loading} />
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </div>

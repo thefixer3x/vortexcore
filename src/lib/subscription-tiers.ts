@@ -1,35 +1,41 @@
+export interface TierFeature {
+  label: string;
+  /** Set when the feature is on the roadmap but not yet built — never advertise it as active. */
+  comingSoon?: boolean;
+}
+
 export const TIERS = {
   free: {
     name: 'Free',
     price: 0,
     priceId: null,
     features: [
-      'Basic dashboard',
-      'Up to 3 virtual cards',
-      'Standard AI responses',
-    ],
+      { label: 'Basic dashboard' },
+      { label: 'Up to 3 virtual cards' },
+      { label: 'Standard AI responses' },
+    ] as TierFeature[],
   },
   pro: {
     name: 'Pro',
     price: 4.99,
     priceId: 'price_1RiSAL2KF4vMCpn8wUyDio3N',
     features: [
-      'Detailed VortexAI Insights',
-      'Unlimited virtual cards',
-      'Priority AI responses',
-      'Advanced analytics',
-    ],
+      { label: 'Detailed VortexAI Insights' },
+      { label: 'Unlimited virtual cards' },
+      { label: 'Priority AI responses' },
+      { label: 'Advanced analytics' },
+    ] as TierFeature[],
   },
   enterprise: {
     name: 'Enterprise',
     price: 9.99,
     priceId: 'price_1RiSAi2KF4vMCpn8B18AAI8v',
     features: [
-      'Everything in Pro',
-      'Multiple sub-users',
-      'Access to instant credit',
-      'Dedicated support',
-    ],
+      { label: 'Everything in Pro' },
+      { label: 'Multiple sub-users', comingSoon: true },
+      { label: 'Access to instant credit', comingSoon: true },
+      { label: 'Dedicated support', comingSoon: true },
+    ] as TierFeature[],
   },
 } as const;
 
