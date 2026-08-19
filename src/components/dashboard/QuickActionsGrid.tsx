@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -5,7 +6,7 @@ import {
   DASHBOARD_ACTION_ORDER,
   type DashboardActionType
 } from "./action-config";
-import { Smartphone, BarChart3, Users, Settings, PiggyBank, TrendingUp, Shield, Sparkles, Zap } from "lucide-react";
+import { Smartphone, BarChart3, Users, Settings, PiggyBank, TrendingUp, Shield, Sparkles, Zap, Layers } from "lucide-react";
 
 interface QuickActionsGridProps {
   onActionSelect?: (action: DashboardActionType) => void;
@@ -13,6 +14,8 @@ interface QuickActionsGridProps {
 }
 
 export const QuickActionsGrid = ({ onActionSelect, disabled = false }: QuickActionsGridProps) => {
+  const navigate = useNavigate();
+
   const secondaryActions = [
     {
       icon: Smartphone,
@@ -96,6 +99,20 @@ export const QuickActionsGrid = ({ onActionSelect, disabled = false }: QuickActi
                 </Button>
               );
             })}
+            <Button
+              variant="outline"
+              className="h-auto p-3 sm:p-4 flex flex-col items-center gap-2 sm:gap-3 hover:shadow-md transition-all duration-300 group border-0 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:scale-105 btn-modern"
+              onClick={() => navigate("/profile/payments/bulk-payments")}
+              disabled={disabled}
+            >
+              <div className="p-2 sm:p-3 rounded-full bg-teal-100 dark:bg-teal-900/20 group-hover:scale-110 transition-transform">
+                <Layers className="h-4 w-4 sm:h-5 sm:w-5 text-teal-600 dark:text-teal-400" />
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-xs sm:text-sm leading-tight">Bulk Payments</p>
+                <p className="text-xs text-muted-foreground mt-1 hidden sm:block">Pay multiple recipients</p>
+              </div>
+            </Button>
             {secondaryActions.map((action) => (
               <Button
                 key={action.label}

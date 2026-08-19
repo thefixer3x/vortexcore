@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
@@ -48,6 +48,10 @@ const App = () => {
               <Route path="/insights" element={<Insights />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/virtual-cards" element={<VirtualCards />} />
+              <Route
+                path="/bulk-payments"
+                element={<Navigate to="/profile/payments/bulk-payments" replace />}
+              />
             </Route>
 
             {/* Payment-related routes */}
