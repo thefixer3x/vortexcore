@@ -140,6 +140,6 @@ its output.
 ## Acceptance criteria (Issue #97)
 
 - [x] All 7 gates documented as checklist — this file
-- [x] No deployment without all gates passing — policy + CI gate workflow
+- [ ] No deployment without all gates passing — the gate runner now fails closed (a HARD gate that SKIPs from missing env is treated as a failure, not a pass; see `scripts/acceptance-gate/run-gates.sh`), but `main`/`main-protected` branch protection does not yet require this check to pass before merge, so a failing/blocked run still doesn't stop a merge or deploy today — tracked in #97.
 - [x] Gating automation exists (CI integration) — `scripts/acceptance-gate/` + `.github/workflows/acceptance-gate.yml`
 - [x] Results logged for audit trail — `audit/acceptance-gate-results.{log,json}` per run
