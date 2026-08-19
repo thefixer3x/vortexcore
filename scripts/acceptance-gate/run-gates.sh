@@ -145,15 +145,28 @@ if gate_gated 7; then
 fi
 
 # ---------------- Summary ----------------
+# A HARD gate that SKIPped (missing required env) blocks release just like a
+# FAIL — "HARD" means the check must actually run, not that it's optional
+# when the environment happens to be absent. Only a SOFT gate may SKIP and
+# still let the release proceed (currently just Gate 4, visual validation).
 log ""
 log "=== Gate summary ==="
 OVERALL=PASS
+HARD_SKIPPED=""
 for g in 1 2 3 4 5 6 7; do
   s=$(eval "echo \$R$g"); k=$(eval "echo \$K$g")
-  [[ "$s" == "FAIL" ]] && OVERALL=FAIL
+  if [[ "$s" == "FAIL" ]]; then
+    OVERALL=FAIL
+  elif [[ "$s" == "SKIP" && "$k" == "HARD" ]]; then
+    OVERALL=FAIL
+    HARD_SKIPPED="$HARD_SKIPPED $g"
+  fi
   log "  Gate $g [$k] : $s"
 done
 log "OVERALL: $OVERALL"
+if [[ -n "$HARD_SKIPPED" ]]; then
+  log "HARD gates skipped without required env (blocking):$HARD_SKIPPED"
+fi
 
 # JSON audit trail (portable: no associative arrays)
 {
@@ -172,8 +185,12 @@ log "OVERALL: $OVERALL"
 log "audit written: $JSON"
 
 if [[ "$OVERALL" == "FAIL" ]]; then
-  echo "❌ RELEASE BLOCKED: at least one gate is RED." >&2
+  if [[ -n "$HARD_SKIPPED" ]]; then
+    echo "❌ RELEASE BLOCKED: HARD gate(s)$HARD_SKIPPED skipped without required environment (treated as failing), or another gate is RED." >&2
+  else
+    echo "❌ RELEASE BLOCKED: at least one gate is RED." >&2
+  fi
   exit 1
 fi
-echo "✅ Gates pass (or skip without env): release eligible."
+echo "✅ All gates passed with required environment present: release eligible."
 exit 0
