@@ -53,42 +53,55 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
-      case "create_cardholder":
-        // Create a new cardholder in Stripe
+      case "create_cardholder": {
+        // Create a new cardholder in Stripe. Self-service: any authenticated
+        // user can create their own cardholder — Stripe requires a billing
+        // address for individual cardholders, so it's required here too.
         if (!auth.userId) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
-        // RBAC: restrict to issuer/admin roles
-        if (!(auth.roles || []).some(r => ['issuer', 'admin'].includes(r))) {
-          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-        }
         await rateLimit('create_cardholder');
         requireIdempotency('create_cardholder');
-        const { name, email, metadata } = data || {};
+        const { name, email, phone_number, billing, metadata } = data || {};
+        if (!name || !email || !billing?.address?.line1 || !billing?.address?.city || !billing?.address?.postal_code || !billing?.address?.country) {
+          return new Response(
+            JSON.stringify({ error: 'name, email, and billing.address (line1, city, postal_code, country) are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
         const safeMetadata = { ...(metadata || {}), user_id: auth.userId };
         const cardholder = await stripe.issuing.cardholders.create({
           type: "individual",
           name,
           email,
+          phone_number,
+          billing,
           metadata: safeMetadata,
         }, idempotencyKey ? { idempotencyKey } : undefined);
         return new Response(
           JSON.stringify({ cardholder }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
-      case "create_card":
-        // Create a new virtual card
+      case "create_card": {
+        // Create a new virtual card. Self-service, but the cardholder must
+        // belong to the requesting user (checked via the metadata.user_id set
+        // when the cardholder was created above) so nobody can issue a card
+        // against someone else's cardholder record.
         if (!auth.userId) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-        }
-        // RBAC: issuer/admin can create; optionally allow self-service under constraints
-        if (!(auth.roles || []).some(r => ['issuer', 'admin'].includes(r))) {
-          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
         await rateLimit('create_card');
         requireIdempotency('create_card');
         const { cardholder_id, currency, spending_limits } = data || {};
+        if (!cardholder_id) {
+          return new Response(JSON.stringify({ error: 'cardholder_id is required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        const ownerCardholder = await stripe.issuing.cardholders.retrieve(cardholder_id);
+        if (ownerCardholder.metadata?.user_id !== auth.userId) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
         const cardData: any = {
           cardholder: cardholder_id,
           currency: currency || "usd",
@@ -108,6 +121,7 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
           JSON.stringify({ card }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "get_card":
         // Get card details
@@ -118,7 +132,7 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         // Ownership check via DB (virtual_cards)
         if (admin) {
           const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', card_id).single();
-          if (vc && vc.user_id !== auth.userId) {
+          if (!vc || vc.user_id !== auth.userId) {
             return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         }
@@ -136,7 +150,7 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         const { card_id: updateCardId, status } = data || {};
         if (admin) {
           const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', updateCardId).single();
-          if (vc && vc.user_id !== auth.userId) {
+          if (!vc || vc.user_id !== auth.userId) {
             return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         }
@@ -150,19 +164,19 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
-      case "get_card_details":
-        // Get sensitive card details (number, CVC, expiry)
+      case "get_card_details": {
+        // Get sensitive card details (number, CVC, expiry). Owner-only: the
+        // card's own holder can reveal it, same as any other card action —
+        // this used to require admin/compliance roles that no user ever has,
+        // which made the "reveal card" UI silently fail for everyone.
         if (!auth.userId) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
+        await rateLimit('get_card_details', 20);
         const { card_id: detailsCardId } = data || {};
-        const privileged = (auth.roles || []).some((r) => r === 'admin' || r === 'compliance');
-        if (!privileged) {
-          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-        }
         if (admin) {
           const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', detailsCardId).single();
-          if (vc && vc.user_id !== auth.userId) {
+          if (!vc || vc.user_id !== auth.userId) {
             return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         }
@@ -171,6 +185,7 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
           JSON.stringify({ details: sensitiveDetails }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "get_transactions":
         // Get card transactions
@@ -180,7 +195,7 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         const { card_id: transactionsCardId, limit } = data || {};
         if (admin) {
           const { data: vc } = await admin.from('virtual_cards').select('user_id').eq('card_id', transactionsCardId).single();
-          if (vc && vc.user_id !== auth.userId) {
+          if (!vc || vc.user_id !== auth.userId) {
             return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
           }
         }

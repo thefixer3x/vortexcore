@@ -13,23 +13,35 @@ interface VirtualCardFormProps {
 export function VirtualCardForm({ onSubmit, isLoading }: VirtualCardFormProps) {
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("usd");
+  const [line1, setLine1] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [country, setCountry] = useState("US");
   const [enableLimit, setEnableLimit] = useState(false);
   const [limitAmount, setLimitAmount] = useState("");
   const [limitInterval, setLimitInterval] = useState<string>("monthly");
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const formData = {
       name,
       currency,
+      billing: {
+        line1,
+        city,
+        state: state || undefined,
+        postal_code: postalCode,
+        country
+      },
       limitAmount: enableLimit ? limitAmount : undefined,
       limitInterval: enableLimit ? limitInterval : undefined
     };
-    
+
     onSubmit(formData);
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-4">
       <div className="space-y-4">
@@ -42,7 +54,7 @@ export function VirtualCardForm({ onSubmit, isLoading }: VirtualCardFormProps) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="currency">Currency</Label>
           <Select value={currency} onValueChange={setCurrency}>
@@ -57,7 +69,40 @@ export function VirtualCardForm({ onSubmit, isLoading }: VirtualCardFormProps) {
             </SelectContent>
           </Select>
         </div>
-        
+
+        <div className="space-y-2">
+          <Label>Billing address</Label>
+          <p className="text-xs text-muted-foreground">Stripe requires this to issue a card.</p>
+          <Input
+            placeholder="Address line 1"
+            value={line1}
+            onChange={(e) => setLine1(e.target.value)}
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <Input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+            <Input placeholder="State / region" value={state} onChange={(e) => setState(e.target.value)} />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              placeholder="Postal code"
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)}
+            />
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger>
+                <SelectValue placeholder="Country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="US">United States</SelectItem>
+                <SelectItem value="GB">United Kingdom</SelectItem>
+                <SelectItem value="NG">Nigeria</SelectItem>
+                <SelectItem value="DE">Germany</SelectItem>
+                <SelectItem value="FR">France</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="enable-limit">Spending Limit</Label>

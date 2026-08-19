@@ -118,9 +118,18 @@ export function VirtualCardManager() {
       return;
     }
 
+    if (!formData.billing?.line1 || !formData.billing?.city || !formData.billing?.postal_code || !formData.billing?.country) {
+      toast({
+        title: "Billing address required",
+        description: "Stripe requires a billing address to issue a card.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setLoading(true);
-      
+
       // Create spending limit object if values provided
       let spendingLimit;
       if (formData.limitAmount && formData.limitInterval) {
@@ -129,11 +138,12 @@ export function VirtualCardManager() {
           interval: formData.limitInterval
         };
       }
-      
+
       const newCard = await createUserVirtualCard(
         user.id,
         formData.name || user.name || user.email,
         user.email,
+        formData.billing,
         formData.currency || 'usd',
         spendingLimit
       );
