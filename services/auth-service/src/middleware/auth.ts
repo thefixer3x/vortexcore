@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
+import { PrismaClient, UserRole } from '@prisma/client';
 import { CryptoUtils, JWTPayload } from '../utils/crypto';
 import { redisUtils } from '../config/redis';
 import { AuthenticationError, AuthorizationError } from './errorHandler';
 import { logger } from '../utils/logger';
+import { ROLE_PERMISSIONS, Permission, isAdmin } from '../config/permissions';
+
+const prisma = new PrismaClient();
 
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
+    role?: UserRole;
     sessionId?: string;
   };
   token?: string;
@@ -20,27 +25,34 @@ export const authenticateToken = async (
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') 
-      ? authHeader.substring(7) 
+    const token = authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.substring(7)
       : null;
 
     if (!token) {
       throw new AuthenticationError('Access token required');
     }
 
-    // Verify token
     const decoded = CryptoUtils.verifyAccessToken(token);
-    
-    // Check if token is blacklisted
+
     const tokenId = CryptoUtils.getTokenId(token);
     if (tokenId && await redisUtils.isTokenBlacklisted(tokenId)) {
       throw new AuthenticationError('Token has been revoked');
     }
 
-    // Attach user info to request
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: { id: true, email: true, role: true, isActive: true },
+    });
+
+    if (!user || !user.isActive) {
+      throw new AuthenticationError('User not found or inactive');
+    }
+
     req.user = {
-      id: decoded.userId,
-      email: decoded.email,
+      id: user.id,
+      email: user.email,
+      role: user.role,
       sessionId: decoded.sessionId,
     };
     req.token = token;
@@ -48,6 +60,7 @@ export const authenticateToken = async (
     logger.debug('Token authenticated successfully', {
       userId: decoded.userId,
       email: decoded.email,
+      role: user.role,
       requestId: req.headers['x-request-id'],
     });
 
@@ -59,7 +72,7 @@ export const authenticateToken = async (
       userAgent: req.get('User-Agent'),
       ip: req.ip,
     });
-    
+
     next(error);
   }
 };
@@ -71,29 +84,34 @@ export const optionalAuth = async (
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') 
-      ? authHeader.substring(7) 
+    const token = authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.substring(7)
       : null;
 
     if (token) {
       try {
         const decoded = CryptoUtils.verifyAccessToken(token);
-        
-        // Check if token is blacklisted
+
         const tokenId = CryptoUtils.getTokenId(token);
         if (tokenId && await redisUtils.isTokenBlacklisted(tokenId)) {
-          // Token is blacklisted, but this is optional auth so continue without user
           return next();
         }
 
-        req.user = {
-          id: decoded.userId,
-          email: decoded.email,
-          sessionId: decoded.sessionId,
-        };
-        req.token = token;
+        const user = await prisma.user.findUnique({
+          where: { id: decoded.userId, isActive: true },
+          select: { id: true, email: true, role: true },
+        });
+
+        if (user) {
+          req.user = {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            sessionId: decoded.sessionId,
+          };
+          req.token = token;
+        }
       } catch (error) {
-        // Token is invalid, but this is optional auth so continue without user
         logger.debug('Optional auth token invalid', {
           error: error instanceof Error ? error.message : 'Unknown error',
           requestId: req.headers['x-request-id'],
@@ -107,6 +125,10 @@ export const optionalAuth = async (
   }
 };
 
+function resolveUserRole(roles: any): UserRole {
+  return roles?.role ?? 'USER';
+}
+
 export const requirePermission = (permissions: string | string[]) => {
   return async (
     req: AuthenticatedRequest,
@@ -118,13 +140,12 @@ export const requirePermission = (permissions: string | string[]) => {
         throw new AuthenticationError('Authentication required');
       }
 
-      // In a real implementation, you would check user permissions here
-      // For now, we'll assume all authenticated users have basic permissions
-      const userPermissions = ['read', 'write']; // This would come from database/cache
-      
+      const role = resolveUserRole(req.user);
+      const userPermissions = ROLE_PERMISSIONS[role] ?? ROLE_PERMISSIONS.USER;
+
       const requiredPermissions = Array.isArray(permissions) ? permissions : [permissions];
-      const hasPermission = requiredPermissions.every(permission => 
-        userPermissions.includes(permission)
+      const hasPermission = requiredPermissions.every((permission) =>
+        userPermissions.includes(permission as Permission)
       );
 
       if (!hasPermission) {
@@ -148,11 +169,10 @@ export const requireAdmin = async (
       throw new AuthenticationError('Authentication required');
     }
 
-    // In a real implementation, check if user has admin role
-    // For now, we'll use a simple check
-    const isAdmin = false; // This would come from database
-    
-    if (!isAdmin) {
+    const role = resolveUserRole(req.user);
+    const userIsAdmin = isAdmin(role);
+
+    if (!userIsAdmin) {
       throw new AuthorizationError('Admin access required');
     }
 
@@ -175,17 +195,16 @@ export const rateLimit = (options: {
     try {
       const key = options.keyGenerator ? options.keyGenerator(req) : req.ip;
       const rateLimitKey = `rate_limit:${key}`;
-      
+
       const current = await redisUtils.incrementRateLimit(rateLimitKey, options.windowMs);
-      
+
       if (current > options.maxRequests) {
         const retryAfter = Math.ceil(options.windowMs / 1000);
         res.set('Retry-After', retryAfter.toString());
-        
+
         throw new Error('Too many requests');
       }
 
-      // Set rate limit headers
       res.set({
         'X-RateLimit-Limit': options.maxRequests.toString(),
         'X-RateLimit-Remaining': Math.max(0, options.maxRequests - current).toString(),
