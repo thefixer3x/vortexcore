@@ -1,12 +1,12 @@
-name: Acceptance Gate (Issue #97)
+name: "Acceptance Gate (Issue #97)"
 
 # Hard gate enforcement: this workflow runs the 7 acceptance gates and FAILS
 # (as a required check) when any HARD gate is RED, so no deploy can proceed
 # without all gates passing. Wire it up as a branch-protection required check
 # on main / main-protected (alongside the deploy workflow).
 #
-# Env-gated gates (2,3,7) SKIP when their secrets are absent — they are only
-# RED (blocking) when the environment IS provided but the check fails.
+# Env-gated HARD gates (2,3,7) block when their required environment is absent
+# or the check fails; only the visual-validation SOFT gate may skip.
 
 on:
   push:
@@ -22,6 +22,9 @@ concurrency:
 jobs:
   run-all-gates:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - name: Checkout exact commit
         uses: actions/checkout@v4
@@ -35,9 +38,6 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
-
-      - name: Install PostgreSQL client (Gate 2)
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Install Playwright browsers (Gate 3)
         if: ${{ env.BASE_URL != '' }}

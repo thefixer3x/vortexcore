@@ -72,8 +72,9 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
+  /* Start Vite only for local tests. A configured BASE_URL targets an
+     already-deployed environment and must not launch an unused dev server. */
+  webServer: process.env.BASE_URL ? undefined : {
     command: 'bun run dev',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
