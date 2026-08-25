@@ -40,15 +40,12 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Install Playwright browsers (Gate 3)
-        if: ${{ env.BASE_URL != '' }}
-        run: bunx playwright install --with-deps chromium
-        env:
-          BASE_URL: ${{ secrets.BASE_URL }}
+        run: bunx playwright install chromium
 
       - name: Run acceptance gates
         env:
           CI: "true"
-          BASE_URL: ${{ secrets.BASE_URL }}
+          BASE_URL: https://me.vortexcore.app
           SUPABASE_DB_CONNECTION_STRING: ${{ secrets.SUPABASE_DB_CONNECTION_STRING }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
