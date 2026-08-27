@@ -5,6 +5,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -16,6 +21,7 @@ model User {
   passwordHash      String              @map("password_hash")
   firstName         String?             @map("first_name")
   lastName          String?             @map("last_name")
+  role              UserRole            @default(USER) @map("role")
   isVerified        Boolean             @default(false) @map("is_verified")
   isActive          Boolean             @default(true) @map("is_active")
   lastLoginAt       DateTime?           @map("last_login_at")
