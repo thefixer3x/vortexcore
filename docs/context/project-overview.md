@@ -28,7 +28,7 @@
 **Tech Stack:**
 - **Frontend:** Bun + React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
 - **Backend:** Supabase (Edge Functions + Postgres)
-- **AI:** OpenAI (primary), Gemini, Perplexity (fallback), Onasis AI Router
+- **AI:** OpenAI (primary), Gemini (support bubble), Perplexity (repo code, dead key), Onasis AI Router (planned)
 - **Billing:** Stripe (Subscriptions, Checkout, Webhooks)
 - **Mobile:** Capacitor
 
@@ -128,6 +128,12 @@ Full schema: `database-schema.md`
 - WebSocket built-in via `Bun.serve({ websocket: ... })`
 - React components: functional with hooks, TypeScript strict mode
 - Test with `bun test`
+
+## AI Surface Reality (2026-09-11)
+- `ai-router` repo ≠ deployed (Lovable shim on v57 with fabricated citation prompt)
+- `openai-chat` is the only properly secured surface (JWT required, RLS-scoped)
+- Perplexity API key is dead (401) — fallback path never works
+- See `docs/reports/AI_SURFACE_CONSOLIDATED_PLAN_2026-09-11.md` for full assessment
 
 ## AI Collaboration Notes
 

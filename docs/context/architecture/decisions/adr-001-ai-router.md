@@ -43,14 +43,37 @@ User message → PII strip → [OpenAI GPT-4o-mini] → brand voice filter → u
 ## Consequences
 
 **Positive:**
-- Single source of truth for AI behavior
-- PII protection centralized in one place
+- Single source of truth for AI behavior (in repo)
+- PII protection centralized in one place (in repo)
 - Easy to add providers by extending the router
 - Brand voice consistency across all AI interactions
 
 **Negative:**
 - Router is a single point of failure (mitigated by fallback)
 - Additional latency when Perplexity fallback triggers
+- **Deployed version diverges from repo code** — see `docs/reports/AI_SURFACE_CONSOLIDATED_PLAN_2026-09-11.md`
+
+## ⚠️ DEVIATION NOTICE (2026-09-11)
+
+The deployed `ai-router` (v57) does NOT implement this ADR. It was rewritten by Lovable and:
+- Uses `ai.gateway.lovable.dev` → `gemini-2.5-pro` instead of OpenAI GPT-4o-mini
+- Perplexity provider was dropped
+- System prompt contains fabrication directives
+- `verify_jwt = false` remains in config
+- No rate limiting
+
+**The repo version is the intended architecture. The deployment is a temporary Lovable shim.**
+Deploying the repo version (or a clean rewrite) is the correct path forward.
+
+## Consequences of the Deviation
+
+- **Users receive fabricated citations** — the deployed prompt tells the model to invent sources like [Reuters]
+- **No auth** — anyone on the internet can drain LLM budgets
+- **No rate limiting** — amplifies the cost DoS risk
+- **Dead model selector** — frontend offers 4 models, none are threaded through
+- **Dead Perplexity key** — the API key is expired/revoked, so the fallback path never works
+
+These issues are tracked in `docs/reports/AI_SURFACE_CONSOLIDATED_PLAN_2026-09-11.md`.
 
 ## Files
 

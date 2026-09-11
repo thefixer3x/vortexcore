@@ -66,18 +66,39 @@ User preference learning:
 - Personalizes recommendations
 - Stores preferences in `agent_banks_memories` table
 
-## AI Router Integration
+## AI Router Integration — VERIFIED STATUS (2026-09-11)
 
-All VortexAI chat routes through `ai-router/index.ts` edge function:
+**Repo code ≠ deployed code.** This is the critical fact.
 
-```
-User message → PII strip → OpenAI → formatResponse → UI
-                        ↓
-                  Perplexity (if fallback + wantRealtime)
-```
+### `ai-router` in the repo
+Routes OpenAI → Perplexity with PII stripping, brand voice enforcement.
+- `supabase/functions/ai-router/index.ts` — main router, `withPublicMiddleware`
+- `supabase/functions/ai-router/providers/perplexity.ts` — Perplexity provider
+- **Not deployed.** The deployed v57 (2026-08-03) is a Lovable rewrite.
 
-Brand voice rules enforced server-side:
-- First-person only ("I", never "VortexAI")
-- Concise, actionable, data-driven
-- Citation format: [MSCI], [Reuters]
-- Always end with recommendation
+### `ai-router` deployed (v57)
+- Provider: `ai.gateway.lovable.dev` → `gemini-2.5-pro`
+- Perplexity code dropped in rewrite
+- System prompt has toxic directives: fabricate citations, forbid admitting ignorance
+- `verify_jwt = false`, no rate limiting
+
+### `openai-chat` — the support bubble (the only well-secured surface)
+- `verify_jwt = true`, uses `withAuthMiddleware`
+- Queries caller-scoped financial context via RLS
+- Provider: Lovable gateway → Gemini or OpenAI
+
+### Callers
+| Component | Calls | Auth required? |
+|-----------|-------|----------------|
+| `PerplexityAIChat.tsx` | `ai-router` | No (public middleware) |
+| `OpenAIChat.tsx` | `openai-chat` | Yes (JWT) |
+| `GeminiDemo.tsx` | `gemini-ai` | No (public middleware) |
+| `useVortexChat.ts` | `ai-router` | No |
+| `useVortexChatPersistent.ts` | `ai-router` | No |
+
+### Brand voice
+The deployed `ai-router` system prompt instructs citation fabrication.
+Do NOT reference `[MSCI]`, `[Reuters]` as real citation format — they are prompt-injected examples that the model invents.
+
+### Perplexity API key
+Dead (401). The fallback path never works. Either renew the key or deprecate the Perplexity path.
