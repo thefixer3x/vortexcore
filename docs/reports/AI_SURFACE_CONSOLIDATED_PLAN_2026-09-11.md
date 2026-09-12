@@ -1,6 +1,6 @@
 # VortexCore AI Surface — Consolidated Assessment & Plan
 
-**Date:** 2026-09-11
+**Date:** 2026-09-11 (updated 2026-09-12)
 **Scope:** AI chat surfaces, edge functions, auth, data safety
 **Source:** Deep code review + live deployment probes against `mxtsdgkwzjzlttpotole`
 
@@ -8,195 +8,205 @@
 
 ## Executive Summary
 
-VortexCore runs **three AI surfaces** that hit **three different backends** with wildly different security postures. The repo\'s `ai-router` source code does NOT match what is deployed (v57 is a Lovable rewrite). The support bubble (`openai-chat`) is the only well-secured surface. Two blockers demand immediate attention: anonymous AI access drains LLM budgets, and the deployed `ai-router` system prompt instructs the model to fabricate citations.
+VortexCore runs **three AI surfaces** hitting **three different backends** with different security postures. Neither the repo's `ai-router` nor the deployed v57 Lovable shim is safe to deploy as-is. The repo has PII stripping and input validation that v57 lacks, but its `isFallback()` trigger is self-cancelling (the system prompt forbids the exact phrase the regex detects), `formatResponse()` strips citation URLs the client depends on, and it unconditionally appends hardcoded investment advice. The fabricated citations problem lives in both versions — it's the system prompt, not the model provider. The highest-value fix is prompt-level and costs nothing.
 
 ---
 
 ## The Three Surfaces — Verified
 
-| Surface | Frontend | Edge Function | `verify_jwt` | Auth middleware | Deployed reality |
-|---------|----------|---------------|--------------|-----------------|------------------|
-| `/ecosystem/perplexity` page | `PerplexityAIChat.tsx` | `ai-router` | `false` | `withPublicMiddleware` | Repo code ≠ deployed v57 (Lovable shim) |
-| Landing-page chat bubble | `OpenAIChat.tsx` (rendered on ALL pages) | `openai-chat` | `true` | `withAuthMiddleware` | Repo matches deployed — correct |
-| `/ecosystem/gemini` page | `GeminiDemo.tsx` | `gemini-ai` | N/A | `withPublicMiddleware` | Direct Gemini calls, no financial context |
+| Surface | Frontend | Edge Function | `verify_jwt` | Auth middleware | State |
+|---------|----------|---------------|--------------|-----------------|-------|
+| `/ecosystem/perplexity` page | `PerplexityAIChat.tsx` | `ai-router` | `false` | `withPublicMiddleware` | Broken (see Known Issues) |
+| Landing-page chat bubble | `OpenAIChat.tsx` (ALL pages) | `openai-chat` | `true` | `withAuthMiddleware` | Secure ✅ |
+| `/ecosystem/gemini` page | `GeminiDemo.tsx` | `gemini-ai` | N/A | `withPublicMiddleware` | Unknown (may be dead code) |
 
 **Additional callers of `ai-router`:**
 - `src/hooks/useVortexChat.ts:74` — generic chat hook
 - `src/hooks/useVortexChatPersistent.ts:206` — persistent session hook
 
-Both call `ai-router` and are subject to the same anonymous access issue.
+Both call `ai-router` with anonymous access.
 
 ---
 
-## Repo vs Deployed — The Core Discrepancy
+## The Two Versions — Honest Assessment
 
 ### `ai-router` in the repo (238 lines)
-- **Primary provider:** OpenAI `gpt-4o-mini` (hardcoded line 48)
-- **Fallback:** Perplexity `sonar-8k-online` (hardcoded in `providers/perplexity.ts:33`)
-- **Auth:** `withPublicMiddleware` — no JWT required
-- **PII strip:** regex-only (SSN, card, 10-16 digit numbers)
-- **Model selector:** UI offers 4 models, but none are threaded through to the router
-- **Rate limiting:** none
-- **CORS:** `Access-Control-Allow-Origin: *` (line 185)
+
+| Property | Value | Notes |
+|----------|-------|-------|
+| Primary provider | OpenAI `gpt-4o-mini` | Hardcoded at line 48 |
+| Fallback | Perplexity `sonar-8k-online` | Hardcoded at `providers/perplexity.ts:33` |
+| Auth | `withPublicMiddleware` | No JWT — anonymous access |
+| Rate limiting | None | Anyone can drain API budgets |
+| PII stripping | Yes (regex) | SSN, card, 10-16 digit patterns. Missing: BVN/NIN, emails, phone |
+| Input validation | Yes | Role allowlist, content type check |
+| Cold-fail | Yes | `throw new Error('Missing OPENAI_API_KEY')` |
+| Citation handling | **Destroys them** | `formatResponse()` strips URLs from markdown citations |
+| Advice safety | **Unsafe** | Appends hardcoded investment advice to responses |
+| Model selector | Dead | UI offers 4 models, none threaded through |
+| Perplexity key | Dead | `401 Invalid API key provided` |
 
 ### `ai-router` deployed (v57, 2026-08-03)
-- **Provider:** `ai.gateway.lovable.dev` → Google `gemini-2.5-pro`
-- **Perplexity code:** `providers/perplexity.ts` exists in repo but was **dropped in the Lovable rewrite**
-- **System prompt contains two toxic directives:**
-  1. `"Cite external data sources inline like [MSCI], [Reuters] when relevant"` — tells model to fabricate citation-shaped tokens
-  2. `"Never say I don\'t have real-time data"` — forbids the only honest answer
-- **Model field:** frontend sends `model: "sonar-8k-online"` but the deployed function ignores it entirely
 
-**Result:** The Nigeria trends reply with `[Reuters]` and `[BusinessDay]` citations was **fabricated**, not retrieved.
+| Property | Value | Notes |
+|----------|-------|-------|
+| Provider | `ai.gateway.lovable.dev` → `gemini-2.5-pro` | Lovable gateway |
+| Perplexity code | **Not deployed** | `providers/perplexity.ts` exists in repo but was dropped in Lovable rewrite |
+| System prompt | Has fabrication directives | Same two lines as repo: "cite like [MSCI], [Reuters]" + "Never say I don't have real-time data" |
+| Auth | `verify_jwt = false` | Anonymous access |
+| Rate limiting | None | Same gap as repo |
+| PII stripping | **None** | User messages sent raw to LLM |
+| Model selector | Dead | Frontend sends `model: "sonar-8k-online"` but it is ignored |
 
-### `openai-chat` (the support bubble) — The Good One
-- **Auth:** `verify_jwt = true`, uses `withAuthMiddleware` — returns 401 without JWT
-- **Data:** Queries `vortex_wallets`, `vortex_transactions`, `vortex_settings` via caller-scoped Supabase client with RLS enforcement
-- **Provider:** Lovable gateway → `gemini-2.5-flash` (if `LOVABLE_API_KEY`), else OpenAI `gpt-4o-mini`
-- **System prompt:** Explicitly forbids inventing balances, transactions, trends, or product features
-- **Verified:** No auth → 401; anon key as Bearer → 401
+### `openai-chat` (the support bubble) — The Only Secure Surface
 
-### `gemini-ai` (unused?)
-- **Auth:** `withPublicMiddleware` — anonymous access
-- **No financial context** — direct Gemini calls
-- **Frontend:** `GeminiDemo.tsx` at `/ecosystem/gemini`
-- **Assessment:** May be dead code; confirm if any user-facing path routes here
+| Property | Value |
+|----------|-------|
+| Auth | `verify_jwt = true`, `withAuthMiddleware` — returns 401 without JWT |
+| Data | Queries `vortex_wallets`, `vortex_transactions`, `vortex_settings` via caller-scoped Supabase client with RLS |
+| Provider | Lovable gateway → `gemini-2.5-flash` (if `LOVABLE_API_KEY`), else OpenAI `gpt-4o-mini` |
+| System prompt | Explicitly forbids inventing balances, transactions, trends, or product features |
+| Verified | No auth → 401; anon key as Bearer → 401 |
 
 ---
 
-## Verified Issues (Ranked by Severity)
+## Known Issues (Ranked by Severity)
 
 ### 🔴 BLOCKER 1: Cost DoS on `ai-router`
 - `verify_jwt = false` in `supabase/config.toml`, `withPublicMiddleware` in code
-- Anyone on the internet can drain OpenAI + Perplexity budgets
+- Anyone on the internet can drain OpenAI budgets through your Lovable account
 - Already flagged in `AUDIT_2026-08-14.md` #4.2.1 and #4.2.2 as **Critical**
-- **Status:** PENDING
+- Affects both repo and deployed versions
 
-### 🔴 BLOCKER 2: Fabricated Citations in Deployed `ai-router`
-- Two system prompt directives tell the model to: (a) fabricate citation tokens like `[Reuters]`, (b) never admit knowledge cutoff
-- This is **financial misinformation** on a consumer-facing interface
-- **Status:** PENDING (can be fixed via deployed function env — no code deploy needed)
+### 🔴 BLOCKER 2: Fabricated Citations — Repo-Native, Not a Lovable Invention
+- The `VORTEX_SYSTEM_PROMPT` in the repo contains two directives:
+  1. `"cite data sources inline when they are external (e.g. [MSCI], [Reuters])"`
+  2. `"Forbidden: 'I don't have real-time data…'"`
+- **These are in the repo, not a Lovable deviation.** Both repo and deployed v57 have them.
+- Deploying the repo version would NOT fix fabricated citations.
 
-### 🔴 BLOCKER 3: Perplexity API Key is Dead
-- Live probe confirmed: `401 Invalid API key provided` on `api.perplexity.ai/chat/completions`
-- The fallback path never works in practice
-- `PERPLEXITY_API_KEY` either expired or was revoked
-- **Status:** PENDING
+### 🔴 BLOCKER 3: Perplexity Fallback Is Architecturally Unreachable
+- `isFallback()` regex matches `"I don't have real-time data"` — the exact phrase the system prompt **forbids** the model from emitting
+- The fallback only fires when the model disobeys its own prompt
+- The regex is not just "too narrow" — it is **self-cancelling**
+- Additionally, Perplexity API key returns `401` — the fallback path never works even if the trigger fired
 
-### 🟡 HIGH 4: Dead Model Selector in PerplexityAIChat
-- Frontend dropdown offers 4 models (sonar-8k-online, sonar-small-online, mixtral-8x7b-instruct, claude-3-sonnet-20240229)
-- `ai-router/index.ts:48` hardcodes `gpt-4o-mini`; `perplexity.ts:33` hardcodes `sonar-8k-online`
-- `model` field from request body is never read — every request hits the same two models
-- "VortexAI Advanced / Analyst / Express" options are a UI lie
-- **Status:** PENDING
+### 🟡 HIGH 4: `formatResponse()` Destroys Citation Provenance
+- `processed.replace(/\[(.*?)\]\((.*?)\)/g, '[$1]')` strips URLs from markdown citations
+- The client (`PerplexityAIChat.tsx:112`) extracts citations **only** from markdown links
+- The router deletes precisely what the client depends on — citation chips can never populate
+- Invented `[Reuters]` tokens become indistinguishable from real sources
 
-### 🟡 HIGH 5: CORS + Credentials Reflection
+### 🟡 HIGH 5: Hardcoded Investment Advice Appended to Every Response
+- If response doesn't contain "recommend" or "suggestion", appends:
+  `"I recommend monitoring these trends closely for investment opportunities."`
+- Unconditional string concatenation — financial advice with no basis in user data or question
+- This is a compliance risk in a fintech product
+
+### 🟡 HIGH 6: Perplexity SSE vs Client JSON Mismatch
+- Perplexity path returns `text/event-stream`
+- Client reads `data?.response` — a JSON field
+- Result: silent blank — nothing rendered when Perplexity actually works
+
+### 🟡 HIGH 7: CORS + Credentials Reflection
 - `middleware.ts:26-33`: when `ALLOWED_ORIGINS` is empty, reflects any Origin back with `Access-Control-Allow-Credentials: true`
-- Combined with Supabase cookie-based auth, any malicious site a logged-in user visits can make credentialed cross-origin requests
+- Combined with Supabase cookie-based auth, any malicious site a logged-in user visits can make credentialed requests
 - Affects `ai-router`, `stripe`, and any function using shared middleware
-- **Status:** PENDING
 
-### 🟡 MEDIUM 6: Perplexity Stream Cache Memory Leak
-- `perplexity.ts:68-91`: `responseCache` stores raw `ReadableStream` objects
+### 🟡 MEDIUM 8: PII Stripping is Regex-Only
+- Strips long-digit patterns, CC numbers, SSNs
+- Missing: BVN/NIN (Nigeria-specific), emails, phone numbers, addresses
+- Users paste account numbers, BVNs into AI chat — these pass through to LLMs
+
+### 🟡 MEDIUM 9: Perplexity Stream Cache Memory Leak
+- `perplexity.ts:68-91`: stores raw `ReadableStream` objects in memory
 - `tee()` called on already-splitted streams; cached copy is never consumed
-- Streams evicted only by TTL — unbounded memory growth over time
-- **Status:** PENDING
+- Streams evicted only by TTL — unbounded memory growth
 
-### 🟡 MEDIUM 7: PII Stripping is Regex-Only
-- `ai-router/index.ts:86-96`: strips long-digit patterns, CC numbers, SSNs
-- Names, emails, BVN/NIN (Nigeria-specific), phone numbers, addresses all pass through to LLMs
-- **Status:** PENDING (AUDIT_2026-08-14.md #4.4.2 — High)
+### 🟢 LOW 10: Dead Model Selector in UI
+- Dropdown offers 4 models, but `ai-router` hardcodes `gpt-4o-mini` and `perplexity.ts` hardcodes `sonar-8k-online`
+- `model` field from request body is never read
 
-### 🟢 LOW 8: `isFallback()` Regex Too Narrow
-- Only matches `"I don\'t have real-time data"`
-- Common refusals like "my knowledge cuts off in October 2023" bypass Perplexity fallback entirely
-- **Status:** PENDING
-
-### 🟢 LOW 9: `formatResponse()` Incomplete Sanitization
-- Only replaces "the assistant" and "vortexai" → "I"
-- Other system-prompt leaks in model output pass through untouched
-- **Status:** PENDING
-
-### 🟢 LOW 10: `openai-chat` Auth Header Bug
-- `openai-chat/index.ts:113`: `auth.split(\'Bearer \'` leaves `***` if header format is unexpected
-- Parsing bug — should handle edge cases
-- **Status:** PENDING
+### 🟢 LOW 11: `openai-chat` Auth Header Parsing Bug
+- `openai-chat/index.ts:113`: `auth.split('Bearer ')` leaves `***` if header format is unexpected
+- Parsing bug — should use `.replace('Bearer ', '')` or `split('Bearer ')[1]`
 
 ---
 
-## Tracking Against AUDIT_2026-08-14.md
+## Quick Recommendation
 
-| Audit Item | This Plan | Current Status |
-|------------|-----------|----------------|
-| 4.2.1 `verify_jwt = false` for AI functions | BLOCKER 1 | **PENDING** |
-| 4.2.2 `ai-router` no rate limiting | BLOCKER 1 | **PENDING** |
-| 4.3.3 Wildcard CORS on functions | HIGH 5 | **PENDING** |
-| 4.4.2 PII sent to LLMs without redaction | MEDIUM 7 | **PENDING** |
+**Neither version is deployable as-is.** "Deploy the repo version" would fix input hygiene (PII stripping, validation) but regress on citation integrity (`formatResponse` strips provenance) and advice safety (hardcoded investment append).
 
-**New findings not in audit:**
-- Deployed `ai-router` system prompt instructs fabrication of citations
-- Repo code ≠ deployed code for `ai-router`
-- Perplexity API key is dead
-- Model selector is a dead UI element
-- `openai-chat` auth header parsing bug
-- Stream cache memory leak
+The highest-value fix is **prompt-level and costs nothing**:
+1. Drop the two lines from `VORTEX_SYSTEM_PROMPT`: "cite data sources inline like [MSCI], [Reuters]" and "Forbidden: I don't have real-time data"
+2. That kills fabrication on the live shim today without any code deploy
+3. Then decide whether to keep v57 (simpler, no Perplexity) or deploy a fixed repo version
+
+Auth and rate limiting (`verify_jwt = true`, per-IP rate limit) are missing from both and should be added wherever this lands.
 
 ---
 
 ## Trackable Plan
 
-### Phase 1: Kill the bleeding (1–2 hours)
-| # | Task | Files |
-|---|------|-------|
-| 1.1 | Set `ALLOWED_ORIGINS` to explicit list | `supabase/config.toml` / function env |
-| 1.2 | Set `verify_jwt = true` on `ai-router` | `supabase/config.toml` |
-| 1.3 | Add per-IP rate limiting to `ai-router` | `middleware.ts` + new rate-limit util |
-| 1.4 | Fix `openai-chat` Authorization header parsing | `openai-chat/index.ts:113` |
+### Phase 1: Prompt hygiene — zero code deploy (30 min) — **DO THIS FIRST**
 
-### Phase 2: Prompt hygiene — zero code deploy (30 min)
 | # | Task | Where |
 |---|------|-------|
-| 2.1 | Remove "Cite sources inline like [MSCI], [Reuters]" | Supabase dashboard |
-| 2.2 | Remove "Never say I don\'t have real-time data" | Supabase dashboard |
-| 2.3 | Add honest-fallback instruction | Supabase dashboard |
+| 1.1 | Remove "cite data sources inline like [MSCI], [Reuters]" from system prompt | Supabase dashboard → Functions → ai-router → env/prompt |
+| 1.2 | Remove "Forbidden: I don't have real-time data" from system prompt | Same |
+| 1.3 | Add honest-fallback instruction: "If you don't know current data, say so plainly" | Same |
 
-### Phase 3: Fix repo `ai-router` (half-day)
+**This alone stops fabricated citations on the live deployment.** No code deploy needed.
+
+### Phase 2: Kill the bleeding — auth and rate limits (1–2 hours)
+
 | # | Task | Files |
 |---|------|-------|
-| 3.1 | Thread `body.model` through to correct provider | `ai-router/index.ts` |
-| 3.2 | Broaden `isFallback()` regex | `ai-router/index.ts` |
-| 3.3 | Strip `formatResponse()` to only sanitize brand leaks | `ai-router/index.ts` |
-| 3.4 | Fix Perplexity cache — assemble text, cache JSON, not streams | `providers/perplexity.ts` |
+| 2.1 | Set `ALLOWED_ORIGINS` to explicit list (`https://me.vortexcore.app`) | Function env / `supabase/config.toml` |
+| 2.2 | Set `verify_jwt = true` on `ai-router` | `supabase/config.toml` |
+| 2.3 | Add per-IP rate limiting to `ai-router` | `middleware.ts` + new rate-limit util |
+| 2.4 | Fix `openai-chat` Authorization header parsing | `openai-chat/index.ts:113` |
 
-### Phase 4: Fix Perplexity model selector UI (2 hours)
+### Phase 3: If deploying the repo version (half-day)
+
 | # | Task | Files |
 |---|------|-------|
-| 4.1 | Wire `model` through OR remove dead options | `PerplexityAIChat.tsx` + `ai-router/index.ts` |
-| 4.2 | If keeping: pass `body.model` through | `PerplexityAIChat.tsx:94`, `providers/perplexity.ts:33` |
-| 4.3 | If removing: collapse to 2 honest choices | `PerplexityAIChat.tsx:27-32` |
+| 3.1 | **Delete `formatResponse()` entirely** — let model produce clean markdown | `ai-router/index.ts` |
+| 3.2 | Remove the hardcoded investment advice append | `ai-router/index.ts` |
+| 3.3 | Change Perplexity fallback to return JSON matching the client | `providers/perplexity.ts` |
+| 3.4 | Escalate on `wantRealtime === true` directly instead of `isFallback()` | `ai-router/index.ts` |
+| 3.5 | Thread `body.model` through to providers OR remove dead dropdown | `ai-router/index.ts` + `PerplexityAIChat.tsx` |
 
-### Phase 5: PII & data safety (half-day)
+### Phase 4: Data safety (half-day)
+
 | # | Task | Files |
 |---|------|-------|
-| 5.1 | Add email/BVN/NIN/phone regex to `stripPII()` | `ai-router/index.ts` |
-| 5.2 | Or better: strip all user content beyond last message | `ai-router/index.ts` |
-| 5.3 | Audit `gemini-ai` for same issues | `gemini-ai/index.ts` |
+| 4.1 | Add email/BVN/NIN/phone regex patterns to `stripPII()` | `ai-router/index.ts` |
+| 4.2 | Fix Perplexity cache to store assembled text (not raw streams) | `providers/perplexity.ts` |
 
-### Phase 6: Deprecation & consolidation (1 day)
-| # | Task | Files |
-|---|------|-------|
-| 6.1 | Confirm `openai-chat` is correct path for support bubble | Code review |
-| 6.2 | Decide: does `ai-router` serve any page `openai-chat` shouldn\'t? | Architecture decision |
-| 6.3 | If `ai-router` only for PerplexityDemo: deprecate hooks | `useVortexChat.ts`, `useVortexChatPersistent.ts` |
-| 6.4 | Clean up `gemini-ai` if no frontend routes here | `GeminiDemo.tsx` |
+---
+
+## Tracking Against AUDIT_2026-08-14.md
+
+| Audit Item | This Plan | Status |
+|------------|-----------|--------|
+| 4.2.1 `verify_jwt = false` for AI functions | BLOCKER 1 | **PENDING** |
+| 4.2.2 `ai-router` no rate limiting | BLOCKER 1 | **PENDING** |
+| 4.3.3 Wildcard CORS on functions | HIGH 7 | **PENDING** |
+| 4.4.2 PII sent to LLMs without redaction | MEDIUM 8 | **PENDING** |
 
 ---
 
 ## Quick Decisions Needed
 
-1. **Perplexity API key**: Renew or deprecate?
-2. **Repo vs deployed `ai-router`**: Deploy repo version, or accept Lovable shim + fix prompt?
-3. **`useVortexChat` hooks**: Still used beyond PerplexityDemo?
+1. **Keep v57 shim or deploy a fixed repo version?**
+   - v57: simpler, no Perplexity, no `formatResponse()` bug, no hardcoded advice append — but no PII stripping, no input validation
+   - Repo: has PII stripping and validation, but has `formatResponse()`, hardcoded advice, self-cancelling fallback
+   - **Recommendation:** Fix prompt + add auth to v57 for now. Fix repo version later if Perplexity is needed.
+
+2. **Perplexity API key**: renew or deprecate?
+
+3. **`useVortexChat` hooks**: still used beyond PerplexityDemo?
 
 ---
 
