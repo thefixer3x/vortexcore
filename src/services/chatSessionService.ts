@@ -4,6 +4,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  [key: string]: string | undefined;
 }
 
 export interface ChatSession {
@@ -14,6 +15,68 @@ export interface ChatSession {
   ai_model: string;
   created_at: string;
   updated_at: string;
+  last_message_at?: string | null;
+}
+
+type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+
+interface DbChatSessionRow {
+  id: string | null;
+  user_id: string | null;
+  title: string | null;
+  model: string | null;
+  metadata: Json | null;
+  created_at: string | null;
+  updated_at: string | null;
+  last_message_at: string | null;
+}
+
+interface DbChatSessionInsert {
+  id?: string | null;
+  user_id?: string | null;
+  title?: string | null;
+  model?: string | null;
+  metadata?: Json | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  last_message_at?: string | null;
+}
+
+interface DbChatSessionUpdate {
+  id?: string | null;
+  user_id?: string | null;
+  title?: string | null;
+  model?: string | null;
+  metadata?: Json | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  last_message_at?: string | null;
+}
+
+interface SessionMetadata {
+  messages?: ChatMessage[];
+  [key: string]: unknown;
+}
+
+function safeMetadata(value: unknown): SessionMetadata {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as SessionMetadata;
+  }
+  return {};
+}
+
+function rowToChatSession(row: DbChatSessionRow): ChatSession {
+  const metadata = safeMetadata(row.metadata);
+  return {
+    id: row.id ?? '',
+    user_id: row.user_id ?? '',
+    session_name: row.title ?? null,
+    messages: Array.isArray(metadata.messages) ? metadata.messages : [],
+    ai_model: row.model ?? 'vortex-router',
+    created_at: row.created_at ?? new Date().toISOString(),
+    updated_at: row.updated_at ?? new Date().toISOString(),
+    last_message_at: row.last_message_at ?? null
+  };
 }
 
 /**
@@ -36,16 +99,18 @@ export class ChatSessionService {
         timestamp: new Date().toISOString()
       };
 
+      const messages = [initialMessage || defaultMessage];
+
+      const insert: DbChatSessionInsert = {
+        user_id: userId,
+        title: sessionName || `Chat ${new Date().toLocaleDateString()}`,
+        model: 'vortex-router',
+        metadata: { messages }
+      };
+
       const { data, error } = await supabase
         .from('ai_chat_sessions')
-        .insert([
-          {
-            user_id: userId,
-            session_name: sessionName || `Chat ${new Date().toLocaleDateString()}`,
-            messages: [initialMessage || defaultMessage],
-            ai_model: 'vortex-router'
-          }
-        ])
+        .insert([insert])
         .select()
         .single();
 
@@ -54,7 +119,7 @@ export class ChatSessionService {
         return null;
       }
 
-      return data;
+      return data ? rowToChatSession(data) : null;
     } catch (error) {
       console.error('Error in createSession:', error);
       return null;
@@ -77,7 +142,7 @@ export class ChatSessionService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(rowToChatSession);
     } catch (error) {
       console.error('Error in getUserSessions:', error);
       return [];
@@ -101,7 +166,7 @@ export class ChatSessionService {
         return null;
       }
 
-      return data;
+      return data ? rowToChatSession(data) : null;
     } catch (error) {
       console.error('Error in getSession:', error);
       return null;
@@ -116,12 +181,14 @@ export class ChatSessionService {
     messages: ChatMessage[]
   ): Promise<boolean> {
     try {
+      const update: DbChatSessionUpdate = {
+        metadata: { messages },
+        updated_at: new Date().toISOString()
+      };
+
       const { error } = await supabase
         .from('ai_chat_sessions')
-        .update({
-          messages,
-          updated_at: new Date().toISOString()
-        })
+        .update(update)
         .eq('id', sessionId);
 
       if (error) {
@@ -170,7 +237,7 @@ export class ChatSessionService {
     try {
       const { error } = await supabase
         .from('ai_chat_sessions')
-        .update({ session_name: newName })
+        .update({ title: newName })
         .eq('id', sessionId)
         .eq('user_id', userId);
 
@@ -226,7 +293,7 @@ export class ChatSessionService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(rowToChatSession);
     } catch (error) {
       console.error('Error in getRecentSessions:', error);
       return [];
@@ -245,7 +312,7 @@ export class ChatSessionService {
         .from('ai_chat_sessions')
         .select('*')
         .eq('user_id', userId)
-        .or(`session_name.ilike.%${searchTerm}%,messages.cs.${JSON.stringify({ content: searchTerm })}`)
+        .or(`title.ilike.%${searchTerm}%,metadata->>messages.cs.${JSON.stringify({ content: searchTerm })}`)
         .order('updated_at', { ascending: false });
 
       if (error) {
@@ -253,7 +320,7 @@ export class ChatSessionService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(rowToChatSession);
     } catch (error) {
       console.error('Error in searchSessions:', error);
       return [];
