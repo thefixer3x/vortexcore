@@ -51,6 +51,10 @@ Gate types:
 | RLS cross-user isolation | `scripts/rls-validate.sql` + REST deny-by-default checks (user A vs user B) | `SUPABASE_DB_CONNECTION_STRING`, test JWTs |
 | No new tables missing grants | verify each new table has RLS + explicit grants | `scripts/rls-validate.sql` |
 
+The Vercel correlation uses `PROVENANCE_SHA` (falling back to `GITHUB_SHA`). The workflow sets it to
+the PR head SHA on `pull_request` runs, because `GITHUB_SHA` there is the synthetic merge commit while
+Vercel deploys the head commit; on `push` runs it equals `GITHUB_SHA`.
+
 **Status @ bf76efd3:** ⏳ **SKIP** in this run — no DB connection / test credentials, and the
 20260816 migration is under active rewrite by t_5e7e78bd. This gate cannot meaningfully pass
 until that lands.
