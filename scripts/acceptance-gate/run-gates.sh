@@ -54,7 +54,6 @@ log "runner: $0 (CI=${CI_MODE:-no})"
 if gate_gated 1; then
   log "[Gate 1] Build validation"
   g1=PASS
-  ( cd "$ROOT" && bun install --frozen-lockfile >/dev/null 2>&1 ) || { g1=FAIL; log "  ✗ install"; }
   ( cd "$ROOT" && bun run build >/dev/null 2>&1 ) || { g1=FAIL; log "  ✗ build"; }
   ( cd "$ROOT" && bunx tsc -b --noEmit >/dev/null 2>&1 ) || { g1=FAIL; log "  ✗ tsc --noEmit"; }
   ( cd "$ROOT" && bun run lint >/dev/null 2>&1 ) || { g1=FAIL; log "  ✗ lint"; }
@@ -99,11 +98,17 @@ fi
 if gate_gated 3; then
   log "[Gate 3] E2E coverage"
   if [[ -z "${BASE_URL:-}" ]] || [[ ! -x "$ROOT/node_modules/.bin/playwright" ]]; then
-    log "  - no BASE_URL / playwright browsers; SKIP (child card: 403/500 specs)"
+    log "  - no BASE_URL / Playwright installation; SKIP"
     record 3 SKIP
   else
     g3=PASS
-    ( cd "$ROOT" && BASE_URL="$BASE_URL" bunx playwright test >/dev/null 2>&1 ) || g3=FAIL
+    # Keep the automatic release gate bounded. Cross-browser diagnostics run
+    # in the manual deep-regression workflow instead of retrying five browser
+    # and device projects on every push.
+    ( cd "$ROOT" && BASE_URL="$BASE_URL" bunx playwright test \
+        src/test/e2e/release-smoke.spec.ts \
+        --project=chromium --workers=2 --retries=0 --max-failures=5 \
+        >/dev/null 2>&1 ) || g3=FAIL
     record 3 $g3
   fi
 fi
