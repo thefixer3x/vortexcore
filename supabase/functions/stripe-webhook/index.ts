@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 import Stripe from "npm:stripe@14.18.0";
+import { PRICE_CATALOG, Tier, entitlementsFor, resolveTier } from "../_shared/subscription-logic.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 // Deno has no sync crypto; webhook verification must use the async Web Crypto path.
@@ -9,23 +10,45 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
 );
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") || "";
-const PRO_PRICE_ID = Deno.env.get("STRIPE_PRO_PRICE_ID") || "price_1RiSAL2KF4vMCpn8wUyDio3N";
-const ENT_PRICE_ID = Deno.env.get("STRIPE_ENT_PRICE_ID") || "price_1RiSAi2KF4vMCpn8B18AAI8v";
 
-function resolveTier(priceId: string | null): string {
-  if (priceId === PRO_PRICE_ID) return "pro";
-  if (priceId === ENT_PRICE_ID) return "enterprise";
-  return "free";
+// Tier logic lives in _shared/subscription-logic.ts (catalog + entitlements),
+// shared with the check-subscription read path.
+function tierRow(userId: string, tier: Tier, isActive: boolean) {
+  return {
+    user_id: userId,
+    ...entitlementsFor(tier, isActive),
+    updated_at: new Date().toISOString(),
+  };
 }
 
 function downgradeTier(userId: string) {
-  return supabase.from("user_tiers").upsert({
-    user_id: userId,
-    tier_name: "free",
-    max_queries_per_day: 10,
-    can_use_advanced_models: false,
-    updated_at: new Date().toISOString(),
-  }, { onConflict: "user_id" });
+  return supabase.from("user_tiers").upsert(tierRow(userId, "free", false), { onConflict: "user_id" });
+}
+
+// Stripe API >= 2025-03-31.basil moved current_period_end from the subscription
+// to its items, and the webhook endpoint uses the account default version, so
+// event payloads no longer carry it at the top level. Accept either shape.
+function toIso(seconds: number | null | undefined): string | null {
+  return typeof seconds === "number" && Number.isFinite(seconds)
+    ? new Date(seconds * 1000).toISOString()
+    : null;
+}
+
+function periodEnd(sub: Stripe.Subscription): number | null {
+  const top = (sub as unknown as { current_period_end?: number }).current_period_end;
+  const item = (sub.items?.data?.[0] as unknown as { current_period_end?: number } | undefined)
+    ?.current_period_end;
+  return top ?? item ?? null;
+}
+
+function priceTier(sub: Stripe.Subscription): { priceId: string | null; tier: Tier } {
+  const price = sub.items?.data?.[0]?.price;
+  const priceId = price?.id ?? null;
+  const tier = resolveTier(priceId, price?.metadata?.tier);
+  if (priceId && !PRICE_CATALOG[priceId]) {
+    console.warn(`[stripe-webhook] price ${priceId} not in PRICE_CATALOG; resolved tier=${tier} from metadata`);
+  }
+  return { priceId, tier };
 }
 
 const CORS = {
@@ -102,7 +125,7 @@ Deno.serve(async (req: Request) => {
 });
 
 async function handleChange(sub: Stripe.Subscription) {
-  const priceId = sub.items.data[0]?.price?.id ?? null;
+  const { priceId, tier } = priceTier(sub);
   const status = sub.status;
 
   const { error: e1 } = await supabase.from("stripe_subscriptions").upsert({
@@ -110,9 +133,9 @@ async function handleChange(sub: Stripe.Subscription) {
     customer_id: sub.customer as string,
     status: status,
     price_id: priceId,
-    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-    cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
-    trial_end: sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null,
+    current_period_end: toIso(periodEnd(sub)),
+    cancel_at: toIso(sub.cancel_at),
+    trial_end: toIso(sub.trial_end),
     updated_at: new Date().toISOString(),
   }, { onConflict: "stripe_subscription_id" });
   if (e1) { console.error("[stripe-webhook] sub upsert:", e1.message); throw e1; }
@@ -122,15 +145,9 @@ async function handleChange(sub: Stripe.Subscription) {
     .eq("customer_id", sub.customer as string).maybeSingle();
 
   if (cr?.user_id) {
-    const tier = resolveTier(priceId);
     const isActive = ["active", "trialing"].includes(sub.status);
-    const { error: e2 } = await supabase.from("user_tiers").upsert({
-      user_id: cr.user_id,
-      tier_name: tier,
-      max_queries_per_day: tier === "enterprise" ? 500 : tier === "pro" ? 100 : 10,
-      can_use_advanced_models: isActive && tier !== "free",
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" });
+    const { error: e2 } = await supabase.from("user_tiers")
+      .upsert(tierRow(cr.user_id, tier, isActive), { onConflict: "user_id" });
     if (e2) console.error("[stripe-webhook] tier upsert:", e2.message);
   }
 }
@@ -145,13 +162,7 @@ async function handleDeletion(sub: Stripe.Subscription) {
     .eq("customer_id", sub.customer as string).maybeSingle();
 
   if (cr?.user_id) {
-    await supabase.from("user_tiers").upsert({
-      user_id: cr.user_id,
-      tier_name: "free",
-      max_queries_per_day: 10,
-      can_use_advanced_models: false,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" });
+    await downgradeTier(cr.user_id);
   }
 }
 
@@ -256,8 +267,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
 }
 
 async function handlePaymentSucceeded(sub: Stripe.Subscription) {
-  const priceId = sub.items.data[0]?.price?.id ?? null;
-  const tier = resolveTier(priceId);
+  const { tier } = priceTier(sub);
   const isActive = ["active", "trialing"].includes(sub.status);
 
   // Update subscription status to active
@@ -274,13 +284,7 @@ async function handlePaymentSucceeded(sub: Stripe.Subscription) {
     .eq("customer_id", sub.customer as string).maybeSingle();
 
   if (cr?.user_id) {
-    await supabase.from("user_tiers").upsert({
-      user_id: cr.user_id,
-      tier_name: tier,
-      max_queries_per_day: tier === "enterprise" ? 500 : tier === "pro" ? 100 : 10,
-      can_use_advanced_models: isActive && tier !== "free",
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" });
+    await supabase.from("user_tiers").upsert(tierRow(cr.user_id, tier, isActive), { onConflict: "user_id" });
     console.log(`[stripe-webhook] payment succeeded for user ${cr.user_id}, restored ${tier} access`);
   }
 }
