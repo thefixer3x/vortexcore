@@ -2,6 +2,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.39.7";
 import Stripe from "npm:stripe@14.18.0";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
+// Deno has no sync crypto; webhook verification must use the async Web Crypto path.
+const cryptoProvider = Stripe.createSubtleCryptoProvider();
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") || "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
@@ -41,7 +43,7 @@ Deno.serve(async (req: Request) => {
   let event: Stripe.Event;
   if (sig && webhookSecret) {
     try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(body, sig, webhookSecret, undefined, cryptoProvider);
     } catch (err) {
       console.error("[stripe-webhook] sig error:", err instanceof Error ? err.message : err);
       return new Response("Signature verification failed", { status: 400 });
