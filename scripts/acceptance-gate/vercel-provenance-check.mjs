@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const {
+  PROVENANCE_SHA,
   GITHUB_SHA,
   VERCEL_TOKEN,
   VERCEL_PROJECT_ID,
@@ -8,8 +9,12 @@ const {
   VERCEL_EXPECT_TARGET = "preview",
 } = process.env;
 
-if (!GITHUB_SHA || !VERCEL_TOKEN || !VERCEL_PROJECT_ID) {
-  console.error("Missing GITHUB_SHA, VERCEL_TOKEN, or VERCEL_PROJECT_ID");
+// On pull_request runs GITHUB_SHA is the synthetic merge commit, but Vercel
+// deploys the PR head SHA. The workflow passes the right one as PROVENANCE_SHA.
+const sha = PROVENANCE_SHA || GITHUB_SHA;
+
+if (!sha || !VERCEL_TOKEN || !VERCEL_PROJECT_ID) {
+  console.error("Missing PROVENANCE_SHA (or GITHUB_SHA), VERCEL_TOKEN, or VERCEL_PROJECT_ID");
   process.exit(1);
 }
 
@@ -37,12 +42,12 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
   const body = await response.json();
   const deployment = body.deployments?.find(
     (candidate) =>
-      candidate.meta?.githubCommitSha === GITHUB_SHA && isExpectedTarget(candidate),
+      candidate.meta?.githubCommitSha === sha && isExpectedTarget(candidate),
   );
 
   if (deployment?.state === "READY") {
     console.log(
-      `Verified ${VERCEL_EXPECT_TARGET} deployment ${deployment.uid} for ${GITHUB_SHA}`,
+      `Verified ${VERCEL_EXPECT_TARGET} deployment ${deployment.uid} for ${sha}`,
     );
     process.exit(0);
   }
@@ -60,6 +65,6 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
 }
 
 console.error(
-  `No READY ${VERCEL_EXPECT_TARGET} deployment found for ${GITHUB_SHA} within 120 seconds`,
+  `No READY ${VERCEL_EXPECT_TARGET} deployment found for ${sha} within 120 seconds`,
 );
 process.exit(1);
