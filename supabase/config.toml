@@ -10,6 +10,10 @@ major_version = 15
 [functions.stripe]
   verify_jwt = true
 
+# Stripe sends no Supabase JWT; auth is the stripe-signature check in the handler.
+[functions.stripe-webhook]
+  verify_jwt = false
+
 [functions.ai-router]
   verify_jwt = false
 
