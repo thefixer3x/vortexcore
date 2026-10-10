@@ -11,7 +11,11 @@ export default tseslint.config(
       "coverage",
       "archive/**",
       "supabase/functions.backup.*/**",
-      "debug-page.js",
+      // Glob pattern so this still matches after debug-page.js was moved to
+      // docs/runbooks/ in commit 465c626. The bare "debug-page.js" pattern
+      // only matched at the repo root and caused Gate 1 to fail on a
+      // pre-existing syntax error in the throwaway script.
+      "**/debug-page.js",
     ],
   },
   {
