@@ -5,6 +5,15 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.22.4";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const db = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "");
+
+// Account IDs the signed-in user has linked (app_vortexcore.accounts via public facade).
+async function ownedAccountIds(userId: string): Promise<Set<string>> {
+  const { data } = await db.from("accounts").select("provider_account_id").eq("user_id", userId).eq("is_active", true);
+  return new Set((data || []).map((r: any) => r.provider_account_id).filter(Boolean));
+}
 
 // ── Env ──────────────────────────────────────────────────────────────────────
 
@@ -98,7 +107,7 @@ async function gatewayFetch(path: string): Promise<Response> {
 // ── Handler ──────────────────────────────────────────────────────────────────
 
 serve(
-  withAuthMiddleware(async (req) => {
+  withAuthMiddleware(async (req, { auth }) => {
     const url = new URL(req.url);
     const pathname = url.pathname;
 
@@ -128,23 +137,26 @@ serve(
         console.error("[obf-accounts] Account schema violation:", parsed.error.flatten());
         return schemaViolation("account");
       }
-      return json(parsed.data);
+      const owned = await ownedAccountIds(auth.userId!);
+      return json(parsed.data.filter((a) => owned.has(a.id)));
     }
 
     // GET /obf-accounts/:id/transactions  →  transactions for account
     const txMatch = pathname.match(/\/obf-accounts\/([^/]+)\/transactions\/?$/);
     if (req.method === "GET" && txMatch) {
-      const accountId = txMatch[1];
+      const accountId = decodeURIComponent(txMatch[1]);
+      const owned = await ownedAccountIds(auth.userId!);
+      if (!owned.has(accountId)) return json({ error: "Account not found" }, 404);
       const params = new URLSearchParams();
       const from = url.searchParams.get("from");
       const to = url.searchParams.get("to");
-      const limit = url.searchParams.get("limit") ?? "50";
+      const limit = String(Math.min(Math.max(parseInt(url.searchParams.get("limit") ?? "50") || 50, 1), 200));
       if (from) params.set("from", from);
       if (to) params.set("to", to);
       params.set("limit", limit);
 
       const upstream = await gatewayFetch(
-        `/v1/aisp/accounts/${accountId}/transactions?${params.toString()}`
+        `/v1/aisp/accounts/${encodeURIComponent(accountId)}/transactions?${params.toString()}`
       );
       if (!upstream.ok) return upstream;
 
