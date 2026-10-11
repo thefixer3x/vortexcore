@@ -39,24 +39,26 @@ function checkRateLimit(ip) {
   record.count++;
   return true;
 }
-function validatePaymentRequest(payload) {
+function validatePaymentRequest(payload, callerEmail) {
   if (!payload || typeof payload !== 'object') {
     throw new Error('Invalid request format');
   }
-  if (!payload.email || !payload.email.includes('@')) {
-    throw new Error('Valid email is required');
+  if (!callerEmail) {
+    throw new Error('Your account has no email address');
   }
   const amount = Number(payload.amount);
   if (isNaN(amount) || amount <= 0) {
     throw new Error('Valid amount is required');
   }
   return {
-    email: payload.email.trim(),
+    // Payment notices always go to the signed-in caller's own email.
+    email: callerEmail,
     amount: amount.toFixed(2),
     currency: payload.currency?.toUpperCase() || 'NGN',
-    reference: payload.reference || crypto.randomUUID(),
-    callback: payload.callback,
-    metadata: payload.metadata || {}
+    // References are generated server-side and callbacks are fixed, never caller-chosen.
+    reference: crypto.randomUUID(),
+    callback: `${Deno.env.get('SUPABASE_URL')}/functions/v1/callback-handler`,
+    metadata: (payload.metadata && typeof payload.metadata === 'object') ? payload.metadata : {}
   };
 }
 function generateSignature(payload) {
@@ -69,7 +71,7 @@ function generateSignature(payload) {
   }, {});
   return createHash('sha512').update(JSON.stringify(sortedPayload)).update(SAYSWITCH_PUBLIC_KEY).digest('hex');
 }
-serve(withAuthMiddleware(async (req)=>{
+serve(withAuthMiddleware(async (req, { auth })=>{
   try {
     if (req.method !== 'POST') {
       throw new Error('Method not allowed');
@@ -106,12 +108,9 @@ serve(withAuthMiddleware(async (req)=>{
       });
     }
     const rawPayload = await req.json();
-    const payload = validatePaymentRequest(rawPayload);
-    // Set default callback URL if not provided
-    if (!payload.callback) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL');
-      payload.callback = `${supabaseUrl}/functions/v1/callback-handler`;
-    }
+    const adminClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', { auth: { persistSession: false } });
+    const { data: caller } = await adminClient.auth.admin.getUserById(auth.userId);
+    const payload = validatePaymentRequest(rawPayload, caller?.user?.email);
     // Generate HMAC signature
     const signature = generateSignature(payload);
     // Make request to SaySwitch API
@@ -137,6 +136,7 @@ serve(withAuthMiddleware(async (req)=>{
     const { error: dbError } = await supabaseClient.from('transactions').insert([
       {
         reference: payload.reference,
+        user_id: auth.userId,
         email: payload.email,
         amount: payload.amount,
         currency: payload.currency,
@@ -165,8 +165,7 @@ serve(withAuthMiddleware(async (req)=>{
     console.error('Error processing payment:', error);
     return new Response(JSON.stringify({
       success: false,
-      message: 'Internal server error',
-      error: error.message
+      message: 'Unable to process payment'
     }), {
       status: 500,
       headers: {
