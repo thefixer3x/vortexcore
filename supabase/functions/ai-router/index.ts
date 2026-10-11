@@ -110,18 +110,18 @@ serve(withPublicMiddleware(async (req) => {
     if (!messages || !Array.isArray(messages)) {
       throw new Error("Missing or invalid 'messages' array in request body");
     }
-    const allowedRoles = new Set(['system', 'user', 'assistant', 'tool']);
-    for (const m of messages) {
-      if (!m || !allowedRoles.has(m.role)) {
-        throw new Error("Invalid message role");
-      }
-      if (typeof m.content !== 'string') {
-        throw new Error("Only string message.content is supported");
-      }
+    // Only user/assistant turns are accepted from callers; system/tool roles are
+    // dropped so the server-owned system prompt cannot be overridden.
+    const allowedRoles = new Set(['user', 'assistant']);
+    const cleanMessages = messages
+      .filter((m: any) => m && allowedRoles.has(m.role) && typeof m.content === 'string')
+      .map((m: any) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+    if (!cleanMessages.length) {
+      throw new Error("No valid user or assistant messages provided");
     }
 
     // Trim chat history to stay within token limits
-    const recentMessages = messages.slice(-5);
+    const recentMessages = cleanMessages.slice(-5);
 
     // Sanitize user messages
     const sanitizedMessages = recentMessages.map(msg => {
