@@ -22,6 +22,8 @@ serve(withAuthMiddleware(async (req, { auth }) => {
       }
       case 'verify-2fa': {
         if (!code || !factorId) return new Response(JSON.stringify({ error: 'Code and factor ID are required for 2FA verification' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        const owns = (caller?.user?.factors || []).some((f: any) => f.id === factorId);
+        if (!owns) return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
         const { data, error } = await supabase.auth.admin.mfaVerify({ factorId, code });
         if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { 'Content-Type': 'application/json' } });
         return new Response(JSON.stringify({ data }), { headers: { 'Content-Type': 'application/json' } });
