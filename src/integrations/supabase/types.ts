@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -2919,6 +2894,7 @@ export type Database = {
           price_id: string | null
           status: string
           stripe_subscription_id: string
+          trial_end: string | null
           updated_at: string | null
         }
         Insert: {
@@ -2930,6 +2906,7 @@ export type Database = {
           price_id?: string | null
           status: string
           stripe_subscription_id: string
+          trial_end?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -2941,6 +2918,7 @@ export type Database = {
           price_id?: string | null
           status?: string
           stripe_subscription_id?: string
+          trial_end?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -6237,6 +6215,7 @@ export type Database = {
           content: string | null
           contradiction_group_id: string | null
           created_at: string | null
+          embedding: string | null
           evidence_memory_ids: string[] | null
           freshness: string | null
           id: string | null
@@ -6253,6 +6232,7 @@ export type Database = {
           content?: string | null
           contradiction_group_id?: string | null
           created_at?: string | null
+          embedding?: string | null
           evidence_memory_ids?: string[] | null
           freshness?: string | null
           id?: string | null
@@ -6269,6 +6249,7 @@ export type Database = {
           content?: string | null
           contradiction_group_id?: string | null
           created_at?: string | null
+          embedding?: string | null
           evidence_memory_ids?: string[] | null
           freshness?: string | null
           id?: string | null
@@ -6856,6 +6837,7 @@ export type Database = {
           id: string | null
           metadata: Json | null
           name: string | null
+          organization_id: string | null
           status: string | null
           type: string | null
           updated_at: string | null
@@ -6867,6 +6849,7 @@ export type Database = {
           id?: string | null
           metadata?: Json | null
           name?: string | null
+          organization_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -6878,6 +6861,7 @@ export type Database = {
           id?: string | null
           metadata?: Json | null
           name?: string | null
+          organization_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -9159,6 +9143,27 @@ export type Database = {
       }
     }
     Functions: {
+      analyze_patterns_aggregate: {
+        Args: {
+          p_filter_organization_id?: string
+          p_filter_type?: string
+          p_filter_user_id?: string
+          p_max_memories?: number
+          p_time_range_days?: number
+          p_top_n_hours?: number
+          p_top_n_tags?: number
+        }
+        Returns: {
+          average_content_length: number
+          cap_hit: boolean
+          day_of_week_distribution: Json
+          peak_hours: Json
+          rows_considered: number
+          top_tags: Json
+          total_memories: number
+          type_distribution: Json
+        }[]
+      }
       apply_auth_event: {
         Args: {
           p_aggregate_id: string
@@ -9225,6 +9230,22 @@ export type Database = {
       delete_control_room_app: {
         Args: { p_hard_delete?: boolean; p_id: string }
         Returns: Json
+      }
+      delete_duplicate_memories: {
+        Args: {
+          dry_run?: boolean
+          duplicate_ids: string[]
+          filter_organization_id?: string
+          filter_user_id?: string
+        }
+        Returns: {
+          deleted_created_at: string
+          deleted_id: string
+          deleted_organization_id: string
+          deleted_user_id: string
+          total_deleted: number
+          was_dry_run: boolean
+        }[]
       }
       detect_duplicate_memories_voyage: {
         Args: {
@@ -9452,7 +9473,13 @@ export type Database = {
       }
       hybrid_search_voyage: {
         Args: {
+          filter_date_from?: string
+          filter_date_to?: string
+          filter_organization_id?: string
+          filter_tags?: string[]
+          filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           keyword_weight?: number
           match_count?: number
           min_similarity?: number
@@ -9523,6 +9550,26 @@ export type Database = {
           topic_id: string
           type: string
           user_id: string
+        }[]
+      }
+      list_insight_candidate_memories: {
+        Args: {
+          p_filter_organization_id?: string
+          p_filter_type?: string
+          p_filter_user_id?: string
+          p_limit?: number
+          p_max_memories?: number
+          p_offset?: number
+          p_time_range_days?: number
+          p_topic?: string
+        }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          memory_type: string
+          tags: string[]
+          title: string
         }[]
       }
       log_intelligence_usage: {
@@ -9642,7 +9689,13 @@ export type Database = {
       match_memories_voyage: {
         Args: {
           distance_metric?: string
+          filter_date_from?: string
+          filter_date_to?: string
+          filter_organization_id?: string
+          filter_tags?: string[]
+          filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           match_count?: number
           match_threshold?: number
           query_embedding: string
@@ -9953,12 +10006,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -9982,11 +10035,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10007,11 +10060,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10032,11 +10085,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10049,11 +10102,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10063,9 +10116,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       environment_type: ["sandbox", "live"],

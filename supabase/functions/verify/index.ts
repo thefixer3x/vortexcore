@@ -3,7 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.39.3";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 const SAYSWITCH_BASE_URL = Deno.env.get('SAYSWITCH_BASE_URL') || 'https://backendapi.sayswitchgroup.com/api/v1';
 const SAYSWITCH_SECRET_KEY = Deno.env.get('SAYSWITCH_SECRET_KEY') || '';
-serve(withAuthMiddleware(async (req)=>{
+serve(withAuthMiddleware(async (req, { auth })=>{
   try {
     if (req.method !== 'GET') {
       throw new Error('Method not allowed');
@@ -13,8 +13,18 @@ serve(withAuthMiddleware(async (req)=>{
     if (!reference) {
       return new Response(JSON.stringify({ success: false, message: 'Reference is required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
+    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
+      auth: { persistSession: false }
+    });
+    const { data: caller } = await supabaseClient.auth.admin.getUserById(auth.userId);
+    const callerEmail = caller?.user?.email;
+    // Only the owner of the transaction (its payer email) may verify it.
+    const { data: owned } = await supabaseClient.from('transactions').select('id').eq('reference', reference).eq('email', callerEmail ?? '__none__').maybeSingle();
+    if (!owned) {
+      return new Response(JSON.stringify({ success: false, message: 'Transaction not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
+    }
     // Verify transaction with SaySwitch API
-    const response = await fetch(`${SAYSWITCH_BASE_URL}/transaction/verify/${reference}`, {
+    const response = await fetch(`${SAYSWITCH_BASE_URL}/transaction/verify/${encodeURIComponent(reference)}`, {
       headers: {
         'Authorization': `Bearer ${SAYSWITCH_SECRET_KEY}`,
         'Content-Type': 'application/json'
@@ -24,22 +34,16 @@ serve(withAuthMiddleware(async (req)=>{
     if (!response.ok) {
       throw new Error(data.message || 'Failed to verify transaction');
     }
-    // Update transaction status in database
-    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
-      auth: {
-        persistSession: false
-      }
-    });
     await supabaseClient.from('transactions').update({
       status: data.status,
       metadata: {
         ...data,
         verified_at: new Date().toISOString()
       }
-    }).eq('reference', reference);
+    }).eq('id', owned.id);
     return new Response(JSON.stringify({ success: true, data }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Error verifying transaction:', error);
-    return new Response(JSON.stringify({ success: false, message: 'Internal server error', error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ success: false, message: 'Unable to verify transaction' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }, ['GET']));
