@@ -14,6 +14,42 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const FREE_TIER_CARD_LIMIT = 3;
+const serviceClient = createClient(
+  Deno.env.get("SUPABASE_URL") || "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
+);
+
+// Mirrors check-subscription: resolve the caller's plan from stored Stripe data.
+async function getUserTier(userId: string): Promise<string> {
+  const { data: customerRow } = await serviceClient
+    .from("stripe_customers").select("customer_id").eq("user_id", userId).maybeSingle();
+  if (!customerRow?.customer_id) return "free";
+  const { data: subs } = await serviceClient
+    .from("stripe_subscriptions").select("status, price_id")
+    .eq("customer_id", customerRow.customer_id)
+    .in("status", ["active", "trialing", "past_due"]);
+  const sub = subs?.[0];
+  if (!sub) return "free";
+  return computeClientTier({ status: sub.status, priceId: sub.price_id }).tier;
+}
+
+// Count non-cancelled cards across every cardholder owned by this user.
+async function countUserCards(userId: string): Promise<number> {
+  let count = 0;
+  const holders = await stripe.issuing.cardholders.search
+    ? null
+    : null;
+  void holders;
+  for await (const ch of stripe.issuing.cardholders.list({ limit: 100 })) {
+    if (ch.metadata?.user_id !== userId) continue;
+    for await (const card of stripe.issuing.cards.list({ cardholder: ch.id, limit: 100 })) {
+      if (card.status !== "canceled") count++;
+    }
+  }
+  return count;
+}
+
 serve(withAuthMiddleware(async (req, { auth, admin }) => {
   // Handle within middleware (OPTIONS handled, CORS added)
   try {
@@ -101,6 +137,18 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         const ownerCardholder = await stripe.issuing.cardholders.retrieve(cardholder_id);
         if (ownerCardholder.metadata?.user_id !== auth.userId) {
           return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+
+        // Server-side plan gate: free plan is limited to FREE_TIER_CARD_LIMIT cards.
+        const tier = await getUserTier(auth.userId);
+        if (tier === 'free') {
+          const owned = await countUserCards(auth.userId);
+          if (owned >= FREE_TIER_CARD_LIMIT) {
+            return new Response(JSON.stringify({
+              error: `The Free plan includes up to ${FREE_TIER_CARD_LIMIT} virtual cards. Upgrade to Pro for unlimited cards.`,
+              code: 'card_limit_reached',
+            }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+          }
         }
         const cardData: any = {
           cardholder: cardholder_id,
