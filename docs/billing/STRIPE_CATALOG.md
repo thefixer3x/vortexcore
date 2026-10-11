@@ -107,3 +107,28 @@ Open items:
 4. Project tag for `Development Services` and `Brand items`.
 5. UAT pass over prices and entitlements.
 6. Re-enable the subtrack-pro.com endpoint `we_1RiSB62KF4vMCpn8afHaBbrF` only if that service is still live.
+
+## 7. Stripe Sync Engine and the rename to `stripe-entitlements` (2026-10-11)
+
+The Supabase Stripe Sync Engine integration was enabled on `mxtsdgkwzjzlttpotole`. It created the `stripe` schema (a raw mirror of Stripe objects), the functions `stripe-setup` and `stripe-worker`, the cron job `stripe-sync-worker`, and its own Stripe endpoint `we_1UPEWV2KF4vMCpn8Rl6cqlWp`.
+
+It also deploys a function named `stripe-webhook`. That is the name our entitlement handler used, so the install replaced our code and entitlement sync stopped.
+
+What was done:
+- Our handler now lives at `supabase/functions/stripe-entitlements` and is deployed under that name (`verify_jwt = false`).
+- Endpoint `we_1U5ySC2KF4vMCpn8BMek6XAu` points at `/functions/v1/stripe-entitlements`.
+- `stripe-webhook` belongs to the Sync Engine. **Never deploy a function with that name from this repo.**
+
+The two run side by side and write different schemas:
+
+| | Sync Engine | Entitlements |
+|---|---|---|
+| Function | `stripe-webhook` (managed) | `stripe-entitlements` (this repo) |
+| Stripe endpoint | `we_1UPEWV2…` (92 events) | `we_1U5ySC2…` (5 events) |
+| Writes | `stripe.*` | `public.stripe_subscriptions`, `public.user_tiers` |
+
+Verified live: replaying `evt_1UM88d2KF4vMCpn8OREiyJzp` (`customer.subscription.deleted`) set `sub_1U5ng02KF4vMCpn8llArgdm3` to `canceled` and the user to `free`. This also confirms `STRIPE_WEBHOOK_SECRET` matches the endpoint's signing secret.
+
+The `wrappers` extension (0.6.2) is installed but has no Stripe foreign server. It gives query-time read access to Stripe and does not receive webhooks, so it is not a replacement for either function.
+
+Possible later change: derive `user_tiers` from `stripe.subscriptions` with a trigger and retire `stripe-entitlements`.

@@ -84,16 +84,16 @@ if [ -d "supabase/functions/stripe" ]; then
     supabase functions deploy stripe || print_warning "Failed to deploy stripe"
 fi
 
-if [ -d "supabase/functions/stripe-webhook" ]; then
-    print_status "Deploying stripe-webhook function..."
-    supabase functions deploy stripe-webhook || print_warning "Failed to deploy stripe-webhook"
+if [ -d "supabase/functions/stripe-entitlements" ]; then
+    print_status "Deploying stripe-entitlements function..."
+    supabase functions deploy stripe-entitlements || print_warning "Failed to deploy stripe-entitlements"
 fi
 
 # Deploy other functions
 for func_dir in supabase/functions/*; do
     if [ -d "$func_dir" ]; then
         func_name=$(basename "$func_dir")
-        if [[ "$func_name" != "ai-router" && "$func_name" != "stripe" && "$func_name" != "stripe-webhook" ]]; then
+        if [[ "$func_name" != "ai-router" && "$func_name" != "stripe" && "$func_name" != "stripe-entitlements" ]]; then
             print_status "Deploying $func_name function..."
             supabase functions deploy "$func_name" || print_warning "Failed to deploy $func_name"
         fi
