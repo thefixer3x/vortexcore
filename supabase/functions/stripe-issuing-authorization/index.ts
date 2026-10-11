@@ -1,6 +1,6 @@
 // Synchronous Stripe Issuing real-time authorization webhook.
 //
-// This is a DIFFERENT endpoint from supabase/functions/stripe-webhook — Stripe
+// This is a DIFFERENT endpoint from supabase/functions/stripe-entitlements — Stripe
 // only sends issuing_authorization.request here if this function's URL is
 // registered as the "respond to authorizations in real time" endpoint under
 // Dashboard > Settings > Issuing > Authorizations. That is a manual Dashboard
@@ -8,7 +8,7 @@
 // response within 2 seconds or it falls back to its own timeout decision, so
 // this handler does the minimum work needed to make one call: no DB writes
 // beyond the read needed to check balance. The actual ledger update happens
-// asynchronously in stripe-webhook's issuing_transaction.created handler once
+// asynchronously in stripe-entitlements's issuing_transaction.created handler once
 // the authorization actually captures.
 import Stripe from "npm:stripe@14.18.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

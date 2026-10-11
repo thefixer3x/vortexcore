@@ -46,7 +46,7 @@ function priceTier(sub: Stripe.Subscription): { priceId: string | null; tier: Ti
   const priceId = price?.id ?? null;
   const tier = resolveTier(priceId, price?.metadata?.tier);
   if (priceId && !PRICE_CATALOG[priceId]) {
-    console.warn(`[stripe-webhook] price ${priceId} not in PRICE_CATALOG; resolved tier=${tier} from metadata`);
+    console.warn(`[stripe-entitlements] price ${priceId} not in PRICE_CATALOG; resolved tier=${tier} from metadata`);
   }
   return { priceId, tier };
 }
@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
     try {
       event = await stripe.webhooks.constructEventAsync(body, sig, webhookSecret, undefined, cryptoProvider);
     } catch (err) {
-      console.error("[stripe-webhook] sig error:", err instanceof Error ? err.message : err);
+      console.error("[stripe-entitlements] sig error:", err instanceof Error ? err.message : err);
       return new Response("Signature verification failed", { status: 400 });
     }
   } else {
@@ -116,7 +116,7 @@ Deno.serve(async (req: Request) => {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[stripe-webhook] handler:", msg);
+    console.error("[stripe-entitlements] handler:", msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { ...CORS, "Content-Type": "application/json" },
@@ -138,7 +138,7 @@ async function handleChange(sub: Stripe.Subscription) {
     trial_end: toIso(sub.trial_end),
     updated_at: new Date().toISOString(),
   }, { onConflict: "stripe_subscription_id" });
-  if (e1) { console.error("[stripe-webhook] sub upsert:", e1.message); throw e1; }
+  if (e1) { console.error("[stripe-entitlements] sub upsert:", e1.message); throw e1; }
 
   const { data: cr } = await supabase
     .from("stripe_customers").select("user_id")
@@ -148,7 +148,7 @@ async function handleChange(sub: Stripe.Subscription) {
     const isActive = ["active", "trialing"].includes(sub.status);
     const { error: e2 } = await supabase.from("user_tiers")
       .upsert(tierRow(cr.user_id, tier, isActive), { onConflict: "user_id" });
-    if (e2) console.error("[stripe-webhook] tier upsert:", e2.message);
+    if (e2) console.error("[stripe-entitlements] tier upsert:", e2.message);
   }
 }
 
@@ -182,14 +182,14 @@ async function handlePaymentFailure(sub: Stripe.Subscription) {
 
   if (cr?.user_id) {
     await downgradeTier(cr.user_id);
-    console.error(`[stripe-webhook] payment failed for user ${cr.user_id}, downgraded to free`);
+    console.error(`[stripe-entitlements] payment failed for user ${cr.user_id}, downgraded to free`);
   }
 }
 
 async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction) {
   const cardId = typeof transaction.card === "string" ? transaction.card : (transaction.card as { id: string })?.id;
   if (!cardId) {
-    console.error("[stripe-webhook] issuing transaction missing card id:", transaction.id);
+    console.error("[stripe-entitlements] issuing transaction missing card id:", transaction.id);
     return;
   }
 
@@ -200,7 +200,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
     .maybeSingle();
 
   if (cardError || !virtualCard) {
-    console.error("[stripe-webhook] issuing transaction for unknown card:", cardId, cardError?.message);
+    console.error("[stripe-entitlements] issuing transaction for unknown card:", cardId, cardError?.message);
     return;
   }
 
@@ -224,7 +224,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
     .maybeSingle();
 
   if (walletError || !wallet) {
-    console.error("[stripe-webhook] no wallet for card user:", virtualCard.user_id, walletError?.message);
+    console.error("[stripe-entitlements] no wallet for card user:", virtualCard.user_id, walletError?.message);
     return;
   }
 
@@ -237,7 +237,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
     p_delta: delta,
   });
   if (rpcError) {
-    console.error("[stripe-webhook] failed to adjust wallet balance:", rpcError.message);
+    console.error("[stripe-entitlements] failed to adjust wallet balance:", rpcError.message);
     return;
   }
 
@@ -262,7 +262,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
     }
   });
   if (insertError) {
-    console.error("[stripe-webhook] failed to record card transaction:", insertError.message);
+    console.error("[stripe-entitlements] failed to record card transaction:", insertError.message);
   }
 }
 
@@ -285,6 +285,6 @@ async function handlePaymentSucceeded(sub: Stripe.Subscription) {
 
   if (cr?.user_id) {
     await supabase.from("user_tiers").upsert(tierRow(cr.user_id, tier, isActive), { onConflict: "user_id" });
-    console.log(`[stripe-webhook] payment succeeded for user ${cr.user_id}, restored ${tier} access`);
+    console.log(`[stripe-entitlements] payment succeeded for user ${cr.user_id}, restored ${tier} access`);
   }
 }
