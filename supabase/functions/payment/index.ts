@@ -136,7 +136,6 @@ serve(withAuthMiddleware(async (req, { auth })=>{
     const { error: dbError } = await supabaseClient.from('transactions').insert([
       {
         reference: payload.reference,
-        user_id: auth.userId,
         email: payload.email,
         amount: payload.amount,
         currency: payload.currency,

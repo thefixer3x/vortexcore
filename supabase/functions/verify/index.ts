@@ -16,8 +16,10 @@ serve(withAuthMiddleware(async (req, { auth })=>{
     const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
       auth: { persistSession: false }
     });
-    // Only the owner of the transaction may verify it.
-    const { data: owned } = await supabaseClient.from('transactions').select('id').eq('reference', reference).eq('user_id', auth.userId).maybeSingle();
+    const { data: caller } = await supabaseClient.auth.admin.getUserById(auth.userId);
+    const callerEmail = caller?.user?.email;
+    // Only the owner of the transaction (its payer email) may verify it.
+    const { data: owned } = await supabaseClient.from('transactions').select('id').eq('reference', reference).eq('email', callerEmail ?? '__none__').maybeSingle();
     if (!owned) {
       return new Response(JSON.stringify({ success: false, message: 'Transaction not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
