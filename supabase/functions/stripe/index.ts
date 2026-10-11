@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { computeClientTier } from "../_shared/subscription-logic.ts";
 
 // Initialize Stripe with the secret key from environment variables
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -37,10 +38,6 @@ async function getUserTier(userId: string): Promise<string> {
 // Count non-cancelled cards across every cardholder owned by this user.
 async function countUserCards(userId: string): Promise<number> {
   let count = 0;
-  const holders = await stripe.issuing.cardholders.search
-    ? null
-    : null;
-  void holders;
   for await (const ch of stripe.issuing.cardholders.list({ limit: 100 })) {
     if (ch.metadata?.user_id !== userId) continue;
     for await (const card of stripe.issuing.cards.list({ cardholder: ch.id, limit: 100 })) {
