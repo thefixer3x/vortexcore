@@ -1,9 +1,9 @@
-import { PerplexityAIChat } from "@/components/ai/PerplexityAIChat";
+import { VortexDeepresearchChat } from "@/components/ai/VortexDeepresearchChat";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const PerplexityDemo = () => {
+const VortexDeepresearchDemo = () => {
   return (
     <div className="container mx-auto py-8 animate-fade-in">
       <div className="flex flex-col gap-6">
@@ -23,11 +23,11 @@ const PerplexityDemo = () => {
         </p>
         
         <div className="mt-4">
-          <PerplexityAIChat />
+          <VortexDeepresearchChat />
         </div>
       </div>
     </div>
   );
 };
 
-export default PerplexityDemo;
+export default VortexDeepresearchDemo;

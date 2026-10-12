@@ -12,8 +12,8 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
 import VirtualCards from "./pages/VirtualCards";
-import GeminiDemo from "./pages/GeminiDemo";
-import PerplexityDemo from "./pages/PerplexityDemo";
+import VortexIQDemo from "./pages/VortexIQDemo";
+import VortexDeepresearchDemo from "./pages/VortexDeepresearchDemo";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 import { SignupForm } from "./components/auth/SignupPage";
 import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryManager";
@@ -22,7 +22,7 @@ import CategoryManager from "./components/payments/beneficiaries/CategoryManager
 import BulkPaymentDashboard from "./components/payments/bulk-payments/BulkPaymentDashboard";
 import ErrorBoundary from "./components/error/ErrorBoundary";
 import ProtectedLayout from "./layouts/ProtectedLayout";
-import { OpenAIChat } from "./components/ai/OpenAIChat";
+import { VortexAssistantChat } from "./components/ai/VortexAssistantChat";
 
 const App = () => {
   return (
@@ -36,8 +36,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
-            <Route path="/ecosystem/vortex-iq" element={<GeminiDemo />} />
-            <Route path="/ecosystem/deep-research" element={<PerplexityDemo />} />
+            <Route path="/ecosystem/vortex-iq" element={<VortexIQDemo />} />
+            <Route path="/ecosystem/deep-research" element={<VortexDeepresearchDemo />} />
             <Route path="/auth" element={<SignupForm />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
 
@@ -70,7 +70,7 @@ const App = () => {
           </Routes>
           
           {/* Persistent AI Chat Bubble - available on all pages */}
-          <OpenAIChat />
+          <VortexAssistantChat />
           </SidebarProvider>
         </BrowserRouter>
         </TooltipProvider>

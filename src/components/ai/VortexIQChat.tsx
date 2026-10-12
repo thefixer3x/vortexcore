@@ -26,7 +26,7 @@ const VORTEX_AI_MODELS = [
   { value: 'accelerated', label: 'VortexIQ Accelerated' },
 ];
 
-export function GeminiAIChat() {
+export function VortexIQChat() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);

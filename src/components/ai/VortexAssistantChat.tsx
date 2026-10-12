@@ -21,7 +21,7 @@ interface Message {
   content: string;
 }
 
-export function OpenAIChat() {
+export function VortexAssistantChat() {
   const { isAuthenticated, isLoading: isAuthLoading, getAccessToken } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);

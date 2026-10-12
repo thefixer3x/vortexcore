@@ -1,10 +1,10 @@
 
-import { GeminiAIChat } from "@/components/ai/GeminiAIChat";
+import { VortexIQChat } from "@/components/ai/VortexIQChat";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const GeminiDemo = () => {
+const VortexIQDemo = () => {
   return (
     <div className="container mx-auto py-8 animate-fade-in">
       <div className="flex flex-col gap-6">
@@ -24,11 +24,11 @@ const GeminiDemo = () => {
         </p>
         
         <div className="mt-4">
-          <GeminiAIChat />
+          <VortexIQChat />
         </div>
       </div>
     </div>
   );
 };
 
-export default GeminiDemo;
+export default VortexIQDemo;
