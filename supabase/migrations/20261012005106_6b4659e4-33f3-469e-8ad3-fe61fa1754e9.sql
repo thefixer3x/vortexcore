@@ -1,0 +1,10 @@
+DROP POLICY IF EXISTS "Authenticated read access" ON public.company_services;
+CREATE POLICY "Admins can read company services" ON public.company_services FOR SELECT TO authenticated USING (public.is_admin());
+REVOKE ALL ON public.company_services FROM anon, authenticated;
+GRANT SELECT ON public.company_services TO authenticated;
+GRANT ALL ON public.company_services TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.vortex_obligations TO authenticated;
+GRANT ALL ON public.vortex_obligations TO service_role;
+GRANT SELECT ON public.vortex_obligation_detections TO authenticated;
+GRANT ALL ON public.vortex_obligation_detections TO service_role;
+CREATE INDEX IF NOT EXISTS vortex_obligations_user_due_idx ON public.vortex_obligations(user_id, due_date);
