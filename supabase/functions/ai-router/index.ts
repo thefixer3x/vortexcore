@@ -41,6 +41,16 @@ serve(withPublicMiddleware(async (req) => {
   const key = Deno.env.get("LOVABLE_API_KEY");
   if (!key) return json({ error: "VortexAI is not configured. Please contact support." }, 503);
   const product = body.mode === "deep-research" || body.wantRealtime === true ? "VortexDeepresearch" : "VortexIQ";
+  const styles: Record<string, string> = {
+    standard: "Give a balanced, concise answer.",
+    express: "Keep the answer brief.",
+    accelerated: "Keep the answer brief.",
+    advanced: "Explain assumptions and reasoning clearly.",
+    enterprise: "Focus on business decisions and risks.",
+    analyst: "Structure the analysis with evidence and limitations.",
+    vision: "Do not claim to inspect images unless image content is actually supplied.",
+  };
+  const style = typeof body.style === "string" ? styles[body.style] || styles.standard : styles.standard;
   try {
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -48,7 +58,7 @@ serve(withPublicMiddleware(async (req) => {
       body: JSON.stringify({
         // Preserve the currently deployed router's model, keeping its identifier private.
         model: "google/gemini-2.5-pro",
-        messages: [{ role: "system", content: `${VORTEX_SYSTEM_PROMPT}\nYour product name is ${product}. No live search sources are attached to this request.` }, ...messages],
+        messages: [{ role: "system", content: `${VORTEX_SYSTEM_PROMPT}\nYour product name is ${product}. ${style} No live search sources are attached to this request.` }, ...messages],
         max_tokens: 800,
       }),
     });

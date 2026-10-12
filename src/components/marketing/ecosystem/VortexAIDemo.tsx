@@ -21,13 +21,15 @@ export const VortexAIDemo = () => {
                 Explore financial questions with VortexDeepresearch. 
                 Analyze market topics, financial news, and business questions.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <Button asChild>
                   <Link to="/ecosystem/deep-research">
                     Try VortexDeepresearch <Globe className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button variant="outline">Learn More</Button>
+                <Button variant="outline" asChild>
+                  <Link to="/ecosystem/vortex-iq">VortexIQ <VortexAIIcon className="ml-2 h-4 w-4" /></Link>
+                </Button>
               </div>
             </div>
             <div className="bg-gradient-to-br from-primary/80 to-primary h-48 md:h-auto md:w-1/3 flex items-center justify-center p-8">
