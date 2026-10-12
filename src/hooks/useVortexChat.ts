@@ -14,8 +14,7 @@ interface ChatOptions {
 
 /**
  * Hook for interacting with the VortexAI assistant
- * Supports cascading AI providers (OpenAI → Gemini → Perplexity)
- * with automatic fallback for real-time information
+ * Uses the shared VortexAI router for general assistance and research.
  */
 export function useVortexChat() {
   const [messages, setMessages] = useState<Message[]>([

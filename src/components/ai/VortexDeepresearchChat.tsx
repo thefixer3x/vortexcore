@@ -26,13 +26,13 @@ interface Citation {
 
 // VortexDeepresearch model options with business-friendly naming
 const RESEARCH_MODES = [
-  { value: 'standard', label: 'VortexDeepresearch', description: 'Real-time data with web search' },
-  { value: 'express', label: 'VortexDeepresearch Express', description: 'Faster responses with web search' },
+  { value: 'standard', label: 'VortexDeepresearch', description: 'Financial research' },
+  { value: 'express', label: 'VortexDeepresearch Express', description: 'Concise analysis' },
   { value: 'advanced', label: 'VortexDeepresearch Advanced', description: 'Complex financial reasoning' },
   { value: 'analyst', label: 'VortexDeepresearch Analyst', description: 'Detailed financial analysis' }
 ];
 
-export function VortexDeepresearchAIChat() {
+export function VortexDeepresearchChat() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
