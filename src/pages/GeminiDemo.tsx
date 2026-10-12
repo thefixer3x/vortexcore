@@ -14,7 +14,7 @@ const GeminiDemo = () => {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">VortexCore AI</h1>
+          <h1 className="text-3xl font-bold">VortexIQ</h1>
         </div>
         
         <p className="text-muted-foreground">

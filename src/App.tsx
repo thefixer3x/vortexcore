@@ -36,8 +36,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
-            <Route path="/ecosystem/gemini" element={<GeminiDemo />} />
-            <Route path="/ecosystem/perplexity" element={<PerplexityDemo />} />
+            <Route path="/ecosystem/vortex-iq" element={<GeminiDemo />} />
+            <Route path="/ecosystem/deep-research" element={<PerplexityDemo />} />
             <Route path="/auth" element={<SignupForm />} />
             <Route path="/auth/callback" element={<AuthCallbackHandler />} />
 

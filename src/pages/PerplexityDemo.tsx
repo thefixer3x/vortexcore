@@ -13,12 +13,12 @@ const PerplexityDemo = () => {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">VortexCore AI Realtime</h1>
+          <h1 className="text-3xl font-bold">VortexDeepresearch</h1>
         </div>
         
         <p className="text-muted-foreground">
-          Experience the power of VortexCore's advanced AI capabilities with real-time information. 
-          Our enterprise-grade language models provide up-to-date market intelligence, 
+          Experience the power of VortexCore's advanced AI capabilities for research and analysis. 
+          Our enterprise-grade language models provide market intelligence, 
           financial news, and personalized recommendations for your business needs.
         </p>
         
