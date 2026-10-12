@@ -667,10 +667,12 @@ export type Database = {
           description: string | null
           id: string
           method: string
+          organization_id: string | null
           path: string
           rate_limit: number | null
           service_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           auth_required?: boolean
@@ -678,10 +680,12 @@ export type Database = {
           description?: string | null
           id?: string
           method: string
+          organization_id?: string | null
           path: string
           rate_limit?: number | null
           service_id: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           auth_required?: boolean
@@ -689,10 +693,12 @@ export type Database = {
           description?: string | null
           id?: string
           method?: string
+          organization_id?: string | null
           path?: string
           rate_limit?: number | null
           service_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -2324,8 +2330,10 @@ export type Database = {
           created_at: string
           feedback_score: number | null
           id: string
+          organization_id: string | null
           prompt: string
           tokens_used: number | null
+          user_id: string | null
           was_escalated: boolean | null
         }
         Insert: {
@@ -2334,8 +2342,10 @@ export type Database = {
           created_at?: string
           feedback_score?: number | null
           id?: string
+          organization_id?: string | null
           prompt: string
           tokens_used?: number | null
+          user_id?: string | null
           was_escalated?: boolean | null
         }
         Update: {
@@ -2344,8 +2354,10 @@ export type Database = {
           created_at?: string
           feedback_score?: number | null
           id?: string
+          organization_id?: string | null
           prompt?: string
           tokens_used?: number | null
+          user_id?: string | null
           was_escalated?: boolean | null
         }
         Relationships: []
