@@ -17,7 +17,7 @@ const stateBadge = {
 
 const fmt = (n: number | null, c?: string | null) =>
   n == null ? "" : new Intl.NumberFormat(undefined, { style: "currency", currency: c || "NGN" }).format(n);
-const lastPayment = (o: Obligation) => o.metadata?.payments?.at(-1);
+const lastPayment = (o: Obligation) => o.metadata?.payments?.slice(-1)[0];
 
 const Obligations = () => {
   const { obligations, feed, isLoading, isDetecting, error, detect, pay, markPaid, remove } = useObligations({ live: true });
