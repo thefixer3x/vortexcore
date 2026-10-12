@@ -13,6 +13,7 @@ import {
   Moon,
   Monitor,
   Home
+  CalendarClock,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
