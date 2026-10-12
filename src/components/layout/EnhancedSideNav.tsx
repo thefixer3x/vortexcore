@@ -12,7 +12,8 @@ import {
   Sun,
   Moon,
   Monitor,
-  Home
+  Home,
+  CalendarClock,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -86,6 +87,7 @@ export function EnhancedSideNav() {
   const mainNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
+    { name: "Obligations", path: "/obligations", icon: CalendarClock },
     { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
   ];
