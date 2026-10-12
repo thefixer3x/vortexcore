@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
+import Obligations from "./pages/Obligations";
 import NotFound from "./pages/NotFound";
 import Ecosystem from "./pages/Ecosystem";
 import VirtualCards from "./pages/VirtualCards";
@@ -47,6 +48,7 @@ const App = () => {
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/obligations" element={<Obligations />} />
               <Route path="/virtual-cards" element={<VirtualCards />} />
               <Route
                 path="/bulk-payments"

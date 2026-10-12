@@ -86,6 +86,7 @@ export function EnhancedSideNav() {
   const mainNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
+    { name: "Obligations", path: "/obligations", icon: CalendarClock },
     { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
   ];

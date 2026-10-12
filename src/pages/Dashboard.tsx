@@ -21,6 +21,7 @@ import {
   DASHBOARD_ACTIONS
 } from "@/components/dashboard/action-config";
 import { OBFAccountPanel } from "@/components/obf";
+import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
 
 const ACCOUNT_COLORS = [
   "bg-gradient-to-br from-blue-500 to-blue-700",
@@ -181,6 +182,8 @@ const Dashboard = () => {
           <OBFAccountPanel />
         </div>
       )}
+
+      <div className="animate-fade-in"><ObligationsWidget /></div>
 
       {/* Quick Actions Grid with Enhanced Animations */}
       <div className="animate-scale-in">
