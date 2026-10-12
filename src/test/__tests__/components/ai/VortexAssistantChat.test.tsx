@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { OpenAIChat } from '@/components/ai/OpenAIChat'
+import { VortexAssistantChat } from '@/components/ai/VortexAssistantChat'
 
 const mocks = vi.hoisted(() => ({
   invoke: vi.fn(),
@@ -43,7 +43,7 @@ function sendMessage(content: string) {
   fireEvent.click(screen.getByRole('button', { name: 'Send message' }))
 }
 
-describe('OpenAIChat', () => {
+describe('VortexAssistantChat', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.auth.isAuthenticated = true
@@ -57,38 +57,38 @@ describe('OpenAIChat', () => {
 
   it('is not exposed while auth is loading or when the user is signed out', () => {
     mocks.auth.isAuthenticated = false
-    const { rerender } = render(<OpenAIChat />)
+    const { rerender } = render(<VortexAssistantChat />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
     mocks.auth.isAuthenticated = true
     mocks.auth.isLoading = true
-    rerender(<OpenAIChat />)
+    rerender(<VortexAssistantChat />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
   it('shows a truthful welcome message for authenticated users', () => {
-    render(<OpenAIChat />)
+    render(<VortexAssistantChat />)
     openChat()
 
     expect(screen.getByText('VortexAI Assistant')).toBeInTheDocument()
-    expect(screen.getByText(/available to your signed-in account/i)).toBeInTheDocument()
+    expect(screen.getByText(/Welcome to VortexAI/i)).toBeInTheDocument()
   })
 
-  it('sends the current access token, prompt, and bounded UI history', async () => {
-    render(<OpenAIChat />)
+  it('sends the current access token, messages, and UI history', async () => {
+    render(<VortexAssistantChat />)
     openChat()
     sendMessage('Review my spending')
 
     await waitFor(() => {
-      expect(mocks.invoke).toHaveBeenCalledWith('openai-chat', {
+      expect(mocks.invoke).toHaveBeenCalledWith('ai-router', {
         headers: { Authorization: 'Bearer mock-token' },
         body: {
-          prompt: 'Review my spending',
-          history: [
+          messages: [
             {
               role: 'assistant',
-              content: 'Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.',
+              content: 'Welcome to VortexAI. How can I help you today?',
             },
+            { role: 'user', content: 'Review my spending' },
           ],
         },
       })
@@ -99,11 +99,11 @@ describe('OpenAIChat', () => {
 
   it('does not invoke the backend without an authenticated token', async () => {
     mocks.getAccessToken.mockResolvedValue(null)
-    render(<OpenAIChat />)
+    render(<VortexAssistantChat />)
     openChat()
     sendMessage('Show my balance')
 
-    expect(await screen.findByText(/couldn't securely load your financial context/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Your session has expired/i)).toBeInTheDocument()
     expect(mocks.invoke).not.toHaveBeenCalled()
     expect(mocks.toast).toHaveBeenCalledWith(expect.objectContaining({
       description: 'Your session has expired. Please sign in again.',
@@ -113,16 +113,16 @@ describe('OpenAIChat', () => {
 
   it('surfaces backend failures without substituting financial claims', async () => {
     mocks.invoke.mockResolvedValue({ data: null, error: { message: 'context unavailable' } })
-    render(<OpenAIChat />)
+    render(<VortexAssistantChat />)
     openChat()
     sendMessage('What changed this month?')
 
-    expect(await screen.findByText(/couldn't securely load your financial context/i)).toBeInTheDocument()
+    expect(await screen.findByText(/context unavailable/i)).toBeInTheDocument()
     expect(screen.queryByText(/spending down/i)).not.toBeInTheDocument()
   })
 
   it('can be minimized, restored, and cleared', () => {
-    render(<OpenAIChat />)
+    render(<VortexAssistantChat />)
     openChat()
 
     fireEvent.click(screen.getByTitle('Minimize'))
@@ -131,6 +131,6 @@ describe('OpenAIChat', () => {
     expect(screen.getByText('VortexAI Assistant')).toBeInTheDocument()
 
     fireEvent.click(screen.getByText('Clear Chat'))
-    expect(screen.getAllByText(/available to your signed-in account/i)).toHaveLength(1)
+    expect(screen.getAllByText(/Welcome to VortexAI/i)).toHaveLength(1)
   })
 })
