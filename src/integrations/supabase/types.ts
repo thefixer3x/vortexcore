@@ -3959,6 +3959,42 @@ export type Database = {
         }
         Relationships: []
       }
+      vortex_obligation_feed: {
+        Row: {
+          amount: number | null
+          created_at: string
+          currency: string | null
+          id: string
+          kind: string
+          message: string
+          obligation_id: string | null
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          kind: string
+          message: string
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          kind?: string
+          message?: string
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       vortex_obligations: {
         Row: {
           amount: number | null
@@ -9955,6 +9991,14 @@ export type Database = {
         }[]
       }
       vortex_get_setting: { Args: { p_key: string }; Returns: Json }
+      vortex_next_due: {
+        Args: { p_due: string; p_rec: string }
+        Returns: string
+      }
+      vortex_pay_obligation: {
+        Args: { p_obligation_id: string; p_user_id: string }
+        Returns: Json
+      }
       vortex_set_setting: {
         Args: { p_key: string; p_value: Json }
         Returns: Json
