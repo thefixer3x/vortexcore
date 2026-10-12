@@ -1,4 +1,5 @@
 
+import { VortexAIIcon } from "./VortexAIIcon";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,17 +20,17 @@ interface Message {
 
 // Updated model names with business-focused terminology
 const VORTEX_AI_MODELS = [
-  { value: 'gemini-pro', label: 'VortexAI Standard' },
-  { value: 'gemini-pro-vision', label: 'VortexAI Vision' },
-  { value: 'gemini-2.0-flash', label: 'VortexAI Enterprise' },
-  { value: 'gemini-1.5-flash', label: 'VortexAI Accelerated' },
+  { value: 'standard', label: 'VortexIQ Standard' },
+  { value: 'vision', label: 'VortexIQ Vision' },
+  { value: 'enterprise', label: 'VortexIQ Enterprise' },
+  { value: 'accelerated', label: 'VortexIQ Accelerated' },
 ];
 
-export function GeminiAIChat() {
+export function VortexIQChat() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState<string>("gemini-pro");
+  const [model, setModel] = useState<string>("standard");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { getAccessToken, isAuthenticated } = useAuth();
@@ -42,7 +43,7 @@ export function GeminiAIChat() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || isLoading) return;
     
     // Track AI prompt sent event
     LogRocket.track('ai_prompt_sent', {
@@ -63,7 +64,7 @@ export function GeminiAIChat() {
     try {
       // Convert messages to format expected by the API
       const history = messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model',
+        role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.content
       }));
 
@@ -79,13 +80,13 @@ export function GeminiAIChat() {
       }
 
       // Call the Supabase Edge Function
-      const { data, error } = await supabase.functions.invoke("gemini-ai", {
-        body: { prompt, history, model },
+      const { data, error } = await supabase.functions.invoke("ai-router", {
+        body: { messages: [...history, userMessage], mode: "vortex-iq", style: model },
         headers: authHeaders
       });
 
       if (error) {
-        console.error("Error calling Gemini AI:", error);
+        console.error("Error calling VortexIQ:", error);
         
         // Provide more specific error messages based on error type
         let errorMessage = "Failed to get a response from the AI assistant";
@@ -126,7 +127,7 @@ export function GeminiAIChat() {
         });
       }
     } catch (error) {
-      console.error("Error in Gemini AI chat:", error);
+      console.error("Error in VortexIQ chat:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -151,7 +152,7 @@ export function GeminiAIChat() {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" /> VortexCore AI Assistant
+            <VortexAIIcon className="h-5 w-5 text-primary" /> VortexIQ
           </CardTitle>
           <CardDescription>Powered by advanced language models</CardDescription>
         </div>
@@ -207,7 +208,7 @@ export function GeminiAIChat() {
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-muted-foreground text-center">
-                Start a conversation with VortexCore AI.
+                Start a conversation with VortexIQ.
                 <br />
                 Ask any question or request assistance.
               </p>
@@ -219,8 +220,8 @@ export function GeminiAIChat() {
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`flex gap-2 ${message.role === 'user' ? 'flex-row' : 'flex-row-reverse'}`}>
-                  <Avatar className={`h-8 w-8 ${message.role === 'user' ? 'bg-primary' : 'bg-muted'}`}>
-                    {message.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                  <Avatar className={`h-8 w-8 shrink-0 flex items-center justify-center ${message.role === 'user' ? 'bg-primary' : 'bg-muted'}`}>
+                    {message.role === 'user' ? <User className="h-4 w-4" /> : <VortexAIIcon className="h-4 w-4 text-primary" />}
                   </Avatar>
                   <div
                     className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
@@ -251,7 +252,7 @@ export function GeminiAIChat() {
               }
             }}
           />
-          <Button type="submit" size="icon" disabled={isLoading || !prompt.trim()}>
+          <Button type="submit" aria-label="Send message" size="icon" disabled={isLoading || !prompt.trim()}>
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (

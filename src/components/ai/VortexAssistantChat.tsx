@@ -1,3 +1,4 @@
+import { VortexAIIcon } from "./VortexAIIcon";
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +21,7 @@ interface Message {
   content: string;
 }
 
-export function OpenAIChat() {
+export function VortexAssistantChat() {
   const { isAuthenticated, isLoading: isAuthLoading, getAccessToken } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -29,7 +30,7 @@ export function OpenAIChat() {
     {
       role: "assistant",
       content:
-        "Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.",
+        "Welcome to VortexAI. How can I help you today?",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,7 @@ export function OpenAIChat() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || isLoading) return;
 
     const userMessage: Message = {
       role: "user",
@@ -62,22 +63,22 @@ export function OpenAIChat() {
       }
 
       LogRocket.track("ai_prompt_sent", {
-        provider: "openai_chat",
+        provider: "vortex_ai",
         promptLength: userMessage.content.length,
         historyLength: messages.length,
       });
 
       const history = messages.map((m) => ({ role: m.role, content: m.content }));
 
-      const { data, error } = await supabase.functions.invoke('openai-chat', {
+      const { data, error } = await supabase.functions.invoke('ai-router', {
         headers: { Authorization: `Bearer ${accessToken}` },
         body: {
-          prompt: userMessage.content,
-          history
+          messages: [...history, userMessage]
         }
       });
 
-      if (error) throw new Error(error.message || "Failed to get AI response");
+      if (error) throw new Error(error.message || "VortexAI is temporarily unavailable");
+      if (typeof data?.response !== "string" || !data.response.trim()) throw new Error(data?.error || "VortexAI returned an empty response");
       
       setMessages((prev) => {
         const updated = [...prev];
@@ -90,7 +91,7 @@ export function OpenAIChat() {
 
       setRetryCount(0);
     } catch (error) {
-      console.error("Error in OpenAI chat:", error);
+      console.error("Error in VortexAI chat:", error);
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant" && !last.content) return prev.slice(0, -1);
@@ -101,7 +102,7 @@ export function OpenAIChat() {
         {
           role: "assistant",
           content:
-            "I couldn't securely load your financial context. Please try again; if this continues, contact support.",
+            error instanceof Error ? error.message : "VortexAI is temporarily unavailable. Please try again.",
         },
       ]);
       toast({
@@ -129,7 +130,7 @@ export function OpenAIChat() {
       {
         role: "assistant",
         content:
-          "Welcome to VortexCore. I can help explain the balances and transactions available to your signed-in account.",
+          "Welcome to VortexAI. How can I help you today?",
       },
     ]);
     setRetryCount(0);
@@ -142,10 +143,12 @@ export function OpenAIChat() {
     return (
       <div className="fixed bottom-4 right-4 z-50">
         <Button
+          aria-label="Open VortexAI"
+          title="Open VortexAI"
           onClick={() => setIsOpen(true)}
           className="rounded-full h-14 w-14 p-0 bg-primary hover:bg-primary/90 shadow-lg flex items-center justify-center"
         >
-          <MessageSquare className="h-6 w-6" />
+          <VortexAIIcon className="h-6 w-6 text-primary-foreground" />
         </Button>
       </div>
     );
@@ -170,7 +173,7 @@ export function OpenAIChat() {
         <div className="bg-primary p-3 text-primary-foreground flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10">
-              <img src="/favicon.svg" alt="VortexAI" className="h-5 w-5 text-primary-foreground" />
+              <VortexAIIcon className="h-5 w-5 text-primary-foreground" />
             </div>
             <h3 className="font-medium">VortexAI Assistant</h3>
           </div>

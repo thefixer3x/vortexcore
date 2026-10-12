@@ -1,3 +1,4 @@
+import { VortexAIIcon } from "./VortexAIIcon";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,22 +24,22 @@ interface Citation {
   url: string;
 }
 
-// Perplexity model options with business-friendly naming
-const PERPLEXITY_MODELS = [
-  { value: 'sonar-8k-online', label: 'VortexAI Realtime', description: 'Real-time data with web search' },
-  { value: 'sonar-small-online', label: 'VortexAI Express', description: 'Faster responses with web search' },
-  { value: 'mixtral-8x7b-instruct', label: 'VortexAI Advanced', description: 'Complex financial reasoning' },
-  { value: 'claude-3-sonnet-20240229', label: 'VortexAI Analyst', description: 'Detailed financial analysis' }
+// VortexDeepresearch model options with business-friendly naming
+const RESEARCH_MODES = [
+  { value: 'standard', label: 'VortexDeepresearch', description: 'Financial research' },
+  { value: 'express', label: 'VortexDeepresearch Express', description: 'Concise analysis' },
+  { value: 'advanced', label: 'VortexDeepresearch Advanced', description: 'Complex financial reasoning' },
+  { value: 'analyst', label: 'VortexDeepresearch Analyst', description: 'Detailed financial analysis' }
 ];
 
-export function PerplexityAIChat() {
+export function VortexDeepresearchChat() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
-    content: "Welcome to VortexAI Realtime. I can provide financial information, market data, and business insights with real-time information from the web. How can I assist you today?"
+    content: "Welcome to VortexDeepresearch. I can help analyze financial information and business questions. How can I assist you today?"
   }]);
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState<string>("sonar-8k-online");
+  const [model, setModel] = useState<string>("standard");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { getAccessToken, isAuthenticated } = useAuth();
@@ -51,11 +52,11 @@ export function PerplexityAIChat() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || isLoading) return;
     
     // Track analytics
     LogRocket.track('ai_prompt_sent', {
-      provider: 'perplexity',
+      provider: 'vortex_deepresearch',
       model: model,
       promptLength: prompt.length,
       historyLength: messages.length
@@ -91,13 +92,14 @@ export function PerplexityAIChat() {
             content: m.content
           })),
           wantRealtime: true,
-          model: model
+          style: model,
+          mode: "deep-research"
         },
         headers: authHeaders
       });
 
       if (error) {
-        console.error("Error calling Perplexity AI:", error);
+        console.error("Error calling VortexDeepresearch AI:", error);
         toast({
           title: "Error",
           description: "Failed to get a response from the AI assistant",
@@ -137,7 +139,7 @@ export function PerplexityAIChat() {
         });
       }
     } catch (error) {
-      console.error("Error in Perplexity chat:", error);
+      console.error("Error in VortexDeepresearch chat:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -149,7 +151,7 @@ export function PerplexityAIChat() {
   };
 
   // Get the selected model's label
-  const selectedModelLabel = PERPLEXITY_MODELS.find(m => m.value === model)?.label || "VortexAI Realtime";
+  const selectedModelLabel = RESEARCH_MODES.find(m => m.value === model)?.label || "VortexDeepresearch";
 
   return (
     <Card className="border shadow-md">
@@ -157,11 +159,11 @@ export function PerplexityAIChat() {
         <div className="flex justify-between items-center">
           <div>
             <CardTitle className="text-xl font-semibold flex items-center">
-              <Globe className="h-5 w-5 mr-2 text-primary" />
-              VortexAI Realtime
+              <VortexAIIcon className="h-5 w-5 mr-2 text-primary" />
+              VortexDeepresearch
             </CardTitle>
             <CardDescription>
-              Powered by Perplexity with real-time information
+              Market research and financial analysis
             </CardDescription>
           </div>
           <Popover>
@@ -182,7 +184,7 @@ export function PerplexityAIChat() {
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PERPLEXITY_MODELS.map(model => (
+                      {RESEARCH_MODES.map(model => (
                         <SelectItem key={model.value} value={model.value}>
                           <div className="flex flex-col">
                             <span>{model.label}</span>
@@ -202,11 +204,11 @@ export function PerplexityAIChat() {
         <div className="h-[400px] overflow-y-auto p-4 space-y-4 border rounded-md bg-muted/30">
           {messages.map((message, index) => (
             <div key={index} className="flex gap-3">
-              <Avatar className={message.role === 'user' ? 'bg-primary' : 'bg-muted'}>
+              <Avatar className={`shrink-0 flex items-center justify-center ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
                 {message.role === 'user' ? (
                   <User className="h-4 w-4" />
                 ) : (
-                  <Bot className="h-4 w-4" />
+                  <VortexAIIcon className="h-4 w-4 text-primary" />
                 )}
               </Avatar>
               <div className="flex-1 space-y-2">
@@ -249,7 +251,8 @@ export function PerplexityAIChat() {
             />
             <div className="absolute right-2 bottom-2">
               <Button 
-                type="submit" 
+                type="submit"
+                aria-label="Send message"
                 size="sm" 
                 disabled={isLoading || !prompt.trim()}
                 className="h-8 w-8 p-0 rounded-full"
@@ -264,7 +267,7 @@ export function PerplexityAIChat() {
           </div>
           <div className="text-xs text-muted-foreground flex items-center">
             <AlertCircle className="h-3 w-3 mr-1" />
-            Using {selectedModelLabel} — responses include real-time information
+            {selectedModelLabel}
           </div>
         </form>
       </CardContent>

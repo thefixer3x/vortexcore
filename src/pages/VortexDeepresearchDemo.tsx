@@ -1,10 +1,9 @@
-
-import { GeminiAIChat } from "@/components/ai/GeminiAIChat";
+import { VortexDeepresearchChat } from "@/components/ai/VortexDeepresearchChat";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const GeminiDemo = () => {
+const VortexDeepresearchDemo = () => {
   return (
     <div className="container mx-auto py-8 animate-fade-in">
       <div className="flex flex-col gap-6">
@@ -14,21 +13,21 @@ const GeminiDemo = () => {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">VortexCore AI</h1>
+          <h1 className="text-3xl font-bold">VortexDeepresearch</h1>
         </div>
         
         <p className="text-muted-foreground">
-          Experience the power of VortexCore's advanced AI capabilities. 
-          Our enterprise-grade language models provide intelligent assistance, 
-          data analysis, and personalized recommendations for your financial workflows.
+          Experience the power of VortexCore's advanced AI capabilities for research and analysis. 
+          Our enterprise-grade language models provide market intelligence, 
+          financial news, and personalized recommendations for your business needs.
         </p>
         
         <div className="mt-4">
-          <GeminiAIChat />
+          <VortexDeepresearchChat />
         </div>
       </div>
     </div>
   );
 };
 
-export default GeminiDemo;
+export default VortexDeepresearchDemo;
