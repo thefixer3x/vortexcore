@@ -10,4 +10,8 @@
 - [x] Live obligations feed + auto-matching / auto re-scan on new transactions.
 - [x] Admin screen: promote users, manage company projects.
 - [x] Client records / query classifications / company endpoints: already scoped to owners or verified orgs.
-- [ ] First admin account — needs the user's email to promote.
+- [x] First admin account — admin@lanonasis.com promoted.
+
+# Supabase API key migration
+- [ ] Switch frontend and server clients to publishable/secret keys without changing access policies — blocked on the new server key.
+- [ ] Redeploy affected functions and verify live requests and Supabase logs after the migration.
