@@ -1,11 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.43.1";
+import { createClient } from "../_shared/supabase-client.ts";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 
 serve(withAuthMiddleware(async (req, { auth }) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    const supabaseServiceKey = Deno.env.get('VORTEX_SUPABASE_SECRET_KEY') || '';
     if (!supabaseUrl || !supabaseServiceKey) throw new Error('Missing Supabase credentials');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
