@@ -3,11 +3,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Support both Vite (VITE_*) and legacy Next-style (NEXT_PUBLIC_*) envs
-const SUPABASE_URL =
-  import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error('Missing Supabase environment variables. Please check your .env file.');
@@ -33,9 +30,13 @@ export const supabase = createClient<Database>(
         'X-Client-Info': 'vortex-core-app/1.0 performance-optimized',
       },
       fetch: (url, options = {}) => {
+        const headers = new Headers(options.headers);
+        if (headers.get('Authorization') === `Bearer ${SUPABASE_PUBLISHABLE_KEY}`) {
+          headers.delete('Authorization');
+        }
         // Add request timing for performance monitoring
         const start = Date.now();
-        return fetch(url, options).then(response => {
+        return fetch(url, { ...options, headers }).then(response => {
           const duration = Date.now() - start;
           // Log slow requests (over 500ms) to help identify performance issues
           if (duration > 500) {
