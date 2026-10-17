@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.39.3";
+import { createClient } from "../_shared/supabase-client.ts";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 const SAYSWITCH_BASE_URL = Deno.env.get('SAYSWITCH_BASE_URL') || 'https://backendapi.sayswitchgroup.com/api/v1';
 const SAYSWITCH_SECRET_KEY = Deno.env.get('SAYSWITCH_SECRET_KEY') || '';
@@ -13,7 +13,7 @@ serve(withAuthMiddleware(async (req, { auth })=>{
     if (!reference) {
       return new Response(JSON.stringify({ success: false, message: 'Reference is required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
-    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
+    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('VORTEX_SUPABASE_SECRET_KEY') ?? '', {
       auth: { persistSession: false }
     });
     const { data: caller } = await supabaseClient.auth.admin.getUserById(auth.userId);

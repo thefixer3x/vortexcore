@@ -20,7 +20,7 @@ export function validateClientConfig(): ConfigValidationResult {
 
   // Check required Supabase configuration
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl) {
     result.isValid = false;
@@ -31,12 +31,12 @@ export function validateClientConfig(): ConfigValidationResult {
     result.recommendations.push('Verify VITE_SUPABASE_URL format: https://your-project-id.supabase.co');
   }
 
-  if (!supabaseAnonKey) {
+  if (!supabasePublishableKey) {
     result.isValid = false;
-    result.errors.push('VITE_SUPABASE_ANON_KEY is missing from environment variables');
-    result.recommendations.push('Set VITE_SUPABASE_ANON_KEY to your Supabase anonymous/public key');
-  } else if (!supabaseAnonKey.startsWith('eyJ')) {
-    result.warnings.push('VITE_SUPABASE_ANON_KEY may have incorrect format (should be a JWT token)');
+    result.errors.push('VITE_SUPABASE_PUBLISHABLE_KEY is missing from environment variables');
+    result.recommendations.push('Set VITE_SUPABASE_PUBLISHABLE_KEY to your Supabase publishable key');
+  } else if (!supabasePublishableKey.startsWith('sb_publishable_')) {
+    result.warnings.push('Supabase publishable key configuration may be incorrect');
   }
 
   // Check optional but recommended configuration

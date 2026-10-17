@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "../_shared/supabase-client.ts";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 const json = (body: unknown, status = 200) =>
@@ -13,13 +13,13 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Use POST" }, 405);
 
   const url = Deno.env.get("SUPABASE_URL")!;
-  const userClient = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, {
+  const userClient = createClient(url, Deno.env.get("VORTEX_SUPABASE_PUBLISHABLE_KEY")!, {
     global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
   });
-  const { data: u, error: authErr } = await userClient.auth.getUser();
+  const { data: u, error: authErr } = await userClient.auth.getUser((req.headers.get("Authorization") ?? "").replace(/^Bearer /, ""));
   if (authErr || !u?.user) return json({ error: "Please sign in" }, 401);
 
-  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const admin = createClient(url, Deno.env.get("VORTEX_SUPABASE_SECRET_KEY")!);
   const { data: me } = await admin.from("users").select("role").eq("id", u.user.id).maybeSingle();
   const isAdmin = me?.role === "admin" || me?.role === "superadmin";
 

@@ -1,11 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.39.7";
+import { createClient } from "../_shared/supabase-client.ts";
 import { computeClientTier } from "../_shared/subscription-logic.ts";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || ""
 );
 
 serve(withAuthMiddleware(async (_req, { auth }) => {

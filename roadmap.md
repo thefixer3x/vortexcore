@@ -13,5 +13,6 @@
 - [x] First admin account — admin@lanonasis.com promoted.
 
 # Supabase API key migration
-- [ ] Switch frontend and server clients to publishable/secret keys without changing access policies — blocked on the new server key.
-- [ ] Redeploy affected functions and verify live requests and Supabase logs after the migration.
+- [x] Switch frontend and server clients to publishable/secret keys without changing access policies.
+- [x] Redeploy affected functions; verify public auth/AI access, protected denials, isolated privileged SDK reads, and Supabase logs.
+- [ ] Verify signed-in admin and wallet-payment flows after migration — external Supabase has no managed test session; requires the user's signed-in session.

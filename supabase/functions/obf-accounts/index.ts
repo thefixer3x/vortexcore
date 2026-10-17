@@ -5,9 +5,9 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { z } from "https://esm.sh/zod@3.22.4";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "../_shared/supabase-client.ts";
 
-const db = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "");
+const db = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "");
 
 // Account IDs the signed-in user has linked (app_vortexcore.accounts via public facade).
 async function ownedAccountIds(userId: string): Promise<Set<string>> {

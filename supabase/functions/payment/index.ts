@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.39.3";
+import { createClient } from "../_shared/supabase-client.ts";
 import { createHash } from "node:crypto";
 // Constants and configurations
 const SAYSWITCH_BASE_URL = Deno.env.get('SAYSWITCH_BASE_URL') || 'https://backendapi.sayswitchgroup.com/api/v1';
@@ -108,7 +108,7 @@ serve(withAuthMiddleware(async (req, { auth })=>{
       });
     }
     const rawPayload = await req.json();
-    const adminClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', { auth: { persistSession: false } });
+    const adminClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('VORTEX_SUPABASE_SECRET_KEY') ?? '', { auth: { persistSession: false } });
     const { data: caller } = await adminClient.auth.admin.getUserById(auth.userId);
     const payload = validatePaymentRequest(rawPayload, caller?.user?.email);
     // Generate HMAC signature
@@ -128,7 +128,7 @@ serve(withAuthMiddleware(async (req, { auth })=>{
       throw new Error(data.message || 'Failed to initialize payment');
     }
     // Store transaction in database
-    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', {
+    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('VORTEX_SUPABASE_SECRET_KEY') ?? '', {
       auth: {
         persistSession: false
       }

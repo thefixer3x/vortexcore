@@ -1,7 +1,7 @@
 import { test, expect, request } from '@playwright/test';
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const anonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 test.describe('Stripe Edge Function Auth', () => {
   test.skip(!supabaseUrl, 'SUPABASE_URL is not configured');
@@ -11,7 +11,7 @@ test.describe('Stripe Edge Function Auth', () => {
     const res = await api.post(`${supabaseUrl}/functions/v1/stripe`, {
       headers: {
         'Content-Type': 'application/json',
-        ...(anonKey ? { 'apikey': anonKey } : {}),
+        ...(publishableKey ? { 'apikey': publishableKey } : {}),
       },
       data: { action: 'get_transactions', data: { card_id: 'fake', limit: 1 } },
     });

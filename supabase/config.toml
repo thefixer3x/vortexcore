@@ -8,7 +8,7 @@ major_version = 15
   # verify_jwt = false
 
 [functions.stripe]
-  verify_jwt = true
+  verify_jwt = false
 
 # Stripe sends no Supabase JWT; auth is the stripe-signature check in the handler.
 [functions.stripe-entitlements]
@@ -21,4 +21,31 @@ major_version = 15
   verify_jwt = false
 
 [functions.openai-chat]
-  verify_jwt = true
+  verify_jwt = false
+
+# Caller JWTs are validated inside handlers; API keys are opaque, not JWTs.
+[functions.auth]
+  verify_jwt = false
+[functions.check-subscription]
+  verify_jwt = false
+[functions.create-checkout-session]
+  verify_jwt = false
+[functions.customer-portal]
+  verify_jwt = false
+[functions.detect-obligations]
+  verify_jwt = false
+[functions.pay-obligation]
+  verify_jwt = false
+[functions.vortex-admin]
+  verify_jwt = false
+[functions.obf-accounts]
+  verify_jwt = false
+[functions.payment]
+  verify_jwt = false
+[functions.verify]
+  verify_jwt = false
+# Webhooks retain their existing provider signature/secret checks.
+[functions.callback-handler]
+  verify_jwt = false
+[functions.stripe-issuing-authorization]
+  verify_jwt = false

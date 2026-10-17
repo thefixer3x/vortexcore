@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "../_shared/supabase-client.ts";
 import { computeClientTier } from "../_shared/subscription-logic.ts";
 
 // Initialize Stripe with the secret key from environment variables
@@ -18,7 +18,7 @@ const corsHeaders = {
 const FREE_TIER_CARD_LIMIT = 3;
 const serviceClient = createClient(
   Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
+  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "",
 );
 
 // Mirrors check-subscription: resolve the caller's plan from stored Stripe data.

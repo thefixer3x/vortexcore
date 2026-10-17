@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "../_shared/supabase-client.ts";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 const json = (body: unknown, status = 200) =>
@@ -13,14 +13,14 @@ Deno.serve(async (req) => {
 
   const url = Deno.env.get("SUPABASE_URL")!;
   const authHeader = req.headers.get("Authorization") ?? "";
-  const userClient = createClient(url, Deno.env.get("SUPABASE_ANON_KEY")!, {
+  const userClient = createClient(url, Deno.env.get("VORTEX_SUPABASE_PUBLISHABLE_KEY")!, {
     global: { headers: { Authorization: authHeader } },
   });
-  const { data: userData, error: authErr } = await userClient.auth.getUser();
+  const { data: userData, error: authErr } = await userClient.auth.getUser(authHeader.replace(/^Bearer /, ""));
   if (authErr || !userData?.user) return json({ error: "Please sign in" }, 401);
   const userId = userData.user.id;
 
-  const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const admin = createClient(url, Deno.env.get("VORTEX_SUPABASE_SECRET_KEY")!);
   const key = Deno.env.get("LOVABLE_API_KEY");
   if (!key) return json({ error: "VortexAI is not configured" }, 503);
 

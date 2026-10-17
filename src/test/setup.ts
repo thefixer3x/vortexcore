@@ -57,7 +57,7 @@ if (typeof window !== 'undefined') {
 // Mock environment variables for testing
 if (process.env.NODE_ENV === 'test') {
   process.env.VITE_SUPABASE_URL = 'https://test-supabase-url.supabase.co'
-  process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key'
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test_fixture'
 }
 
 // Test timeout is configured in vitest.config.ts
