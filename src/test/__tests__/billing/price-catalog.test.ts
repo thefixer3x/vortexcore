@@ -5,6 +5,9 @@ import {
   TIER_ENTITLEMENTS,
   entitlementsFor,
   isTier,
+  isVortexCorePrice,
+  PRO_PRICE_ID,
+  ENT_PRICE_ID,
   resolveTier,
 } from '../../../../supabase/functions/_shared/subscription-logic'
 
@@ -42,13 +45,35 @@ describe('billing catalog', () => {
     expect(PRICE_CATALOG[id].project).toBe('vortexcore')
   })
 
-  it('legacy SubTrack prices keep resolving to pro / enterprise', () => {
-    expect(resolveTier(SUBTRACK_PRO)).toBe('pro')
-    expect(resolveTier(SUBTRACK_ENT)).toBe('enterprise')
+  it('SubTrack prices never grant a VortexCore tier (separate apps, shared Stripe account)', () => {
+    expect(resolveTier(SUBTRACK_PRO)).toBe('free')
+    expect(resolveTier(SUBTRACK_ENT)).toBe('free')
+    expect(resolveTier(SUBTRACK_PRO, 'pro', 'subtrack')).toBe('free')
+    expect(resolveTier(SUBTRACK_ENT, 'enterprise', 'subtrack')).toBe('free')
+    expect(PRICE_CATALOG[SUBTRACK_PRO]).toBeUndefined()
+    expect(PRICE_CATALOG[SUBTRACK_ENT]).toBeUndefined()
   })
 
-  it('an unlisted price falls back to its metadata tier', () => {
-    expect(resolveTier('price_new_unlisted', 'hobby')).toBe('hobby')
+  it('PRO / ENT constants are VortexCore prices, never env-overridable to another app', () => {
+    expect(PRO_PRICE_ID).toBe(VORTEXCORE.pro)
+    expect(ENT_PRICE_ID).toBe(VORTEXCORE.enterprise)
+  })
+
+  it('only VortexCore prices count as own subscriptions', () => {
+    expect(isVortexCorePrice(VORTEXCORE.pro)).toBe(true)
+    expect(isVortexCorePrice('price_admin_created', 'vortexcore')).toBe(true)
+    expect(isVortexCorePrice(SUBTRACK_PRO, 'subtrack')).toBe(false)
+    expect(isVortexCorePrice('price_unknown')).toBe(false)
+    expect(isVortexCorePrice(null)).toBe(false)
+  })
+
+  it('an unlisted VortexCore price falls back to its metadata tier', () => {
+    expect(resolveTier('price_new_unlisted', 'hobby', 'vortexcore')).toBe('hobby')
+  })
+
+  it('an unlisted price from another or unknown project is free', () => {
+    expect(resolveTier('price_new_unlisted', 'hobby')).toBe('free')
+    expect(resolveTier('price_new_unlisted', 'pro', 'subtrack')).toBe('free')
   })
 
   it('an unlisted price with bad or missing metadata is free', () => {

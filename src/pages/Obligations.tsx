@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useObligations, classifyObligation, type Obligation } from "@/hooks/use-obligations";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
 import { StatementUpload } from "@/components/obligations/StatementUpload";
@@ -16,13 +17,17 @@ const stateBadge = {
   paid: { label: "Paid", variant: "outline" as const },
 };
 
-const fmt = (n: number | null, c?: string | null) =>
-  n == null ? "" : new Intl.NumberFormat(undefined, { style: "currency", currency: c || "NGN" }).format(n);
 const lastPayment = (o: Obligation) => o.metadata?.payments?.slice(-1)[0];
 
 const Obligations = () => {
   const { obligations, feed, isLoading, isDetecting, error, detect, importStatement, pay, markPaid, remove } = useObligations({ live: true });
   const { toast } = useToast();
+  const { formatCurrency } = useCurrency();
+  // Each amount keeps its own currency. Detected obligations can have no currency;
+  // show those as a plain number rather than labelling them with the user's
+  // preferred currency, which may not be the source currency.
+  const fmt = (n: number | null, c?: string | null) =>
+    n == null ? "" : c ? formatCurrency(n, c) : new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n);
   const [payingId, setPayingId] = useState<string | null>(null);
 
   const runDetection = async () => {
@@ -125,7 +130,7 @@ const Obligations = () => {
                   <div className="text-right">
                     {o.amount != null && (
                       <div className="font-semibold">
-                        {new Intl.NumberFormat(undefined, { style: "currency", currency: o.currency || "NGN" }).format(o.amount)}
+                        {fmt(o.amount, o.currency)}
                       </div>
                     )}
                     <div className="text-xs text-muted-foreground">

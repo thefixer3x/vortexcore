@@ -17,8 +17,8 @@ import { describe, it, expect } from 'vitest'
 // Replicate the pure functions from supabase/functions/_shared/subscription-logic.ts
 // so this test is self-contained and environment-agnostic.
 
-const PRO_PRICE_ID = "price_1RiSAL2KF4vMCpn8wUyDio3N";
-const ENT_PRICE_ID = "price_1RiSAi2KF4vMCpn8B18AAI8v";
+const PRO_PRICE_ID = "price_1UOr872KF4vMCpn81Q4FSS67";
+const ENT_PRICE_ID = "price_1UOr882KF4vMCpn8mLZJAN20";
 
 function resolveTier(priceId: string | null): string {
   if (priceId === PRO_PRICE_ID) return "pro";
