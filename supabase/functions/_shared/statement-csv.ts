@@ -84,7 +84,7 @@ const find = (headers: string[], patterns: RegExp[], exclude?: RegExp) => {
 };
 
 export function parseStatementCsv(text: string): { rows: StatementRow[]; skipped: number; error?: string } {
-  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.trim());
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.replace(/[,;\t|"\s]/g, ""));
   if (!lines.length) return { rows: [], skipped: 0, error: "The file is empty." };
   const sample = lines.slice(0, 20).join("\n");
   const delim = [",", ";", "\t", "|"].sort((a, b) => sample.split(b).length - sample.split(a).length)[0];
