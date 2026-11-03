@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.sync_config (
 
 -- Store the webhook secret
 INSERT INTO public.sync_config (key, value)
-VALUES ('webhook_secret', 'd45932caace861750bed85b45ee56c391c967919d9a12df049d6df4aaa248bc1')
+VALUES ('webhook_secret', '<redacted: rotated 2026-11-03, now in Vault as user_sync_webhook_secret>')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now();
 
 -- Restrict access to service role only
