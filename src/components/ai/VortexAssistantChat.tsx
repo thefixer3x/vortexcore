@@ -48,7 +48,7 @@ export function VortexAssistantChat() {
   };
 
   // Questions typed into the "Search with VortexAI" bar open this chat and are answered here.
-  const sendRef = useRef<(text: string) => Promise<void>>();
+  const sendRef = useRef<((text: string) => Promise<void>) | null>(null);
   useEffect(() => {
     const onAsk = (ev: Event) => {
       const text = (ev as CustomEvent<string>).detail;
