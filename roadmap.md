@@ -25,3 +25,4 @@
 - [ ] Remove canned chat replies; VortexAI search asks the real assistant.
 - [ ] Re-check the migration: project schemas + public facade views, admin data in control_room, secret-key access (no service-role key use).
 - [ ] Align with patch review: VortexCore Stripe prices (free/hobby/pro/enterprise, no SubTrack IDs), realtime subscriptions on app_vortexcore, control_room lockdown, VortexCore-only cockpit projects and counts, run in one transaction.
+- [ ] Confirm every database change applied today is saved in supabase/migrations/.
