@@ -44,11 +44,29 @@ export function VortexAssistantChat() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || isLoading) return;
+    await sendText(message);
+  };
+
+  // Questions typed into the "Search with VortexAI" bar open this chat and are answered here.
+  const sendRef = useRef<(text: string) => Promise<void>>();
+  useEffect(() => {
+    const onAsk = (ev: Event) => {
+      const text = (ev as CustomEvent<string>).detail;
+      if (typeof text !== "string" || !text.trim()) return;
+      setIsOpen(true);
+      setIsMinimized(false);
+      void sendRef.current?.(text);
+    };
+    window.addEventListener("vortex:ask", onAsk);
+    return () => window.removeEventListener("vortex:ask", onAsk);
+  }, []);
+
+  const sendText = async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
     const userMessage: Message = {
       role: "user",
-      content: message,
+      content: text,
     };
 
     // Push user message and a placeholder assistant bubble for streaming
