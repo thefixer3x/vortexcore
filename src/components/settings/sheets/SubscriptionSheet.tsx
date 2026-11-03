@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CrownIcon, Zap, Building2, Check, Loader2, ExternalLink, CreditCard, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/contexts/SubscriptionContext";
-import { TIERS } from "@/lib/subscription-tiers";
+import { usePricingTiers, formatPlanPrice } from "@/hooks/use-pricing-tiers";
+import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SubscriptionSheetProps {
@@ -16,6 +17,7 @@ interface SubscriptionSheetProps {
 
 const TIER_ICONS = {
   free: CrownIcon,
+  hobby: Sparkles,
   pro: Zap,
   enterprise: Building2,
 };
@@ -26,6 +28,8 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const { toast } = useToast();
+  const { tiers } = usePricingTiers();
+  const currentName = tiers.find((p) => p.tier_key === tier)?.name ?? tier;
 
   const isPastDue = status === "past_due";
   const isTrialing = status === "trialing";
@@ -158,7 +162,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                 <div className="flex items-center gap-2">
                   {(() => { const Icon = TIER_ICONS[tier]; return <Icon className="h-5 w-5 text-yellow-500" />; })()}
                   <span className="font-semibold text-sm sm:text-base capitalize">
-                    {t("subscription.current_plan", { plan: TIERS[tier].name })}
+                    {t("subscription.current_plan", { plan: currentName })}
                   </span>
                 </div>
                 <Badge variant={subscribed ? "default" : "secondary"} className="capitalize text-xs">
@@ -195,8 +199,9 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
             )}
 
             {/* Plan cards */}
-            {(["pro", "enterprise"] as const).map((key) => {
-              const plan = TIERS[key];
+            {tiers.filter((p) => p.tier_key !== "free").map((plan) => {
+              const key = plan.tier_key;
+              const priceId = plan.stripe_price_id;
               const isCurrentPlan = tier === key;
               const isLoading = checkoutLoading === key;
 
@@ -211,7 +216,7 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                       <span className="font-semibold text-sm">{plan.name}</span>
                       {isCurrentPlan && <Badge className="text-xs">{t("subscription.status.active")}</Badge>}
                     </div>
-                    <span className="text-sm font-bold">${plan.price}<span className="text-xs font-normal text-muted-foreground">/mo</span></span>
+                    <span className="text-sm font-bold">{formatPlanPrice(plan)}<span className="text-xs font-normal text-muted-foreground">/{plan.billing_interval === "year" ? "yr" : "mo"}</span></span>
                   </div>
 
                   <ul className="space-y-1.5">
@@ -230,11 +235,11 @@ export const SubscriptionSheet = ({ open, onClose }: SubscriptionSheetProps) => 
                     ))}
                   </ul>
 
-                  {!isCurrentPlan && plan.priceId && (
+                  {!isCurrentPlan && priceId && (
                     <Button
                       className="w-full"
                       size="sm"
-                      onClick={() => void handleSubscribe(plan.priceId!, key)}
+                      onClick={() => void handleSubscribe(priceId, key)}
                       disabled={isLoading || !!checkoutLoading}
                     >
                       {isLoading ? (
