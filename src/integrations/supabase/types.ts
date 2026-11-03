@@ -3923,135 +3923,6 @@ export type Database = {
           },
         ]
       }
-      vortex_obligation_detections: {
-        Row: {
-          created_at: string
-          error: string | null
-          id: string
-          obligations_created: number
-          run_completed_at: string | null
-          run_started_at: string
-          status: string
-          transactions_scanned: number
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          error?: string | null
-          id?: string
-          obligations_created?: number
-          run_completed_at?: string | null
-          run_started_at?: string
-          status?: string
-          transactions_scanned?: number
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          error?: string | null
-          id?: string
-          obligations_created?: number
-          run_completed_at?: string | null
-          run_started_at?: string
-          status?: string
-          transactions_scanned?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
-      vortex_obligation_feed: {
-        Row: {
-          amount: number | null
-          created_at: string
-          currency: string | null
-          id: string
-          kind: string
-          message: string
-          obligation_id: string | null
-          transaction_id: string | null
-          user_id: string
-        }
-        Insert: {
-          amount?: number | null
-          created_at?: string
-          currency?: string | null
-          id?: string
-          kind: string
-          message: string
-          obligation_id?: string | null
-          transaction_id?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number | null
-          created_at?: string
-          currency?: string | null
-          id?: string
-          kind?: string
-          message?: string
-          obligation_id?: string | null
-          transaction_id?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      vortex_obligations: {
-        Row: {
-          amount: number | null
-          category: string
-          confidence: number | null
-          created_at: string
-          currency: string
-          description: string | null
-          due_date: string | null
-          id: string
-          metadata: Json
-          recurrence: string
-          source: string
-          source_ref: string | null
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          amount?: number | null
-          category?: string
-          confidence?: number | null
-          created_at?: string
-          currency?: string
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          metadata?: Json
-          recurrence?: string
-          source?: string
-          source_ref?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          amount?: number | null
-          category?: string
-          confidence?: number | null
-          created_at?: string
-          currency?: string
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          metadata?: Json
-          recurrence?: string
-          source?: string
-          source_ref?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       wallets: {
         Row: {
           account_name: string | null
@@ -9048,6 +8919,219 @@ export type Database = {
         }
         Relationships: []
       }
+      vortex_cockpit_projects: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string | null
+          metadata: Json | null
+          name: string | null
+          status: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligation_detections: {
+        Row: {
+          created_at: string | null
+          error: string | null
+          id: string | null
+          obligations_created: number | null
+          run_completed_at: string | null
+          run_started_at: string | null
+          status: string | null
+          transactions_scanned: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          obligations_created?: number | null
+          run_completed_at?: string | null
+          run_started_at?: string | null
+          status?: string | null
+          transactions_scanned?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          obligations_created?: number | null
+          run_completed_at?: string | null
+          run_started_at?: string | null
+          status?: string | null
+          transactions_scanned?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligation_feed: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          currency: string | null
+          id: string | null
+          kind: string | null
+          message: string | null
+          obligation_id: string | null
+          transaction_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string | null
+          kind?: string | null
+          message?: string | null
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string | null
+          kind?: string | null
+          message?: string | null
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligations: {
+        Row: {
+          amount: number | null
+          category: string | null
+          confidence: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          due_date: string | null
+          id: string | null
+          metadata: Json | null
+          recurrence: string | null
+          source: string | null
+          source_ref: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string | null
+          metadata?: Json | null
+          recurrence?: string | null
+          source?: string | null
+          source_ref?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string | null
+          metadata?: Json | null
+          recurrence?: string | null
+          source?: string | null
+          source_ref?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_pricing_tiers: {
+        Row: {
+          billing_interval: string | null
+          card_limit: number | null
+          created_at: string | null
+          currency: string | null
+          features: Json | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          previous_price_ids: string[] | null
+          price: number | null
+          sort_order: number | null
+          stripe_price_id: string | null
+          tier_key: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          billing_interval?: string | null
+          card_limit?: number | null
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          previous_price_ids?: string[] | null
+          price?: number | null
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tier_key?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          billing_interval?: string | null
+          card_limit?: number | null
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          previous_price_ids?: string[] | null
+          price?: number | null
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tier_key?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       vortex_settings: {
         Row: {
           created_at: string | null
@@ -10282,6 +10366,11 @@ export type Database = {
               user_id: string
             }[]
           }
+      vortex_admin_audit: {
+        Args: { p_action: string; p_details: Json; p_user_id: string }
+        Returns: undefined
+      }
+      vortex_admin_stats: { Args: never; Returns: Json }
       vortex_delete_ai_credential: {
         Args: { _provider: string }
         Returns: boolean
