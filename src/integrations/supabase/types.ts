@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
@@ -255,7 +230,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_active: boolean | null
-          key: string
+          key: string | null
           key_context: string | null
           key_hash: string | null
           last_used_at: string | null
@@ -274,7 +249,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
-          key: string
+          key?: string | null
           key_context?: string | null
           key_hash?: string | null
           last_used_at?: string | null
@@ -293,7 +268,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean | null
-          key?: string
+          key?: string | null
           key_context?: string | null
           key_hash?: string | null
           last_used_at?: string | null
@@ -692,10 +667,12 @@ export type Database = {
           description: string | null
           id: string
           method: string
+          organization_id: string | null
           path: string
           rate_limit: number | null
           service_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           auth_required?: boolean
@@ -703,10 +680,12 @@ export type Database = {
           description?: string | null
           id?: string
           method: string
+          organization_id?: string | null
           path: string
           rate_limit?: number | null
           service_id: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           auth_required?: boolean
@@ -714,10 +693,12 @@ export type Database = {
           description?: string | null
           id?: string
           method?: string
+          organization_id?: string | null
           path?: string
           rate_limit?: number | null
           service_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -2349,8 +2330,10 @@ export type Database = {
           created_at: string
           feedback_score: number | null
           id: string
+          organization_id: string | null
           prompt: string
           tokens_used: number | null
+          user_id: string | null
           was_escalated: boolean | null
         }
         Insert: {
@@ -2359,8 +2342,10 @@ export type Database = {
           created_at?: string
           feedback_score?: number | null
           id?: string
+          organization_id?: string | null
           prompt: string
           tokens_used?: number | null
+          user_id?: string | null
           was_escalated?: boolean | null
         }
         Update: {
@@ -2369,8 +2354,10 @@ export type Database = {
           created_at?: string
           feedback_score?: number | null
           id?: string
+          organization_id?: string | null
           prompt?: string
           tokens_used?: number | null
+          user_id?: string | null
           was_escalated?: boolean | null
         }
         Relationships: []
@@ -2919,6 +2906,7 @@ export type Database = {
           price_id: string | null
           status: string
           stripe_subscription_id: string
+          trial_end: string | null
           updated_at: string | null
         }
         Insert: {
@@ -2930,6 +2918,7 @@ export type Database = {
           price_id?: string | null
           status: string
           stripe_subscription_id: string
+          trial_end?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -2941,6 +2930,7 @@ export type Database = {
           price_id?: string | null
           status?: string
           stripe_subscription_id?: string
+          trial_end?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -3932,99 +3922,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      vortex_obligation_detections: {
-        Row: {
-          created_at: string
-          error: string | null
-          id: string
-          obligations_created: number
-          run_completed_at: string | null
-          run_started_at: string
-          status: string
-          transactions_scanned: number
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          error?: string | null
-          id?: string
-          obligations_created?: number
-          run_completed_at?: string | null
-          run_started_at?: string
-          status?: string
-          transactions_scanned?: number
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          error?: string | null
-          id?: string
-          obligations_created?: number
-          run_completed_at?: string | null
-          run_started_at?: string
-          status?: string
-          transactions_scanned?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
-      vortex_obligations: {
-        Row: {
-          amount: number | null
-          category: string
-          confidence: number | null
-          created_at: string
-          currency: string
-          description: string | null
-          due_date: string | null
-          id: string
-          metadata: Json
-          recurrence: string
-          source: string
-          source_ref: string | null
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          amount?: number | null
-          category?: string
-          confidence?: number | null
-          created_at?: string
-          currency?: string
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          metadata?: Json
-          recurrence?: string
-          source?: string
-          source_ref?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          amount?: number | null
-          category?: string
-          confidence?: number | null
-          created_at?: string
-          currency?: string
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          metadata?: Json
-          recurrence?: string
-          source?: string
-          source_ref?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       wallets: {
         Row: {
@@ -6237,6 +6134,7 @@ export type Database = {
           content: string | null
           contradiction_group_id: string | null
           created_at: string | null
+          embedding: string | null
           evidence_memory_ids: string[] | null
           freshness: string | null
           id: string | null
@@ -6253,6 +6151,7 @@ export type Database = {
           content?: string | null
           contradiction_group_id?: string | null
           created_at?: string | null
+          embedding?: string | null
           evidence_memory_ids?: string[] | null
           freshness?: string | null
           id?: string | null
@@ -6269,6 +6168,7 @@ export type Database = {
           content?: string | null
           contradiction_group_id?: string | null
           created_at?: string | null
+          embedding?: string | null
           evidence_memory_ids?: string[] | null
           freshness?: string | null
           id?: string | null
@@ -6856,6 +6756,7 @@ export type Database = {
           id: string | null
           metadata: Json | null
           name: string | null
+          organization_id: string | null
           status: string | null
           type: string | null
           updated_at: string | null
@@ -6867,6 +6768,7 @@ export type Database = {
           id?: string | null
           metadata?: Json | null
           name?: string | null
+          organization_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -6878,6 +6780,7 @@ export type Database = {
           id?: string | null
           metadata?: Json | null
           name?: string | null
+          organization_id?: string | null
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -9016,6 +8919,219 @@ export type Database = {
         }
         Relationships: []
       }
+      vortex_cockpit_projects: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string | null
+          metadata: Json | null
+          name: string | null
+          status: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligation_detections: {
+        Row: {
+          created_at: string | null
+          error: string | null
+          id: string | null
+          obligations_created: number | null
+          run_completed_at: string | null
+          run_started_at: string | null
+          status: string | null
+          transactions_scanned: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          obligations_created?: number | null
+          run_completed_at?: string | null
+          run_started_at?: string | null
+          status?: string | null
+          transactions_scanned?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error?: string | null
+          id?: string | null
+          obligations_created?: number | null
+          run_completed_at?: string | null
+          run_started_at?: string | null
+          status?: string | null
+          transactions_scanned?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligation_feed: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          currency: string | null
+          id: string | null
+          kind: string | null
+          message: string | null
+          obligation_id: string | null
+          transaction_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string | null
+          kind?: string | null
+          message?: string | null
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string | null
+          kind?: string | null
+          message?: string | null
+          obligation_id?: string | null
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_obligations: {
+        Row: {
+          amount: number | null
+          category: string | null
+          confidence: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          due_date: string | null
+          id: string | null
+          metadata: Json | null
+          recurrence: string | null
+          source: string | null
+          source_ref: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string | null
+          metadata?: Json | null
+          recurrence?: string | null
+          source?: string | null
+          source_ref?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string | null
+          metadata?: Json | null
+          recurrence?: string | null
+          source?: string | null
+          source_ref?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vortex_pricing_tiers: {
+        Row: {
+          billing_interval: string | null
+          card_limit: number | null
+          created_at: string | null
+          currency: string | null
+          features: Json | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          previous_price_ids: string[] | null
+          price: number | null
+          sort_order: number | null
+          stripe_price_id: string | null
+          tier_key: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          billing_interval?: string | null
+          card_limit?: number | null
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          previous_price_ids?: string[] | null
+          price?: number | null
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tier_key?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          billing_interval?: string | null
+          card_limit?: number | null
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          previous_price_ids?: string[] | null
+          price?: number | null
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tier_key?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       vortex_settings: {
         Row: {
           created_at: string | null
@@ -9159,6 +9275,64 @@ export type Database = {
       }
     }
     Functions: {
+      __plpgsql_show_dependency_tb:
+        | {
+            Args: {
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              funcoid: unknown
+              relid?: unknown
+            }
+            Returns: {
+              name: string
+              oid: unknown
+              params: string
+              schema: string
+              type: string
+            }[]
+          }
+        | {
+            Args: {
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              name: string
+              relid?: unknown
+            }
+            Returns: {
+              name: string
+              oid: unknown
+              params: string
+              schema: string
+              type: string
+            }[]
+          }
+      analyze_patterns_aggregate: {
+        Args: {
+          p_filter_organization_id?: string
+          p_filter_type?: string
+          p_filter_user_id?: string
+          p_max_memories?: number
+          p_time_range_days?: number
+          p_top_n_hours?: number
+          p_top_n_tags?: number
+        }
+        Returns: {
+          average_content_length: number
+          cap_hit: boolean
+          day_of_week_distribution: Json
+          peak_hours: Json
+          rows_considered: number
+          top_tags: Json
+          total_memories: number
+          type_distribution: Json
+        }[]
+      }
       apply_auth_event: {
         Args: {
           p_aggregate_id: string
@@ -9225,6 +9399,22 @@ export type Database = {
       delete_control_room_app: {
         Args: { p_hard_delete?: boolean; p_id: string }
         Returns: Json
+      }
+      delete_duplicate_memories: {
+        Args: {
+          dry_run?: boolean
+          duplicate_ids: string[]
+          filter_organization_id?: string
+          filter_user_id?: string
+        }
+        Returns: {
+          deleted_created_at: string
+          deleted_id: string
+          deleted_organization_id: string
+          deleted_user_id: string
+          total_deleted: number
+          was_dry_run: boolean
+        }[]
       }
       detect_duplicate_memories_voyage: {
         Args: {
@@ -9452,7 +9642,13 @@ export type Database = {
       }
       hybrid_search_voyage: {
         Args: {
+          filter_date_from?: string
+          filter_date_to?: string
+          filter_organization_id?: string
+          filter_tags?: string[]
+          filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           keyword_weight?: number
           match_count?: number
           min_similarity?: number
@@ -9523,6 +9719,26 @@ export type Database = {
           topic_id: string
           type: string
           user_id: string
+        }[]
+      }
+      list_insight_candidate_memories: {
+        Args: {
+          p_filter_organization_id?: string
+          p_filter_type?: string
+          p_filter_user_id?: string
+          p_limit?: number
+          p_max_memories?: number
+          p_offset?: number
+          p_time_range_days?: number
+          p_topic?: string
+        }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          memory_type: string
+          tags: string[]
+          title: string
         }[]
       }
       log_intelligence_usage: {
@@ -9642,7 +9858,13 @@ export type Database = {
       match_memories_voyage: {
         Args: {
           distance_metric?: string
+          filter_date_from?: string
+          filter_date_to?: string
+          filter_organization_id?: string
+          filter_tags?: string[]
+          filter_type?: string
           filter_user_id?: string
+          include_deleted?: boolean
           match_count?: number
           match_threshold?: number
           query_embedding: string
@@ -9677,6 +9899,276 @@ export type Database = {
       pgsm_create_15_view: { Args: never; Returns: number }
       pgsm_create_17_view: { Args: never; Returns: number }
       pgsm_create_view: { Args: never; Returns: number }
+      plpgsql_check_function:
+        | {
+            Args: {
+              all_warnings?: boolean
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              compatibility_warnings?: boolean
+              constant_tracing?: boolean
+              extra_warnings?: boolean
+              fatal_errors?: boolean
+              format?: string
+              funcoid: unknown
+              incomment_options_usage_warning?: boolean
+              newtable?: unknown
+              oldtable?: unknown
+              other_warnings?: boolean
+              performance_warnings?: boolean
+              relid?: unknown
+              security_warnings?: boolean
+              use_incomment_options?: boolean
+              without_warnings?: boolean
+            }
+            Returns: string[]
+          }
+        | {
+            Args: {
+              all_warnings?: boolean
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              compatibility_warnings?: boolean
+              constant_tracing?: boolean
+              extra_warnings?: boolean
+              fatal_errors?: boolean
+              format?: string
+              incomment_options_usage_warning?: boolean
+              name: string
+              newtable?: unknown
+              oldtable?: unknown
+              other_warnings?: boolean
+              performance_warnings?: boolean
+              relid?: unknown
+              security_warnings?: boolean
+              use_incomment_options?: boolean
+              without_warnings?: boolean
+            }
+            Returns: string[]
+          }
+      plpgsql_check_function_tb:
+        | {
+            Args: {
+              all_warnings?: boolean
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              compatibility_warnings?: boolean
+              constant_tracing?: boolean
+              extra_warnings?: boolean
+              fatal_errors?: boolean
+              funcoid: unknown
+              incomment_options_usage_warning?: boolean
+              newtable?: unknown
+              oldtable?: unknown
+              other_warnings?: boolean
+              performance_warnings?: boolean
+              relid?: unknown
+              security_warnings?: boolean
+              use_incomment_options?: boolean
+              without_warnings?: boolean
+            }
+            Returns: {
+              context: string
+              detail: string
+              functionid: unknown
+              hint: string
+              level: string
+              lineno: number
+              message: string
+              position: number
+              query: string
+              sqlstate: string
+              statement: string
+            }[]
+          }
+        | {
+            Args: {
+              all_warnings?: boolean
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              compatibility_warnings?: boolean
+              constant_tracing?: boolean
+              extra_warnings?: boolean
+              fatal_errors?: boolean
+              incomment_options_usage_warning?: boolean
+              name: string
+              newtable?: unknown
+              oldtable?: unknown
+              other_warnings?: boolean
+              performance_warnings?: boolean
+              relid?: unknown
+              security_warnings?: boolean
+              use_incomment_options?: boolean
+              without_warnings?: boolean
+            }
+            Returns: {
+              context: string
+              detail: string
+              functionid: unknown
+              hint: string
+              level: string
+              lineno: number
+              message: string
+              position: number
+              query: string
+              sqlstate: string
+              statement: string
+            }[]
+          }
+      plpgsql_check_pragma: { Args: { name: string[] }; Returns: number }
+      plpgsql_check_profiler: { Args: { enable?: boolean }; Returns: boolean }
+      plpgsql_check_tracer: {
+        Args: { enable?: boolean; verbosity?: string }
+        Returns: boolean
+      }
+      plpgsql_coverage_branches:
+        | { Args: { funcoid: unknown }; Returns: number }
+        | { Args: { name: string }; Returns: number }
+      plpgsql_coverage_statements:
+        | { Args: { funcoid: unknown }; Returns: number }
+        | { Args: { name: string }; Returns: number }
+      plpgsql_profiler_function_statements_tb:
+        | {
+            Args: { funcoid: unknown }
+            Returns: {
+              avg_time: number
+              block_num: number
+              exec_stmts: number
+              exec_stmts_err: number
+              lineno: number
+              max_time: number
+              parent_note: string
+              parent_stmtid: number
+              processed_rows: number
+              queryid: number
+              stmtid: number
+              stmtname: string
+              total_time: number
+            }[]
+          }
+        | {
+            Args: { name: string }
+            Returns: {
+              avg_time: number
+              block_num: number
+              exec_stmts: number
+              exec_stmts_err: number
+              lineno: number
+              max_time: number
+              parent_note: string
+              parent_stmtid: number
+              processed_rows: number
+              queryid: number
+              stmtid: number
+              stmtname: string
+              total_time: number
+            }[]
+          }
+      plpgsql_profiler_function_tb:
+        | {
+            Args: { funcoid: unknown }
+            Returns: {
+              avg_time: number
+              cmds_on_row: number
+              exec_stmts: number
+              exec_stmts_err: number
+              lineno: number
+              max_time: number[]
+              processed_rows: number[]
+              queryids: number[]
+              source: string
+              stmt_lineno: number
+              total_time: number
+            }[]
+          }
+        | {
+            Args: { name: string }
+            Returns: {
+              avg_time: number
+              cmds_on_row: number
+              exec_stmts: number
+              exec_stmts_err: number
+              lineno: number
+              max_time: number[]
+              processed_rows: number[]
+              queryids: number[]
+              source: string
+              stmt_lineno: number
+              total_time: number
+            }[]
+          }
+      plpgsql_profiler_functions_all: {
+        Args: never
+        Returns: {
+          avg_time: number
+          exec_count: number
+          exec_stmts_err: number
+          funcoid: unknown
+          max_time: number
+          min_time: number
+          stddev_time: number
+          total_time: number
+        }[]
+      }
+      plpgsql_profiler_install_fake_queryid_hook: {
+        Args: never
+        Returns: undefined
+      }
+      plpgsql_profiler_remove_fake_queryid_hook: {
+        Args: never
+        Returns: undefined
+      }
+      plpgsql_profiler_reset: { Args: { funcoid: unknown }; Returns: undefined }
+      plpgsql_profiler_reset_all: { Args: never; Returns: undefined }
+      plpgsql_show_dependency_tb:
+        | {
+            Args: {
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              fnname: string
+              relid?: unknown
+            }
+            Returns: {
+              name: string
+              oid: unknown
+              params: string
+              schema: string
+              type: string
+            }[]
+          }
+        | {
+            Args: {
+              anycompatiblerangetype?: unknown
+              anycompatibletype?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              funcoid: unknown
+              relid?: unknown
+            }
+            Returns: {
+              name: string
+              oid: unknown
+              params: string
+              schema: string
+              type: string
+            }[]
+          }
       project_auth_event_to_audit_log: {
         Args: {
           p_aggregate_id: string
@@ -9874,6 +10366,11 @@ export type Database = {
               user_id: string
             }[]
           }
+      vortex_admin_audit: {
+        Args: { p_action: string; p_details: Json; p_user_id: string }
+        Returns: undefined
+      }
+      vortex_admin_stats: { Args: never; Returns: Json }
       vortex_delete_ai_credential: {
         Args: { _provider: string }
         Returns: boolean
@@ -9890,6 +10387,14 @@ export type Database = {
         }[]
       }
       vortex_get_setting: { Args: { p_key: string }; Returns: Json }
+      vortex_next_due: {
+        Args: { p_due: string; p_rec: string }
+        Returns: string
+      }
+      vortex_pay_obligation: {
+        Args: { p_obligation_id: string; p_user_id: string }
+        Returns: Json
+      }
       vortex_set_setting: {
         Args: { p_key: string; p_value: Json }
         Returns: Json
@@ -9953,12 +10458,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -9982,11 +10487,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10007,11 +10512,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10032,11 +10537,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10049,11 +10554,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -10063,9 +10568,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       environment_type: ["sandbox", "live"],

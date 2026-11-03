@@ -196,7 +196,7 @@ export const BulkPaymentForm = ({
               <span className="text-xs text-muted-foreground">
                 {tier === "free"
                   ? "Free plan: up to 5 recipients per batch."
-                  : `${tier === "pro" ? "Pro" : "Enterprise"} plan: up to ${recipientLimit} recipients per batch.`}
+                  : `${tier.charAt(0).toUpperCase() + tier.slice(1)} plan: up to ${recipientLimit} recipients per batch.`}
               </span>
             )}
           </div>

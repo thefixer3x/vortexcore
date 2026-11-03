@@ -33,7 +33,7 @@ vercel --prod
 ### Environment Variables
 **Required for production:**
 - `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
 - `VITE_OBF_LIVE` (usually false until OBF ready)
 
 ## Supabase Edge Functions
@@ -57,6 +57,8 @@ supabase secrets set STRIPE_SECRET_KEY=xxx
 ```
 
 **Required secrets:**
+- `VORTEX_SUPABASE_PUBLISHABLE_KEY` — matching project publishable key for caller validation
+- `VORTEX_SUPABASE_SECRET_KEY` — server-only secret key; never a frontend variable
 - `OPENAI_API_KEY`
 - `PERPLEXITY_API_KEY`
 - `STRIPE_SECRET_KEY`

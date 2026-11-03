@@ -11,6 +11,7 @@ import { BulkPaymentHistory } from "./BulkPaymentHistory";
 
 const RECIPIENT_LIMITS = {
   free: 5,
+  hobby: 20,
   pro: 50,
   enterprise: Infinity
 } as const;

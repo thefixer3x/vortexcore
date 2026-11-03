@@ -3,16 +3,17 @@ import type { Context, Config } from "@netlify/functions";
 export default async (req: Request, _context: Context) => {
   // Proxy to Supabase Edge Function ai-router
   const supabaseUrl = process.env.VITE_SUPABASE_URL || "https://mxtsdgkwzjzlttpotole.supabase.co";
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
+  const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const authorization = req.headers.get("authorization");
 
   const endpoint = `${supabaseUrl}/functions/v1/ai-router`;
   const init: RequestInit = {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      ...(anonKey ? { apikey: anonKey } : {}),
+      ...(publishableKey ? { apikey: publishableKey } : {}),
       // Forward auth if present
-      ...(req.headers.get("authorization") ? { authorization: req.headers.get("authorization")! } : {}),
+      ...(authorization && authorization !== `Bearer ${publishableKey}` ? { authorization } : {}),
     },
     body: await req.text(),
   };

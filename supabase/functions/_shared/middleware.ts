@@ -1,15 +1,15 @@
 // Lightweight, self-contained middleware for Supabase Edge Functions
 // Provides: dynamic CORS, security headers, optional JWT verification and simple RBAC hook
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "./supabase-client.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const VORTEX_SUPABASE_PUBLISHABLE_KEY = Deno.env.get('VORTEX_SUPABASE_PUBLISHABLE_KEY')!;
+const VORTEX_SUPABASE_SECRET_KEY = Deno.env.get('VORTEX_SUPABASE_SECRET_KEY') || '';
 const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') || '').split(',').map(s => s.trim()).filter(Boolean);
 
-const publicSupabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const adminSupabase = SUPABASE_SERVICE_ROLE_KEY ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY) : null;
+const publicSupabase = createClient(SUPABASE_URL, VORTEX_SUPABASE_PUBLISHABLE_KEY);
+const adminSupabase = VORTEX_SUPABASE_SECRET_KEY ? createClient(SUPABASE_URL, VORTEX_SUPABASE_SECRET_KEY) : null;
 
 export interface AuthContext {
   userId?: string;

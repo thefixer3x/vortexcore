@@ -1,0 +1,1 @@
+UPDATE public.users SET role = 'admin' WHERE id = 'b990c45e-8bf0-44d2-aeb6-6503ee08d152' AND lower(email) = 'admin@lanonasis.com' AND role = 'user';

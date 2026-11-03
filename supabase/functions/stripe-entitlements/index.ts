@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.39.7";
+import { createClient } from "../_shared/supabase-client.ts";
 import Stripe from "npm:stripe@14.18.0";
 import { PRICE_CATALOG, Tier, entitlementsFor, resolveTier } from "../_shared/subscription-logic.ts";
 
@@ -7,7 +7,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion:
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || ""
 );
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") || "";
 

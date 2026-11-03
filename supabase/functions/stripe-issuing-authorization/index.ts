@@ -11,13 +11,13 @@
 // asynchronously in stripe-entitlements's issuing_transaction.created handler once
 // the authorization actually captures.
 import Stripe from "npm:stripe@14.18.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "../_shared/supabase-client.ts";
 
 const STRIPE_API_VERSION = "2023-10-16";
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: STRIPE_API_VERSION });
 const admin = createClient(
   Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || ""
 );
 const webhookSecret = Deno.env.get("STRIPE_ISSUING_WEBHOOK_SECRET") || "";
 

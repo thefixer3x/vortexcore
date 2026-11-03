@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.39.7";
+import { safeOrigin } from "../_shared/safe-origin.ts";
+import { createClient } from "../_shared/supabase-client.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
   apiVersion: "2023-10-16",
@@ -9,7 +10,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || ""
 );
 
 serve(withAuthMiddleware(async (req, { auth }) => {
@@ -26,7 +27,7 @@ serve(withAuthMiddleware(async (req, { auth }) => {
     );
   }
 
-  const origin = req.headers.get("origin") || "https://vortexcore.app";
+  const origin = safeOrigin(req);
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: customerRow.customer_id,
     return_url: `${origin}/settings?tab=billing`,

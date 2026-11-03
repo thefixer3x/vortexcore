@@ -12,8 +12,11 @@ import {
   Sun,
   Moon,
   Monitor,
-  Home
+  Home,
+  CalendarClock,
+  ShieldCheck,
 } from "lucide-react";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { SideNavHeader } from "./SideNavHeader";
@@ -83,11 +86,14 @@ export function EnhancedSideNav() {
     }
   }, [location.pathname, sidebarOpen, toggleSidebar, isMobile]);
 
+  const isAdmin = useIsAdmin();
   const mainNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Transactions", path: "/transactions", icon: CreditCard },
+    { name: "Obligations", path: "/obligations", icon: CalendarClock },
     { name: "VortexAI", path: "/insights", icon: PieChart },
     { name: "Settings", path: "/settings", icon: Settings },
+    ...(isAdmin ? [{ name: "Admin", path: "/admin", icon: ShieldCheck }] : []),
   ];
 
   const getThemeIcon = () => {

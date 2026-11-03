@@ -1,3 +1,4 @@
+import { VortexAIIcon } from './VortexAIIcon';
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -232,7 +233,7 @@ export function EnhancedVortexAIChat() {
         <div className="p-4 border-b bg-background">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
+              <VortexAIIcon className="h-5 w-5 text-primary" />
               <div>
                 <h2 className="font-semibold">VortexAI Assistant</h2>
                 {isAuthenticated && (
