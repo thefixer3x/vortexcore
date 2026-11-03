@@ -1,0 +1,1 @@
+UPDATE app_vortexcore.vortex_pricing_tiers SET card_limit = NULL WHERE tier_key = 'hobby' AND card_limit IS NOT NULL;
