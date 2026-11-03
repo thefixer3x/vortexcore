@@ -1,3 +1,4 @@
+import { resolvePublishableKey } from '@/integrations/supabase/publishable-key';
 /**
  * Configuration validator utility for VortexCore
  * Helps identify missing environment variables and configuration issues
@@ -20,7 +21,7 @@ export function validateClientConfig(): ConfigValidationResult {
 
   // Check required Supabase configuration
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const supabasePublishableKey = resolvePublishableKey(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
   if (!supabaseUrl) {
     result.isValid = false;
