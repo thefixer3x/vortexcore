@@ -16,3 +16,10 @@
 - [x] Switch frontend and server clients to publishable/secret keys without changing access policies.
 - [x] Redeploy affected functions; verify public auth/AI access, protected denials, isolated privileged SDK reads, and Supabase logs.
 - [ ] Verify signed-in admin and wallet-payment flows after migration — external Supabase has no managed test session; requires the user's signed-in session.
+
+# Admin dashboard, statements, real AI (Nov 3)
+- [ ] Fix obligation/payment database rules that silently blocked detection and wallet payments.
+- [ ] Verify paying an obligation records amount + date (admin@lanonasis.com) — browser sign-in not available for this Supabase project; verify server-side.
+- [ ] Admin dashboard: charts, company projects, editable pricing tiers (used by the plan sheet).
+- [ ] Bank statement upload (CSV + PDF) → transactions → live feed → obligation detection.
+- [ ] Remove canned chat replies; VortexAI search asks the real assistant.
