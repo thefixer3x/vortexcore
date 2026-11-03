@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useObligations, classifyObligation, type Obligation } from "@/hooks/use-obligations";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
+import { StatementUpload } from "@/components/obligations/StatementUpload";
 
 const stateBadge = {
   overdue: { label: "Overdue", variant: "destructive" as const },
@@ -20,7 +21,7 @@ const fmt = (n: number | null, c?: string | null) =>
 const lastPayment = (o: Obligation) => o.metadata?.payments?.slice(-1)[0];
 
 const Obligations = () => {
-  const { obligations, feed, isLoading, isDetecting, error, detect, pay, markPaid, remove } = useObligations({ live: true });
+  const { obligations, feed, isLoading, isDetecting, error, detect, importStatement, pay, markPaid, remove } = useObligations({ live: true });
   const { toast } = useToast();
   const [payingId, setPayingId] = useState<string | null>(null);
 
@@ -49,7 +50,7 @@ const Obligations = () => {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Obligations</h1>
-          <p className="text-sm text-muted-foreground">Bills, subscriptions and repayments VortexAI found in your transactions.</p>
+          <p className="text-sm text-muted-foreground">Bills, subscriptions and repayments VortexAI found in your transactions and bank statements.</p>
         </div>
         <Button onClick={runDetection} disabled={isDetecting} className="gap-2">
           {isDetecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <VortexAIIcon className="h-4 w-4" />}
@@ -58,6 +59,8 @@ const Obligations = () => {
       </div>
 
       <ObligationsWidget />
+
+      <StatementUpload onImport={importStatement} busy={isDetecting} />
 
       <Card>
         <CardHeader className="pb-2">
@@ -93,7 +96,7 @@ const Obligations = () => {
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : obligations.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">
-          No obligations yet. Click "Detect with VortexAI" to scan your transactions.
+          No obligations yet. Import a bank statement or click "Detect with VortexAI" to scan your transactions.
         </CardContent></Card>
       ) : (
         <div className="space-y-3">
