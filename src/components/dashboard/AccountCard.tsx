@@ -1,5 +1,6 @@
 
 import { CreditCard } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 
 interface AccountCardProps {
@@ -17,13 +18,7 @@ interface AccountCardProps {
 }
 
 export function AccountCard({ account, className }: AccountCardProps) {
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
+  const { formatCurrency } = useCurrency();
   
   const getAccountTypeIcon = (type: string) => {
     // You can add more account type icons here

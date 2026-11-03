@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowUpRight,
@@ -87,13 +88,7 @@ export function TransactionList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(mockTransactions);
   
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
+  const { formatCurrency } = useCurrency();
   
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {

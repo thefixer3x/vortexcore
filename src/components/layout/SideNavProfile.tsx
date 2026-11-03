@@ -27,7 +27,7 @@ export function SideNavProfile() {
       </p>
       <div className="mt-2 text-xs px-2 py-1 bg-muted rounded-full flex items-center gap-1">
         <Globe className="h-3 w-3" />
-        <span>Default Currency: <span className="font-medium">{currency} NGN</span></span>
+        <span>Default Currency: <span className="font-medium">{currency}</span></span>
       </div>
     </div>
   );

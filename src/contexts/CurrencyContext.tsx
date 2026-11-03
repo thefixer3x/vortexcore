@@ -10,7 +10,7 @@ interface CurrencyContextType {
   language: Language;
   setCurrency: (currency: Currency) => Promise<void>;
   setLanguage: (language: Language) => Promise<void>;
-  formatCurrency: (value: number, currencyOverride?: Currency) => string;
+  formatCurrency: (value: number, currencyOverride?: Currency | string | null) => string;
   isLoading: boolean;
 }
 
@@ -109,8 +109,11 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   }, [user?.id, isAuthenticated]);
 
   // Format currency with user's preference or override
-  const formatCurrency = useCallback((value: number, currencyOverride?: Currency): string => {
-    const currencyToUse = currencyOverride || currency;
+  // Formats an amount in its own currency (a row's stored currency) or, when none
+  // is given, in the user's preferred currency. It never converts between
+  // currencies: showing an NGN amount with a USD sign would misstate the value.
+  const formatCurrency = useCallback((value: number, currencyOverride?: Currency | string | null): string => {
+    const currencyToUse = (currencyOverride ? String(currencyOverride).toUpperCase() : currency);
 
     // Map language to locale
     const localeMap: Record<Language, string> = {
