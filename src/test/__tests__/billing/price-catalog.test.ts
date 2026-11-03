@@ -6,6 +6,8 @@ import {
   entitlementsFor,
   isTier,
   isVortexCorePrice,
+  PRO_PRICE_ID,
+  ENT_PRICE_ID,
   resolveTier,
 } from '../../../../supabase/functions/_shared/subscription-logic'
 
@@ -50,6 +52,11 @@ describe('billing catalog', () => {
     expect(resolveTier(SUBTRACK_ENT, 'enterprise', 'subtrack')).toBe('free')
     expect(PRICE_CATALOG[SUBTRACK_PRO]).toBeUndefined()
     expect(PRICE_CATALOG[SUBTRACK_ENT]).toBeUndefined()
+  })
+
+  it('PRO / ENT constants are VortexCore prices, never env-overridable to another app', () => {
+    expect(PRO_PRICE_ID).toBe(VORTEXCORE.pro)
+    expect(ENT_PRICE_ID).toBe(VORTEXCORE.enterprise)
   })
 
   it('only VortexCore prices count as own subscriptions', () => {

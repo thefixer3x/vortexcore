@@ -23,8 +23,11 @@ const Obligations = () => {
   const { obligations, feed, isLoading, isDetecting, error, detect, importStatement, pay, markPaid, remove } = useObligations({ live: true });
   const { toast } = useToast();
   const { formatCurrency } = useCurrency();
-  // Each amount keeps its own currency; the user's preference is only the fallback.
-  const fmt = (n: number | null, c?: string | null) => (n == null ? "" : formatCurrency(n, c));
+  // Each amount keeps its own currency. Detected obligations can have no currency;
+  // show those as a plain number rather than labelling them with the user's
+  // preferred currency, which may not be the source currency.
+  const fmt = (n: number | null, c?: string | null) =>
+    n == null ? "" : c ? formatCurrency(n, c) : new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n);
   const [payingId, setPayingId] = useState<string | null>(null);
 
   const runDetection = async () => {

@@ -1,13 +1,12 @@
 // Pure subscription tier/status logic — no Deno or Node dependencies.
 // Imported by check-subscription Edge Function and browser Vitest tests.
 
-export const PRO_PRICE_ID =
-  (typeof Deno !== "undefined" ? Deno.env.get("STRIPE_PRO_PRICE_ID") : null) ||
-  "price_1UOr872KF4vMCpn81Q4FSS67";
-
-export const ENT_PRICE_ID =
-  (typeof Deno !== "undefined" ? Deno.env.get("STRIPE_ENT_PRICE_ID") : null) ||
-  "price_1UOr882KF4vMCpn8mLZJAN20";
+// VortexCore's own Pro / Enterprise prices. Deliberately not read from env:
+// older deploy notes set STRIPE_PRO_PRICE_ID / STRIPE_ENT_PRICE_ID to the
+// SubTrack prices, and an env override must never let another app's price
+// grant a VortexCore tier.
+export const PRO_PRICE_ID = "price_1UOr872KF4vMCpn81Q4FSS67";
+export const ENT_PRICE_ID = "price_1UOr882KF4vMCpn8mLZJAN20";
 
 // ---------------------------------------------------------------------------
 // Billing catalog — single source of truth for tiers and price labels.
@@ -74,11 +73,10 @@ export const PROJECT = "vortexcore";
  */
 export function isVortexCorePrice(priceId: string | null, metadataProject?: unknown): boolean {
   if (priceId && PRICE_CATALOG[priceId]) return PRICE_CATALOG[priceId].project === PROJECT;
-  if (priceId === PRO_PRICE_ID || priceId === ENT_PRICE_ID) return true;
   return metadataProject === PROJECT;
 }
 
-// Resolution order: env-overridden ids, then the catalog, then the price's own
+// Resolution order: the catalog, then the price's own
 // `tier` metadata (lets an admin-created VortexCore price entitle correctly
 // before the catalog is redeployed), else free. A price from another project
 // always resolves to free: one Stripe account, separate entitlements per app.
@@ -87,8 +85,6 @@ export function resolveTier(
   metadataTier?: unknown,
   metadataProject?: unknown,
 ): Tier {
-  if (priceId === PRO_PRICE_ID) return "pro";
-  if (priceId === ENT_PRICE_ID) return "enterprise";
   if (priceId && PRICE_CATALOG[priceId]) {
     return PRICE_CATALOG[priceId].project === PROJECT ? PRICE_CATALOG[priceId].tier : "free";
   }

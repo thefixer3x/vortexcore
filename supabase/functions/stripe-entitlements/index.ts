@@ -43,18 +43,25 @@ function periodEnd(sub: Stripe.Subscription): number | null {
 
 // The Stripe account is shared with other apps (SubTrack, ...). Their
 // subscriptions must never grant, change or revoke a VortexCore tier, so every
-// subscription handler returns early for a price that is not VortexCore's.
-function isOwnSubscription(sub: Stripe.Subscription): boolean {
-  const price = sub.items?.data?.[0]?.price;
-  const own = isVortexCorePrice(price?.id ?? null, price?.metadata?.project);
-  if (!own) {
-    console.log(`[stripe-entitlements] skipping subscription ${sub.id}: price ${price?.id ?? "none"} belongs to project ${price?.metadata?.project ?? "unknown"}`);
+// subscription handler returns early for a subscription with no VortexCore item.
+// All items are checked, not just the first.
+function ownItemPrice(sub: Stripe.Subscription): Stripe.Price | null {
+  for (const item of sub.items?.data ?? []) {
+    const price = item.price;
+    if (price && isVortexCorePrice(price.id, price.metadata?.project)) return price;
   }
-  return own;
+  return null;
+}
+
+function isOwnSubscription(sub: Stripe.Subscription): boolean {
+  if (ownItemPrice(sub)) return true;
+  const ids = (sub.items?.data ?? []).map((i) => `${i.price?.id ?? "none"}(${i.price?.metadata?.project ?? "unknown"})`);
+  console.log(`[stripe-entitlements] skipping subscription ${sub.id}: no VortexCore price among ${ids.join(", ") || "no items"}`);
+  return false;
 }
 
 function priceTier(sub: Stripe.Subscription): { priceId: string | null; tier: Tier } {
-  const price = sub.items?.data?.[0]?.price;
+  const price = ownItemPrice(sub);
   const priceId = price?.id ?? null;
   const tier = resolveTier(priceId, price?.metadata?.tier, price?.metadata?.project);
   if (priceId && !PRICE_CATALOG[priceId]) {
