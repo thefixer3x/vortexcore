@@ -49,3 +49,6 @@ major_version = 15
   verify_jwt = false
 [functions.stripe-issuing-authorization]
   verify_jwt = false
+
+[functions.import-statement]
+verify_jwt = false
