@@ -134,6 +134,8 @@ export function VortexAssistantChat() {
     }
   };
 
+  sendRef.current = sendText;
+
   const handleRetry = () => {
     const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
     if (lastUserMessage) {
