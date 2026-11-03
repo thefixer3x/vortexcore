@@ -60,20 +60,39 @@ export const PRICE_CATALOG: Record<string, CatalogEntry> = {
   price_1UOr852KF4vMCpn8TlJ5MMn9: { project: "vortexcore", tier: "hobby", billing: "monthly" },
   price_1UOr872KF4vMCpn81Q4FSS67: { project: "vortexcore", tier: "pro", billing: "monthly" },
   price_1UOr882KF4vMCpn8mLZJAN20: { project: "vortexcore", tier: "enterprise", billing: "monthly" },
-  // subtrack (legacy SubTrack Pro prices; live subscriptions may still use them)
-  price_1RiSAL2KF4vMCpn8wUyDio3N: { project: "subtrack", tier: "pro", billing: "monthly" },
-  price_1RiSAi2KF4vMCpn8B18AAI8v: { project: "subtrack", tier: "enterprise", billing: "monthly" },
+  // Other projects' prices (SubTrack and others) are deliberately absent: the
+  // Stripe account is shared, but entitlements are per app.
 };
 
-// Resolution order: env-overridden legacy ids, then the catalog, then the
-// price's own `tier` metadata (lets a new price entitle correctly before the
-// catalog is redeployed), else free. No project check on purpose: one user
-// profile spans services, so a subscription is honoured whichever project sold it.
-export function resolveTier(priceId: string | null, metadataTier?: unknown): Tier {
+export const PROJECT = "vortexcore";
+
+/**
+ * True when a price belongs to VortexCore: listed in the catalog, or tagged
+ * `metadata.project = "vortexcore"` (prices created from the admin pricing
+ * screen). Every other project's subscription must be ignored, so it can never
+ * grant, change or revoke a VortexCore tier.
+ */
+export function isVortexCorePrice(priceId: string | null, metadataProject?: unknown): boolean {
+  if (priceId && PRICE_CATALOG[priceId]) return PRICE_CATALOG[priceId].project === PROJECT;
+  if (priceId === PRO_PRICE_ID || priceId === ENT_PRICE_ID) return true;
+  return metadataProject === PROJECT;
+}
+
+// Resolution order: env-overridden ids, then the catalog, then the price's own
+// `tier` metadata (lets an admin-created VortexCore price entitle correctly
+// before the catalog is redeployed), else free. A price from another project
+// always resolves to free: one Stripe account, separate entitlements per app.
+export function resolveTier(
+  priceId: string | null,
+  metadataTier?: unknown,
+  metadataProject?: unknown,
+): Tier {
   if (priceId === PRO_PRICE_ID) return "pro";
   if (priceId === ENT_PRICE_ID) return "enterprise";
-  if (priceId && PRICE_CATALOG[priceId]) return PRICE_CATALOG[priceId].tier;
-  if (isTier(metadataTier)) return metadataTier;
+  if (priceId && PRICE_CATALOG[priceId]) {
+    return PRICE_CATALOG[priceId].project === PROJECT ? PRICE_CATALOG[priceId].tier : "free";
+  }
+  if (metadataProject === PROJECT && isTier(metadataTier)) return metadataTier;
   return "free";
 }
 

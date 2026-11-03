@@ -1,6 +1,6 @@
 import { createClient } from "../_shared/supabase-client.ts";
 import Stripe from "npm:stripe@14.18.0";
-import { PRICE_CATALOG, Tier, entitlementsFor, resolveTier } from "../_shared/subscription-logic.ts";
+import { PRICE_CATALOG, Tier, entitlementsFor, isVortexCorePrice, resolveTier } from "../_shared/subscription-logic.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 // Deno has no sync crypto; webhook verification must use the async Web Crypto path.
@@ -41,10 +41,22 @@ function periodEnd(sub: Stripe.Subscription): number | null {
   return top ?? item ?? null;
 }
 
+// The Stripe account is shared with other apps (SubTrack, ...). Their
+// subscriptions must never grant, change or revoke a VortexCore tier, so every
+// subscription handler returns early for a price that is not VortexCore's.
+function isOwnSubscription(sub: Stripe.Subscription): boolean {
+  const price = sub.items?.data?.[0]?.price;
+  const own = isVortexCorePrice(price?.id ?? null, price?.metadata?.project);
+  if (!own) {
+    console.log(`[stripe-entitlements] skipping subscription ${sub.id}: price ${price?.id ?? "none"} belongs to project ${price?.metadata?.project ?? "unknown"}`);
+  }
+  return own;
+}
+
 function priceTier(sub: Stripe.Subscription): { priceId: string | null; tier: Tier } {
   const price = sub.items?.data?.[0]?.price;
   const priceId = price?.id ?? null;
-  const tier = resolveTier(priceId, price?.metadata?.tier);
+  const tier = resolveTier(priceId, price?.metadata?.tier, price?.metadata?.project);
   if (priceId && !PRICE_CATALOG[priceId]) {
     console.warn(`[stripe-entitlements] price ${priceId} not in PRICE_CATALOG; resolved tier=${tier} from metadata`);
   }
@@ -125,6 +137,7 @@ Deno.serve(async (req: Request) => {
 });
 
 async function handleChange(sub: Stripe.Subscription) {
+  if (!isOwnSubscription(sub)) return;
   const { priceId, tier } = priceTier(sub);
   const status = sub.status;
 
@@ -153,6 +166,7 @@ async function handleChange(sub: Stripe.Subscription) {
 }
 
 async function handleDeletion(sub: Stripe.Subscription) {
+  if (!isOwnSubscription(sub)) return;
   await supabase.from("stripe_subscriptions")
     .update({ status: "canceled", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", sub.id);
@@ -167,6 +181,7 @@ async function handleDeletion(sub: Stripe.Subscription) {
 }
 
 async function handlePaymentFailure(sub: Stripe.Subscription) {
+  if (!isOwnSubscription(sub)) return;
   // Update subscription status to past_due
   await supabase.from("stripe_subscriptions")
     .update({ 
@@ -267,6 +282,7 @@ async function handleIssuingTransaction(transaction: Stripe.Issuing.Transaction)
 }
 
 async function handlePaymentSucceeded(sub: Stripe.Subscription) {
+  if (!isOwnSubscription(sub)) return;
   const { tier } = priceTier(sub);
   const isActive = ["active", "trialing"].includes(sub.status);
 
