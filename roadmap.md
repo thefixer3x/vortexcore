@@ -23,3 +23,4 @@
 - [ ] Admin dashboard: charts, company projects, editable pricing tiers (used by the plan sheet).
 - [ ] Bank statement upload (CSV + PDF) → transactions → live feed → obligation detection.
 - [ ] Remove canned chat replies; VortexAI search asks the real assistant.
+- [ ] Re-check the migration: project schemas + public facade views, admin data in control_room, secret-key access (no service-role key use).
