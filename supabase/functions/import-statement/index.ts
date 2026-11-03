@@ -67,19 +67,26 @@ Deno.serve(async (req) => {
 
   const admin = createClient(url, Deno.env.get("VORTEX_SUPABASE_SECRET_KEY")!);
   const importId = crypto.randomUUID();
-  const prepared = await Promise.all(rows.map(async (r, i) => ({
-    user_id: userId,
-    amount: r.amount,
-    currency,
-    type: r.direction,
-    status: "completed",
-    description: r.description,
-    // Same row in a re-uploaded statement produces the same reference -> skipped.
-    reference: `stmt:${await sha([userId, r.date, r.amount, r.direction, r.description, r.balance ?? "", i > 0 && rows[i - 1].date === r.date ? rows[i - 1].description : ""].join("|"))}`,
-    metadata: { source: "statement", import_id: importId, file_name: fileName, balance: r.balance },
-    created_at: `${r.date}T12:00:00Z`,
-    completed_at: `${r.date}T12:00:00Z`,
-  })));
+  // Identical rows on the same day get an occurrence number, so a re-upload of
+  // the same statement produces the same references and is skipped.
+  const seenKeys = new Map<string, number>();
+  const prepared = await Promise.all(rows.map(async (r) => {
+    const base = [userId, r.date, r.amount, r.direction, r.description.toLowerCase(), r.balance ?? ""].join("|");
+    const n = (seenKeys.get(base) ?? 0) + 1;
+    seenKeys.set(base, n);
+    return {
+      user_id: userId,
+      amount: r.amount,
+      currency,
+      type: r.direction,
+      status: "completed",
+      description: r.description,
+      reference: `stmt:${await sha(`${base}|${n}`)}`,
+      metadata: { source: "statement", import_id: importId, file_name: fileName, balance: r.balance },
+      created_at: `${r.date}T12:00:00Z`,
+      completed_at: `${r.date}T12:00:00Z`,
+    };
+  }));
 
   // Drop rows already imported earlier.
   const existing = new Set<string>();
@@ -90,19 +97,18 @@ Deno.serve(async (req) => {
     for (const d of data ?? []) existing.add(d.reference);
   }
   const fresh = prepared.filter((p) => !existing.has(p.reference));
-  const insertedIds: string[] = [];
-  const insertedRows: typeof fresh = [];
+  const inserted: Array<{ id: string; amount: number; type: string; description: string; created_at: string }> = [];
   // Oldest first so the live feed and matching follow the statement's order.
   fresh.sort((a, b) => a.created_at.localeCompare(b.created_at));
   for (let i = 0; i < fresh.length; i += 200) {
     const chunk = fresh.slice(i, i + 200);
-    const { data, error } = await admin.from("vortex_transactions").insert(chunk).select("id");
-    if (error) { console.error("import-statement insert failed", error); return json({ error: "Import failed. Please try again.", imported: insertedIds.length }, 500); }
-    for (const d of data ?? []) insertedIds.push(d.id);
-    insertedRows.push(...chunk);
+    const { data, error } = await admin.from("vortex_transactions").insert(chunk).select("id, amount, type, description, created_at");
+    if (error) { console.error("import-statement insert failed", error); return json({ error: "Import failed. Please try again.", imported: inserted.length }, 500); }
+    inserted.push(...(data ?? []));
   }
 
   let matched = 0;
+  const insertedIds = inserted.map((t) => t.id);
   if (insertedIds.length) {
     const { count } = await admin.from("vortex_obligation_feed").select("id", { count: "exact", head: true })
       .eq("user_id", userId).eq("kind", "matched").in("transaction_id", insertedIds.slice(0, 1000));
@@ -113,9 +119,8 @@ Deno.serve(async (req) => {
   let detectionError: string | undefined;
   if (insertedIds.length && key) {
     try {
-      const compact = insertedRows.slice(-400).map((r, i) => ({
-        id: insertedIds[insertedIds.length - Math.min(400, insertedRows.length) + i],
-        amount: r.amount, type: r.type, date: r.created_at, description: r.description,
+      const compact = inserted.slice(-400).map((t) => ({
+        id: t.id, amount: Number(t.amount), type: t.type, date: t.created_at, description: t.description,
       }));
       obligationsCreated = (await detectAndSaveObligations(admin, userId, compact, key, currency)).created;
     } catch (e) {
