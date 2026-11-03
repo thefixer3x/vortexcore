@@ -3,11 +3,11 @@
 
 export const PRO_PRICE_ID =
   (typeof Deno !== "undefined" ? Deno.env.get("STRIPE_PRO_PRICE_ID") : null) ||
-  "price_1RiSAL2KF4vMCpn8wUyDio3N";
+  "price_1UOr872KF4vMCpn81Q4FSS67";
 
 export const ENT_PRICE_ID =
   (typeof Deno !== "undefined" ? Deno.env.get("STRIPE_ENT_PRICE_ID") : null) ||
-  "price_1RiSAi2KF4vMCpn8B18AAI8v";
+  "price_1UOr882KF4vMCpn8mLZJAN20";
 
 // ---------------------------------------------------------------------------
 // Billing catalog — single source of truth for tiers and price labels.

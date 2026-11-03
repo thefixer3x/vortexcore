@@ -61,10 +61,21 @@ serve(withAuthMiddleware(async (_req, { auth }) => {
     }), { headers: { "Content-Type": "application/json" } });
   }
 
-  const { tier, subscribed, mappedStatus } = computeClientTier({
+  const computed = computeClientTier({
     status: activeSub.status,
     priceId: activeSub.price_id,
   });
+  const { subscribed, mappedStatus } = computed;
+  let tier = computed.tier;
+  // Prices created from the admin pricing screen are recorded on the plan row.
+  if (tier === "free" && activeSub.price_id) {
+    const { data: plans } = await supabase
+      .from("vortex_pricing_tiers")
+      .select("tier_key, stripe_price_id, previous_price_ids");
+    const match = (plans ?? []).find((p: { stripe_price_id: string | null; previous_price_ids: string[] | null }) =>
+      p.stripe_price_id === activeSub.price_id || (p.previous_price_ids ?? []).includes(activeSub.price_id));
+    if (match) tier = match.tier_key;
+  }
 
   return new Response(JSON.stringify({
     subscribed,
