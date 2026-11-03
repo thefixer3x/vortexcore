@@ -34,9 +34,9 @@ export function normaliseDate(raw: string): string | null {
     return b > 12 && a <= 12 ? build(+m[3], a, b) : build(+m[3], b, a);
   }
   m = s.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ,]*(\d{2,4})/);
-  if (m && MONTHS[m[2].slice(0, 4).toLowerCase()] ?? MONTHS[m[2].slice(0, 3).toLowerCase()]) {
-    const mon = MONTHS[m[2].slice(0, 4).toLowerCase()] ?? MONTHS[m[2].slice(0, 3).toLowerCase()];
-    return build(+m[3], mon, +m[1]);
+  if (m) {
+    const mon = MONTHS[m[2].slice(0, 3).toLowerCase()];
+    if (mon) return build(+m[3], mon, +m[1]);
   }
   m = s.match(/^([A-Za-z]{3,9})[ -](\d{1,2}),?[ -](\d{2,4})/);
   if (m && MONTHS[m[1].slice(0, 3).toLowerCase()]) return build(+m[3], MONTHS[m[1].slice(0, 3).toLowerCase()], +m[2]);
