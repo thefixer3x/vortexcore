@@ -53,4 +53,15 @@ describe('createEntitlementResolver', () => {
     expect(() => createEntitlementResolver({ project: '', tiers: ['free'], fallbackTier: 'free' })).toThrow();
     expect(() => createEntitlementResolver({ project: 'x', tiers: ['free'] as string[], fallbackTier: 'pro' })).toThrow();
   });
+
+  it('resolves a multi-item subscription from the first price of this app', () => {
+    const items = [
+      { id: 'other', metadata: { project: 'vortexcore', tier: 'pro' } },
+      null,
+      { id: 'mine', metadata: { project: 'subtrack', tier: 'team' } },
+    ];
+    expect(subtrack.resolveTierFromPrices(items)).toBe('team');
+    expect(subtrack.resolveTierFromPrices([items[0]])).toBe('free');
+    expect(subtrack.resolveTierFromPrices(undefined)).toBe('free');
+  });
 });

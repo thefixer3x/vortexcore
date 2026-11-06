@@ -18,11 +18,20 @@ export function minorUnitDigits(currency: string): number {
   return 2;
 }
 
-/** 10.5 USD → 1050. Rounds half away from zero. */
+/**
+ * 10.5 USD → 1050. Rounds half away from zero on the decimal value as written,
+ * so 1.005 USD → 101 (binary scaling would give 100.49999… and round down).
+ */
 export function toMinorUnits(amount: number, currency: string): number {
   if (!Number.isFinite(amount)) throw new Error('fin-core: amount must be a finite number');
-  const factor = 10 ** minorUnitDigits(currency);
-  return Math.sign(amount) * Math.round(Math.abs(amount) * factor);
+  const digits = minorUnitDigits(currency);
+  const abs = Math.abs(amount);
+  const text = String(abs);
+  // Shift the decimal point in the shortest decimal representation instead of
+  // multiplying in binary. Exponent notation (very large/small) falls back.
+  const scaled = text.includes('e') ? abs * 10 ** digits : Number(`${text}e${digits}`);
+  const minor = Math.round(scaled);
+  return amount < 0 && minor !== 0 ? -minor : minor;
 }
 
 /** 1050 USD → 10.5 */

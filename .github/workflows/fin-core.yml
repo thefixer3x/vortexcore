@@ -41,6 +41,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -48,6 +50,10 @@ jobs:
       - run: npm ci
       - name: Tag matches package.json version
         run: test "fin-core-v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - name: Tag points to a commit on main
+        run: |
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD
       - run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

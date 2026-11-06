@@ -47,6 +47,12 @@ export interface EntitlementResolver<T extends string> {
   resolveTier(price: PriceLike | null | undefined): T;
   /** Resolve from a stored price id only (no metadata available). */
   resolveTierFromPriceId(priceId: string | null | undefined): T;
+  /**
+   * Resolve from every price on a subscription (e.g. `items.data.map(i => i.price)`).
+   * The first price that belongs to this app decides; prices from other apps are
+   * skipped, so an unrelated first item never hides this app's tier.
+   */
+  resolveTierFromPrices(prices: Iterable<PriceLike | null | undefined> | null | undefined): T;
 }
 
 export function createEntitlementResolver<T extends string>(
@@ -84,5 +90,11 @@ export function createEntitlementResolver<T extends string>(
     isProjectPrice,
     resolveTier,
     resolveTierFromPriceId: (priceId) => resolveTier(priceId ? { id: priceId } : null),
+    resolveTierFromPrices: (prices) => {
+      for (const price of prices ?? []) {
+        if (isProjectPrice(price)) return resolveTier(price);
+      }
+      return fallbackTier;
+    },
   };
 }

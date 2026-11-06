@@ -11,6 +11,15 @@ describe('minor units', () => {
     expect(toMinorUnits(500, 'JPY')).toBe(500);
     expect(toMinorUnits(1.234, 'KWD')).toBe(1234);
     expect(toMinorUnits(-0.005, 'USD')).toBe(-1);
+    // Half-unit boundaries that binary scaling gets wrong.
+    expect(toMinorUnits(1.005, 'USD')).toBe(101);
+    expect(toMinorUnits(-1.005, 'USD')).toBe(-101);
+    expect(toMinorUnits(2.675, 'USD')).toBe(268);
+    expect(toMinorUnits(0.285, 'USD')).toBe(29);
+    expect(toMinorUnits(1.0005, 'KWD')).toBe(1001);
+    expect(toMinorUnits(0.4, 'JPY')).toBe(0);
+    expect(Object.is(toMinorUnits(-0.001, 'USD'), -0)).toBe(false);
+    expect(toMinorUnits(1e21, 'USD')).toBe(1e23);
     expect(fromMinorUnits(1050, 'USD')).toBe(10.5);
     expect(() => toMinorUnits(Number.NaN, 'USD')).toThrow();
     expect(() => fromMinorUnits(1.5, 'USD')).toThrow();
