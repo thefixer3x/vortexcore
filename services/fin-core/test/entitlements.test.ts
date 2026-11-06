@@ -44,6 +44,16 @@ describe('createEntitlementResolver', () => {
     expect(subtrack.resolveTier(null)).toBe('free');
   });
 
+  it('falls back when a catalog entry names a tier the app does not have', () => {
+    const resolver = createEntitlementResolver({
+      project: 'subtrack',
+      tiers: ['free', 'pro'] as const,
+      fallbackTier: 'free',
+      catalog: { price_odd: { project: 'subtrack', tier: 'legacy' as never, billing: 'monthly' } },
+    });
+    expect(resolver.resolveTier({ id: 'price_odd', metadata: { project: 'subtrack', tier: 'pro' } })).toBe('free');
+  });
+
   it('does not treat prototype keys as catalog entries', () => {
     expect(vortex.resolveTierFromPriceId('constructor')).toBe('free');
     expect(vortex.isProjectPrice({ id: 'toString' })).toBe(false);
