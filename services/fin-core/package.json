@@ -24,7 +24,7 @@
     "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "license": "MIT",
   "publishConfig": {
@@ -37,6 +37,6 @@
   },
   "devDependencies": {
     "typescript": "5.9.3",
-    "vitest": "3.2.7"
+    "vitest": "4.1.12"
   }
 }
