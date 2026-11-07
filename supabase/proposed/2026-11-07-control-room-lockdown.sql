@@ -1,8 +1,8 @@
 -- =============================================================================
 -- Control-room lockdown (shared Supabase project)
 --
--- STATUS: PROPOSED. Not applied. The owner reviews and applies it (SQL editor,
--- or `psql -1 -f`). Everything below runs in one transaction.
+-- STATUS: APPLIED to production on 2026-11-07, with owner approval, and verified
+-- afterwards. Kept here as the record; everything below ran in one transaction.
 --
 -- Live state read on 2026-11-07 (read-only catalog queries):
 --   * public.render_services is a security_invoker view over

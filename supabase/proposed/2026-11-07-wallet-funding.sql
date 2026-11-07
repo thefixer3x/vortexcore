@@ -1,8 +1,8 @@
 -- =============================================================================
 -- Wallet funding: per-currency wallets, saved cards, top-up credit
 --
--- STATUS: PROPOSED. Not applied. The owner reviews and applies it (SQL editor,
--- or `psql -1 -f`). Everything below runs in one transaction.
+-- STATUS: APPLIED to production on 2026-11-07, with owner approval, and verified
+-- afterwards. Kept here as the record; everything below ran in one transaction.
 -- Owner decisions (2026-11-07): one wallet per currency; card top-ups in scope.
 --
 -- Live state read on 2026-11-07:
