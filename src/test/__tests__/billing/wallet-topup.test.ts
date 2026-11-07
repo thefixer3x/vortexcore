@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  creditErrorRolledBack,
+  creditFailedForGood,
   fromMinorUnits,
   parseTopupRequest,
   paymentIntentMatches,
@@ -90,16 +90,23 @@ describe('paymentIntentMatches', () => {
   })
 })
 
-describe('creditErrorRolledBack', () => {
-  it('treats database errors as rolled back', () => {
-    expect(creditErrorRolledBack({ code: 'P0001' })).toBe(true) // RAISE: WALLET_LOCKED, INVALID_*, REFERENCE_CONFLICT
-    expect(creditErrorRolledBack({ code: '23505' })).toBe(true)
-    expect(creditErrorRolledBack({ code: '57014' })).toBe(true) // statement timeout: cancelled, rolled back
-    expect(creditErrorRolledBack({ code: 'PGRST202' })).toBe(true)
+describe('creditFailedForGood', () => {
+  it('refunds only errors every attempt would hit', () => {
+    for (const message of ['WALLET_LOCKED', 'INVALID_AMOUNT', 'INVALID_CURRENCY', 'REFERENCE_CONFLICT', 'USER_REQUIRED']) {
+      expect(creditFailedForGood({ code: 'P0001', message })).toBe(true)
+    }
+    expect(creditFailedForGood({ code: '23514' })).toBe(true) // check constraint
+    expect(creditFailedForGood({ code: '22003' })).toBe(true) // numeric out of range
   })
-  it('treats a missing code (network failure) as unknown', () => {
-    expect(creditErrorRolledBack({ code: '' })).toBe(false)
-    expect(creditErrorRolledBack({})).toBe(false)
-    expect(creditErrorRolledBack(null)).toBe(false)
+  it('leaves outcomes that may still commit elsewhere for reconciliation', () => {
+    expect(creditFailedForGood({ code: 'P0001', message: 'something else' })).toBe(false)
+    expect(creditFailedForGood({ code: '23505' })).toBe(false) // unique violation: a credit may already exist
+    expect(creditFailedForGood({ code: '57014' })).toBe(false) // statement timeout
+    expect(creditFailedForGood({ code: '55P03' })).toBe(false) // lock not available
+    expect(creditFailedForGood({ code: '40001' })).toBe(false) // serialization failure
+    expect(creditFailedForGood({ code: '40P01' })).toBe(false) // deadlock
+    expect(creditFailedForGood({ code: 'PGRST000' })).toBe(false) // PostgREST could not reach the database
+    expect(creditFailedForGood({ code: '' })).toBe(false) // network failure
+    expect(creditFailedForGood(null)).toBe(false)
   })
 })

@@ -42,6 +42,8 @@ Use any future expiry date, any CVC and any postcode.
 7. **Retry after a refund:** after case 6, retry with the same key. It returns 409 `topup_refunded` and nothing is credited. The next attempt uses a new key.
 8. **Remove cards:** removing the default promotes another card. Removing the only card works. Removing a card already detached in the Stripe dashboard still removes it from the list.
 9. **Switch off:** with `WALLET_TOPUP_ENABLED` unset, `fund-wallet` returns 503.
+10. **Overlapping retries:** send the same request (same key) twice at once, for example with two `curl` calls in parallel. The card is charged once, the wallet is credited once, and nothing is refunded.
+11. **Unknown outcome:** make the credit call fail without a database error, for example by blocking the function's access to the database for one request. The response says "contact support", nothing is refunded, and a retry with the same key credits the wallet exactly once.
 
 ## 4. Checks on the test database
 

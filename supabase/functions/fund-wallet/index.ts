@@ -13,7 +13,7 @@
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "../_shared/supabase-client.ts";
-import { creditErrorRolledBack, fromMinorUnits, parseTopupRequest, paymentIntentMatches } from "../_shared/wallet-topup.ts";
+import { creditFailedForGood, fromMinorUnits, parseTopupRequest, paymentIntentMatches } from "../_shared/wallet-topup.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 const admin = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "");
@@ -100,7 +100,15 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
   // A retried request with the same key returns Stripe's cached PaymentIntent,
   // even if that payment was refunded after an earlier failed credit. Read the
   // charge fresh and never credit a payment that has any refund on it.
-  const latest = await stripe.paymentIntents.retrieve(pi.id, { expand: ["latest_charge"] });
+  let latest: Stripe.PaymentIntent;
+  try {
+    latest = await stripe.paymentIntents.retrieve(pi.id, { expand: ["latest_charge"] });
+  } catch (err) {
+    // The card was charged but nothing was credited yet. A retry with the same
+    // key replays this PaymentIntent and continues from here.
+    console.error("[fund-wallet] could not re-read PaymentIntent after charge", pi.id, (err as Error).message);
+    return json({ error: "We could not confirm your top-up. Please try again.", payment_intent: pi.id }, 502);
+  }
   const charge = latest.latest_charge as Stripe.Charge | null;
   if (!charge || charge.refunded || (charge.amount_refunded ?? 0) > 0) {
     return json({ error: "This top-up was refunded. Please start a new one.", code: "topup_refunded" }, 409);
@@ -140,9 +148,11 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
         amount: fromMinorUnits(pi.amount_received, currency), currency,
       });
     }
-    if (!creditErrorRolledBack(creditErr)) {
-      // No database error code (e.g. a dropped connection or timeout): the
-      // credit may still commit, so refunding now could pay out twice.
+    if (!creditFailedForGood(creditErr)) {
+      // Not an error every attempt would hit (e.g. a dropped connection, a
+      // timeout, or a lock error while another request for this PaymentIntent
+      // is crediting it): the credit may still commit, so refunding now could
+      // pay out twice. A retry with the same key settles it idempotently.
       console.error("[fund-wallet] CRITICAL credit outcome unknown, needs reconciliation", pi.id);
       return json({ error: "We could not confirm your top-up. Please contact support.", payment_intent: pi.id }, 500);
     }
