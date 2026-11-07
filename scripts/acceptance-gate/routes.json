@@ -4,8 +4,6 @@
   "routes": [
     { "path": "/", "kind": "functional", "auth": false, "component": "Index" },
     { "path": "/ecosystem", "kind": "functional", "auth": false, "component": "Ecosystem" },
-    { "path": "/ecosystem/gemini", "kind": "functional", "auth": false, "component": "GeminiDemo" },
-    { "path": "/ecosystem/perplexity", "kind": "functional", "auth": false, "component": "PerplexityDemo" },
     { "path": "/auth", "kind": "functional", "auth": false, "component": "SignupForm" },
     { "path": "/auth/callback", "kind": "functional", "auth": false, "component": "AuthCallbackHandler" },
     { "path": "/dashboard", "kind": "functional", "auth": true, "component": "Dashboard" },
