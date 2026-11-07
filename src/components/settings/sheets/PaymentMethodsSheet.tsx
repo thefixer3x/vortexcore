@@ -114,6 +114,8 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
       });
       setFundAmount("");
     } catch (err: unknown) {
+      // A refunded top-up cannot be retried with the same key.
+      if ((err as { code?: string })?.code === "topup_refunded") topupKey.reset();
       toast({ title: "Funding failed", description: (err as Error).message, variant: "destructive" });
     } finally {
       setLoadingFund(false);

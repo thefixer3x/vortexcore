@@ -96,6 +96,15 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
   if (pi.status !== "succeeded") {
     return json({ error: "The payment did not complete.", status: pi.status }, 402);
   }
+  // A retried request with the same key returns Stripe's cached PaymentIntent,
+  // even if that payment was refunded after an earlier failed credit. Read the
+  // charge fresh and never credit a payment that has any refund on it.
+  const latest = await stripe.paymentIntents.retrieve(pi.id, { expand: ["latest_charge"] });
+  const charge = latest.latest_charge as Stripe.Charge | null;
+  if (!charge || charge.refunded || (charge.amount_refunded ?? 0) > 0) {
+    return json({ error: "This top-up was refunded. Please start a new one.", code: "topup_refunded" }, 409);
+  }
+
   if (!paymentIntentMatches(pi, { amountMinor, currency, customerId, userId })) {
     // Should never happen; do not credit something we did not ask for.
     console.error("[fund-wallet] PaymentIntent mismatch", pi.id);
@@ -112,12 +121,25 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
 
   if (creditErr) {
     console.error("[fund-wallet] credit failed after charge", pi.id, creditErr.message);
+    // The error may have come back after the credit committed (e.g. a dropped
+    // connection). If the ledger row exists, the wallet was credited: do not refund.
+    const { data: credited } = await admin
+      .from("vortex_transactions")
+      .select("id, wallet_id")
+      .eq("reference", `topup_${pi.id}`)
+      .maybeSingle();
+    if (credited) {
+      return json({
+        success: true, idempotent: true, wallet_id: credited.wallet_id, transaction_id: credited.id,
+        amount: fromMinorUnits(pi.amount_received, currency), currency,
+      });
+    }
     try {
       await stripe.refunds.create(
         { payment_intent: pi.id, reason: "requested_by_customer", metadata: { reason: "wallet_credit_failed" } },
         { idempotencyKey: `wallet_topup_refund:${pi.id}` },
       );
-      return json({ error: "We could not add the money to your wallet, so the charge was refunded.", refunded: true }, 500);
+      return json({ error: "We could not add the money to your wallet, so the charge was refunded.", refunded: true, code: "topup_refunded" }, 500);
     } catch (refundErr) {
       console.error("[fund-wallet] CRITICAL refund failed", pi.id, (refundErr as Error).message);
       return json({ error: "Your card was charged but the wallet was not credited. Please contact support.", payment_intent: pi.id }, 500);

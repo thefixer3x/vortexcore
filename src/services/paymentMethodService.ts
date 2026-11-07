@@ -40,16 +40,18 @@ async function invokeOrThrow<T>(fn: string, body: Record<string, unknown>): Prom
   const { data, error } = await supabase.functions.invoke(fn, { body });
   if (error) {
     let message = error.message;
+    let code: string | undefined;
     const context = (error as { context?: Response }).context;
     if (context && typeof context.json === "function") {
       try {
         const payload = await context.json();
         if (payload?.error) message = payload.error;
+        if (typeof payload?.code === "string") code = payload.code;
       } catch {
         // keep the generic message
       }
     }
-    throw new Error(message);
+    throw Object.assign(new Error(message), { code });
   }
   return data as T;
 }

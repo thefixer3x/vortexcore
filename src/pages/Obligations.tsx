@@ -66,6 +66,8 @@ const Obligations = () => {
       toast({ title: result.idempotent ? "Already added" : "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your ${depositCurrency} wallet.` });
       setDepositAmount("");
     } catch (e) {
+      // A refunded top-up cannot be retried with the same key.
+      if ((e as { code?: string })?.code === "topup_refunded") topupKey.reset();
       toast({ title: "Funding failed", description: (e as Error).message, variant: "destructive" });
     } finally {
       setDepositing(false);
