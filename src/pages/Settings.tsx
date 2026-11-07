@@ -21,6 +21,7 @@ import { NotificationSheet } from "@/components/settings/sheets/NotificationShee
 import { BusinessSheet } from "@/components/settings/sheets/BusinessSheet";
 import { SubscriptionSheet } from "@/components/settings/sheets/SubscriptionSheet";
 import { ThemeSheet } from "@/components/settings/sheets/ThemeSheet";
+import { PaymentMethodsSheet } from "@/components/settings/sheets/PaymentMethodsSheet";
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -107,6 +108,11 @@ export default function Settings() {
 
       <ThemeSheet
         open={activeSheet === "theme"}
+        onClose={closeSheet}
+      />
+
+      <PaymentMethodsSheet
+        open={activeSheet === "payment-methods"}
         onClose={closeSheet}
       />
       
