@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { safeRedirect } from "@/lib/safeRedirect";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ShieldCheck } from "lucide-react";
@@ -27,6 +28,7 @@ export function SignupForm({ redirectTo }: SignupFormProps) {
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const { identifyUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +96,7 @@ export function SignupForm({ redirectTo }: SignupFormProps) {
       // function that creates a profile and wallet. Navigate to dashboard.
       // If email confirmation IS required, this will navigate to auth/callback which will
       // show an error briefly, but Supabase's default flow handles re-login after confirmation.
-      navigate(redirectTo || "/dashboard");
+      navigate(safeRedirect(redirectTo ?? searchParams.get("redirect")));
     } catch (err) {
       console.error("Signup error:", err);
       LogRocket.track("signup_failed", {
