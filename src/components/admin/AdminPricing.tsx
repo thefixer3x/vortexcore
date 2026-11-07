@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Save, Trash2 } from "lucide-react";
+import { Loader2, Plus, Save, Trash2, ShieldOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { callAdmin } from "@/lib/admin-api";
 import type { PricingTier } from "@/hooks/use-pricing-tiers";
 
 type Tier = PricingTier & { previous_price_ids: string[] };
 
-function TierEditor({ tier, onSaved }: { tier: Tier; onSaved: () => void }) {
+function TierEditor({ tier, onSaved, isAdmin }: { tier: Tier; onSaved: () => void; isAdmin: boolean }) {
   const { toast } = useToast();
   const [form, setForm] = useState({ ...tier, price: String(tier.price), card_limit: tier.card_limit == null ? "" : String(tier.card_limit) });
   const [busy, setBusy] = useState(false);
@@ -87,7 +88,7 @@ function TierEditor({ tier, onSaved }: { tier: Tier; onSaved: () => void }) {
         </div>
         <div className="flex items-center justify-end gap-2">
           {priceChanged && !isFree && <span className="text-xs text-muted-foreground">A new Stripe price will be created.</span>}
-          <Button onClick={save} disabled={busy || !form.name.trim()} className="gap-1">
+          <Button onClick={save} disabled={busy || !form.name.trim() || !isAdmin} className="gap-1">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
           </Button>
         </div>
@@ -97,6 +98,7 @@ function TierEditor({ tier, onSaved }: { tier: Tier; onSaved: () => void }) {
 }
 
 export function AdminPricing() {
+  const isAdmin = useIsAdmin();
   const [tiers, setTiers] = useState<Tier[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const load = () => callAdmin<{ tiers: Tier[] }>({ action: "list_tiers" })
@@ -107,8 +109,14 @@ export function AdminPricing() {
   if (!tiers) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   return (
     <div className="space-y-4">
+      {!isAdmin && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+          <ShieldOff className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <span className="text-sm text-amber-700 dark:text-amber-300">Admin access required to manage pricing tiers.</span>
+        </div>
+      )}
       <p className="text-sm text-muted-foreground">These plans appear in Settings → Subscription. Changing a paid plan's price creates a new VortexCore price in Stripe.</p>
-      {tiers.map((t) => <TierEditor key={`${t.tier_key}-${t.stripe_price_id}-${t.price}`} tier={t} onSaved={load} />)}
+      {tiers.map((t) => <TierEditor key={`${t.tier_key}-${t.stripe_price_id}-${t.price}`} tier={t} onSaved={load} isAdmin={isAdmin} />)}
     </div>
   );
 }
