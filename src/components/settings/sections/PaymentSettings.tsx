@@ -43,7 +43,8 @@ export const PaymentSettings = ({ onOpen }: { onOpen: (id: string) => void }) =>
   }, [user?.id]);
 
   const toggleDefaultSource = async () => {
-    const newVal = defaultSource === "wallet" ? "card" : "wallet";
+    const previous = defaultSource;
+    const newVal = previous === "wallet" ? "card" : "wallet";
     setDefaultSource(newVal);
 
     try {
@@ -59,6 +60,7 @@ export const PaymentSettings = ({ onOpen }: { onOpen: (id: string) => void }) =>
       if (error) throw error;
       toast({ title: "Preference saved", description: `Payments will default to ${newVal === "wallet" ? "your wallet" : "your saved card"} when available.` });
     } catch {
+      setDefaultSource(previous); // the preference was not stored
       toast({ title: "Save failed", variant: "destructive" });
     }
   };

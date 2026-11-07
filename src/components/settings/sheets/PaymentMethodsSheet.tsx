@@ -215,7 +215,8 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
                         className="h-8 w-8 text-destructive hover:text-destructive"
                         onClick={() => handleRemove(pm.source_id)}
                         title="Remove"
-                        disabled={pm.is_default}
+                        // The default can be removed when it is the only card; otherwise pick another default first.
+                        disabled={pm.is_default && methods.length > 1}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

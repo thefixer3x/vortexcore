@@ -71,7 +71,8 @@ function TierCard({ tier, isPopular, onSelect }: {
 
         <div className="mt-6">
           <Button
-            className={`w-full gap-1 ${tier.price === 0 ? "outline" : ""}`}
+            className="w-full gap-1"
+            variant={tier.price === 0 ? "outline" : "default"}
             onClick={() => onSelect(tier.tier_key)}
           >
             {tier.price === 0 ? "Get Started" : "Subscribe"}
@@ -150,7 +151,7 @@ export default function Pricing() {
           </div>
           <div>
             <h3 className="font-medium mb-1">Is there a free trial?</h3>
-            <p className="text-sm text-muted-foreground">The Free tier is always available with no credit card required. Paid tiers start at $9.99/month.</p>
+            <p className="text-sm text-muted-foreground">The Free tier is always available with no credit card required.</p>
           </div>
         </div>
       </section>

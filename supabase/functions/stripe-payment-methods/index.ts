@@ -160,7 +160,15 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
 
       case "detach_payment_method": {
         const card = await ownCard(userId, data.payment_method_id);
-        await stripe.paymentMethods.detach(card.source_id);
+        try {
+          await stripe.paymentMethods.detach(card.source_id);
+        } catch (err) {
+          // Already detached or deleted on Stripe's side: still remove our row,
+          // otherwise the card is stuck in the list.
+          const e = err as { code?: string; message?: string };
+          const gone = e.code === "resource_missing" || /not attached to a customer/i.test(e.message ?? "");
+          if (!gone) throw err;
+        }
         const { error: delErr } = await admin.from("vortex_payment_methods").delete()
           .eq("user_id", userId).eq("source_id", card.source_id);
         if (delErr) throw new Error(`remove card failed: ${delErr.message}`);
