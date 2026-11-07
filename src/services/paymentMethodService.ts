@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 export interface UserPaymentMethod {
   id: string;
   user_id: string;
-  stripe_payment_method_id: string;
+  source_id: string;
   last4: string;
   brand: string;
   exp_month: number;

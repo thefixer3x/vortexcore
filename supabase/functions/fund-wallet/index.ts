@@ -9,8 +9,6 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
   apiVersion: "2023-10-16",
 });
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Use POST" }, 405);
@@ -40,12 +38,12 @@ Deno.serve(async (req) => {
 
   const userId = u.user.id;
 
-  // 1. Verify user owns this payment method
+  // 1. Verify user owns this payment method (in our vault table)
   const { data: pmRow } = await admin
     .from("user_payment_methods")
-    .select("stripe_payment_method_id")
+    .select("source_id")
     .eq("user_id", userId)
-    .eq("stripe_payment_method_id", paymentMethodId)
+    .eq("source_id", paymentMethodId)
     .maybeSingle();
 
   if (!pmRow) return json({ error: "Payment method not found or unauthorized" }, 404);
@@ -65,79 +63,43 @@ Deno.serve(async (req) => {
     return json({ error: "Payment failed: " + (charge.last_payment_error?.message ?? "unknown") }, 402);
   }
 
-  // 3. Find or create the user's wallet in the target currency
-  let { data: wallet } = await admin
-    .from("vortex_wallets")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("currency", currency)
-    .maybeSingle();
-
-  if (!wallet) {
-    const { data: newWallet, error: createErr } = await admin.rpc("vortex_create_wallet", {
+  // 3. Atomic credit — idempotent by Stripe charge id.
+  //    Writes to app_vortexcore.vortex_transactions (our schema, safe to mutate)
+  //    and updates app_vortexcore.vortex_wallets atomically in the same transaction.
+  const { data: result, error: creditErr } = await admin
+    .rpc("credit_wallet_for_charge", {
       p_user_id: userId,
+      p_amount: amount,
       p_currency: currency,
+      p_charge_id: charge.id,
+      p_type: "deposit",
     });
-    if (createErr) {
-      console.error("Failed to create wallet:", createErr);
-      return json({ error: "Failed to create wallet" }, 500);
-    }
-    wallet = newWallet?.[0] ?? newWallet;
-    if (!wallet) {
-      // Fallback: direct insert if RPC doesn't exist
-      const { data: inserted, error: insertErr } = await admin
-        .from("vortex_wallets")
-        .insert({ user_id: userId, currency, balance: 0 })
-        .select()
-        .single();
-      if (insertErr) return json({ error: "Failed to create wallet" }, 500);
-      wallet = inserted;
-    }
+
+  if (creditErr) {
+    console.error("credit_wallet_for_charge failed:", creditErr);
+    // Money is captured in Stripe but wallet not credited — this is a critical failure.
+    // We MUST return an error and let Stripe refund if necessary.
+    return json({ error: "Failed to credit wallet after successful payment. Please contact support." }, 500);
   }
 
-  // 4. Credit the wallet
-  const newBalance = (wallet.balance ?? 0) + amount;
-  const { error: updateErr } = await admin
-    .from("vortex_wallets")
-    .update({ balance: newBalance, updated_at: new Date().toISOString() })
-    .eq("id", wallet.id);
-
-  if (updateErr) {
-    console.error("Wallet update failed:", updateErr);
-    return json({ error: "Failed to credit wallet" }, 500);
-  }
-
-  // 5. Record the transaction
-  const { error: txErr } = await admin
-    .from("vortex_transactions")
-    .insert({
-      user_id: userId,
+  // Check for idempotent re-entry (same charge_id was already credited)
+  if (result?.idempotent === true) {
+    return json({
+      success: true,
+      idempotent: true,
+      charge_id: charge.id,
       amount,
       currency,
-      type: "deposit",
-      category: "wallet_fund",
-      description: `Wallet funded via ${pmRow.stripe_payment_method_id}`,
-      status: "completed",
-      metadata: {
-        stripe_charge_id: charge.id,
-        payment_method_id: paymentMethodId,
-        note: body.note ?? "",
-        new_balance: newBalance,
-      },
-      created_at: new Date().toISOString(),
+      message: result.message,
     });
-
-  if (txErr) {
-    console.error("Transaction record failed:", txErr);
-    // Don't fail the whole flow if logging fails — money is already credited
   }
 
   return json({
     success: true,
-    wallet_id: wallet.id,
-    new_balance: newBalance,
+    wallet_id: result?.wallet_id,
     charge_id: charge.id,
     amount,
     currency,
+    transaction: result,
   });
 });

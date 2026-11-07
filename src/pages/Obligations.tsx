@@ -58,7 +58,7 @@ const Obligations = () => {
       const result = await fundWallet.mutateAsync({
         amount,
         currency: depositCurrency,
-        payment_method_id: pm.stripe_payment_method_id,
+        payment_method_id: pm.source_id,
       });
       toast({ title: "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your wallet.` });
       setDepositAmount("");

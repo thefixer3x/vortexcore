@@ -98,15 +98,16 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         // Persist to our table for quick lookup
         await serviceClient.from("user_payment_methods").upsert({
           user_id: auth.userId,
-          stripe_payment_method_id: payment_method_id,
-          last4: "", // filled in below
-          brand: "",
+          source_id: payment_method_id,
+          type: "card",
+          brand: "", // filled in below
+          last4: "",
           exp_month: 0,
           exp_year: 0,
           is_default: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        }, { onConflict: "user_id,stripe_payment_method_id" });
+        }, { onConflict: "source_id" });
 
         // Refresh last4/brand/exp from Stripe
         const pm = await stripe.paymentMethods.retrieve(payment_method_id);
@@ -118,7 +119,7 @@ serve(withAuthMiddleware(async (req, { auth }) => {
               exp_month: pm.card.exp_month,
               exp_year: pm.card.exp_year,
             })
-            .eq("stripe_payment_method_id", payment_method_id);
+            .eq("source_id", payment_method_id);
         }
 
         return new Response(
@@ -140,9 +141,9 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         // Enrich with Stripe details for cards
         const enriched = await Promise.all(
           (rows || []).map(async (row) => {
-            if (row.stripe_payment_method_id && row.stripe_payment_method_id.startsWith("pm_")) {
+            if (row.source_id && row.source_id.startsWith("pm_")) {
               try {
-                const pm = await stripe.paymentMethods.retrieve(row.stripe_payment_method_id);
+                const pm = await stripe.paymentMethods.retrieve(row.source_id);
                 if (pm.card) {
                   return {
                     ...row,
@@ -179,7 +180,7 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         const { data: row } = await serviceClient
           .from("user_payment_methods")
           .select("user_id")
-          .eq("stripe_payment_method_id", payment_method_id)
+          .eq("source_id", payment_method_id)
           .eq("user_id", auth.userId)
           .maybeSingle();
 
@@ -198,7 +199,7 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         await serviceClient
           .from("user_payment_methods")
           .update({ is_default: true })
-          .eq("stripe_payment_method_id", payment_method_id);
+          .eq("source_id", payment_method_id);
 
         // Also set on Stripe customer side
         const { data: custRow } = await serviceClient
@@ -231,9 +232,9 @@ serve(withAuthMiddleware(async (req, { auth }) => {
         // Verify ownership
         const { data: row } = await serviceClient
           .from("user_payment_methods")
-          .select("stripe_payment_method_id")
+          .select("source_id")
           .eq("user_id", auth.userId)
-          .eq("stripe_payment_method_id", payment_method_id)
+          .eq("source_id", payment_method_id)
           .maybeSingle();
 
         if (!row) {
@@ -248,7 +249,7 @@ serve(withAuthMiddleware(async (req, { auth }) => {
           .from("user_payment_methods")
           .delete()
           .eq("user_id", auth.userId)
-          .eq("stripe_payment_method_id", payment_method_id);
+          .eq("source_id", payment_method_id);
 
         return new Response(
           JSON.stringify({ success: true }),

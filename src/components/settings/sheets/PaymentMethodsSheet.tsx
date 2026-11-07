@@ -136,7 +136,7 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
         body: JSON.stringify({
           amount,
           currency: fundCurrency,
-          payment_method_id: pm.stripe_payment_method_id,
+          payment_method_id: pm.source_id,
         }),
       });
       const result = await response.json();
@@ -234,7 +234,7 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
-                        onClick={() => handleSetDefault(pm.stripe_payment_method_id)}
+                        onClick={() => handleSetDefault(pm.source_id)}
                         title="Set as default"
                       >
                         {pm.is_default ? <Check className="h-4 w-4" /> : <span className="text-xs">★</span>}
@@ -243,7 +243,7 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleRemove(pm.stripe_payment_method_id)}
+                        onClick={() => handleRemove(pm.source_id)}
                         title="Remove"
                         disabled={pm.is_default}
                       >
