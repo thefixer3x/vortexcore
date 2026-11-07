@@ -28,7 +28,11 @@ const isExpectedTarget = (deployment) =>
     ? deployment.target === "production"
     : deployment.target !== "production";
 
-const attempts = 24;
+// A Vercel preview build takes several minutes; the gate runs in parallel with
+// it, so wait up to PROVENANCE_WAIT_SECONDS (default 600) for READY.
+const intervalMs = 5_000;
+const waitSeconds = Number(process.env.PROVENANCE_WAIT_SECONDS ?? 600);
+const attempts = Math.max(1, Math.ceil((waitSeconds * 1000) / intervalMs));
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   const response = await fetch(endpoint, {
     headers: { Authorization: `Bearer ${VERCEL_TOKEN}` },
@@ -60,11 +64,11 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
   }
 
   if (attempt < attempts) {
-    await new Promise((resolve) => setTimeout(resolve, 5_000));
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
   }
 }
 
 console.error(
-  `No READY ${VERCEL_EXPECT_TARGET} deployment found for ${sha} within 120 seconds`,
+  `No READY ${VERCEL_EXPECT_TARGET} deployment found for ${sha} within ${waitSeconds} seconds`,
 );
 process.exit(1);
