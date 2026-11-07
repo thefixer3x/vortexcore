@@ -40,8 +40,9 @@ Deno.serve(async (req) => {
   let currency = typeof body.currency === "string" && CURRENCY.test(body.currency) ? body.currency : "NGN";
   if (!fileType) return json({ error: "Upload a CSV or PDF statement." }, 400);
 
-  let rows: StatementRow[] = [];
-  let skipped = 0;
+  // Both branches below assign these (or return), so no initial values.
+  let rows: StatementRow[];
+  let skipped: number;
   const key = Deno.env.get("LOVABLE_API_KEY");
   if (fileType === "csv") {
     if (typeof body.content !== "string" || !body.content.trim()) return json({ error: "The file is empty." }, 400);

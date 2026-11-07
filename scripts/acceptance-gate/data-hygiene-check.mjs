@@ -25,6 +25,9 @@ const rootArg = argPath ? (argPath.startsWith('/') ? argPath : join(process.cwd(
 const scanRoot = join(rootArg, 'src');
 
 const EXCLUDE_DIRS = new Set(['node_modules', 'dist', 'coverage', '.git', 'archive', 'test-results', 'playwright-report', '.next', '.vercel', 'functions.backup']);
+// Generated files: not shipped text. types.ts is the Supabase schema typing
+// (it contains field names such as `sqlstate`, not error messages).
+const EXCLUDE_FILES = new Set(['src/integrations/supabase/types.ts']);
 const EXCLUDE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico', '.woff', '.woff2', '.lock', '.lockb', '.diff', '.sql.bak']);
 
 // year >= 2025 literal
@@ -55,6 +58,7 @@ const violations = [];
 
 for (const f of files) {
   const rel = relative(rootArg, f);
+  if (EXCLUDE_FILES.has(rel.split('\\').join('/'))) continue;
   const text = readFileSync(f, 'utf8');
   const lines = text.split('\n');
   lines.forEach((line, i) => {
