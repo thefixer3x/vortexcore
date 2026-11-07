@@ -159,85 +159,9 @@ BEGIN
 END;
 $$;
 
--- ── 3. Lock down control-room write paths ───────────────────────────
--- These revokes stop signed-in users from creating / deleting / updating
--- apps and render_services through public views and RPCs.
---
--- The VortexCore app uses vortex-admin edge function (service secret key)
--- which is NOT affected by revoking anon/authenticated grants.
---
--- Frontend audit: src/ has ZERO runtime references to control_room objects.
--- All interactions go through supabase.functions.invoke("vortex-admin", ...).
---
--- Source: /root/.hermes/cache/scratch/vortexcore-audit/control-room-grants.md
-
--- ── 3a. Public RPC functions (SECURITY DEFINER, no internal auth check) ──
--- These run as the definer (supabase_admin), which has full control_room
--- privileges. Any caller with EXECUTE can bypass the base-table locks.
-
-REVOKE EXECUTE ON FUNCTION public.create_control_room_app(
-  text, text, text, text, text, text, text, text, text, jsonb
-) FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.delete_control_room_app(text, boolean) FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.update_control_room_app(text, jsonb) FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.get_control_room_app(text) FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.get_control_room_apps(text, text) FROM anon, authenticated;
-
--- Ensure service_role retains explicit EXECUTE on these RPCs
-GRANT EXECUTE ON FUNCTION public.create_control_room_app(
-  text, text, text, text, text, text, text, text, text, jsonb
-) TO service_role;
-GRANT EXECUTE ON FUNCTION public.delete_control_room_app(text, boolean) TO service_role;
-GRANT EXECUTE ON FUNCTION public.update_control_room_app(text, jsonb) TO service_role;
-GRANT EXECUTE ON FUNCTION public.get_control_room_app(text) TO service_role;
-GRANT EXECUTE ON FUNCTION public.get_control_room_apps(text, text) TO service_role;
-
--- ── 3b. INSTEAD OF trigger functions on public.render_services ────
--- CRITICAL: render_services has security_invoker=on AND INSTEAD OF triggers.
--- The triggers are SECURITY DEFINER, so they run as supabase_admin.
--- An authenticated user can INSERT/UPDATE/DELETE through the view because:
---   1. View grants INSERT/UPDATE/DELETE to authenticated (granted)
---   2. Trigger runs as definer (bypasses security_invoker)
---   3. Definer writes to control_room.render_services (succeeds)
--- This is a privilege escalation hole.
-
-REVOKE INSERT, UPDATE, DELETE ON TABLE public.render_services FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.render_services_insert() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.render_services_update() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.render_services_delete() FROM anon, authenticated;
-
-GRANT EXECUTE ON FUNCTION public.render_services_insert() TO service_role;
-GRANT EXECUTE ON FUNCTION public.render_services_update() TO service_role;
-GRANT EXECUTE ON FUNCTION public.render_services_delete() TO service_role;
-
--- ── 3c. INSTEAD OF trigger functions on public.projects ──────────
--- projects has security_invoker=true. The triggers are SECURITY DEFINER,
--- but the view itself has 0 grants to anon/authenticated (already locked).
--- Still revoke triggers for defense-in-depth.
-
-REVOKE INSERT, UPDATE, DELETE ON TABLE public.projects FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.projects_insert() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.projects_update() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.projects_delete() FROM anon, authenticated;
-
-GRANT EXECUTE ON FUNCTION public.projects_insert() TO service_role;
-GRANT EXECUTE ON FUNCTION public.projects_update() TO service_role;
-GRANT EXECUTE ON FUNCTION public.projects_delete() TO service_role;
-
--- ── 3d. Public view: public.apps ──────────────────────────────────
--- Has security_invoker=on. View grants INSERT/UPDATE/DELETE to anon/authenticated,
--- but base table control_room.apps has 0 grants → writes DENIED at base level.
--- Still revoke view grants for defense-in-depth.
-
-REVOKE INSERT, UPDATE, DELETE ON TABLE public.apps FROM anon, authenticated;
-
--- ── 3e. Public view: public.vortex_cockpit_projects ──────────────
--- Already has 0 grants to anon/authenticated (locked). Revoke for safety.
-
-REVOKE INSERT, UPDATE, DELETE ON TABLE public.vortex_cockpit_projects FROM anon, authenticated;
+-- ── 3. Control-room lockdown: moved ───────────────────────────────
+-- Moved to supabase/proposed/2026-11-07-control-room-lockdown.sql so it can be
+-- applied on its own, ahead of the wallet-funding changes. The version that
+-- was here revoked EXECUTE only from anon/authenticated; both roles inherit
+-- EXECUTE through PUBLIC, so the control-room RPCs stayed callable with the
+-- anon key (shown by supabase/proposed/test/run.sh).
