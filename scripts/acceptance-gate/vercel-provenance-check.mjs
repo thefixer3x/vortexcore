@@ -32,7 +32,9 @@ const isExpectedTarget = (deployment) =>
 // it, so wait up to PROVENANCE_WAIT_SECONDS (default 600) for READY.
 const intervalMs = 5_000;
 const waitSeconds = Number(process.env.PROVENANCE_WAIT_SECONDS ?? 600);
-const attempts = Math.max(1, Math.ceil((waitSeconds * 1000) / intervalMs));
+// One check now, then one after each interval until the deadline, so the last
+// check lands at (or just before) waitSeconds.
+const attempts = Math.floor((Math.max(0, waitSeconds) * 1000) / intervalMs) + 1;
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   const response = await fetch(endpoint, {
     headers: { Authorization: `Bearer ${VERCEL_TOKEN}` },
