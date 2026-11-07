@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+  creditErrorRolledBack,
   fromMinorUnits,
   parseTopupRequest,
   paymentIntentMatches,
@@ -86,5 +87,19 @@ describe('paymentIntentMatches', () => {
     ['not a top-up', { metadata: { user_id: 'u1', purpose: 'subscription' } }],
   ])('rejects one that is %s', (_label, patch) => {
     expect(paymentIntentMatches({ ...pi, ...patch }, expected)).toBe(false)
+  })
+})
+
+describe('creditErrorRolledBack', () => {
+  it('treats database errors as rolled back', () => {
+    expect(creditErrorRolledBack({ code: 'P0001' })).toBe(true) // RAISE: WALLET_LOCKED, INVALID_*, REFERENCE_CONFLICT
+    expect(creditErrorRolledBack({ code: '23505' })).toBe(true)
+    expect(creditErrorRolledBack({ code: '57014' })).toBe(true) // statement timeout: cancelled, rolled back
+    expect(creditErrorRolledBack({ code: 'PGRST202' })).toBe(true)
+  })
+  it('treats a missing code (network failure) as unknown', () => {
+    expect(creditErrorRolledBack({ code: '' })).toBe(false)
+    expect(creditErrorRolledBack({})).toBe(false)
+    expect(creditErrorRolledBack(null)).toBe(false)
   })
 })

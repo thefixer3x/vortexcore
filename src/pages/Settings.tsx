@@ -52,6 +52,16 @@ export default function Settings() {
     });
   }, [searchParams, setSearchParams, completeCardSetup, toast]);
 
+  // From the pricing page: ?plan=<tier key> opens the subscription sheet,
+  // which lists every plan with its upgrade button.
+  useEffect(() => {
+    if (!searchParams.get("plan")) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete("plan");
+    setSearchParams(next, { replace: true });
+    setActiveSheet("subscription");
+  }, [searchParams, setSearchParams]);
+
   const showToast = () => {
     toast({
       title: t("settings.notifications_saved.title"),

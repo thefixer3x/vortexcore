@@ -46,7 +46,9 @@ function TierCard({ tier, isPopular, onSelect }: {
         <div className="mb-6">
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{formatPlanPrice({ price: tier.price, currency: tier.currency })}</span>
-            {tier.billing_interval === "month" && <span className="text-muted-foreground text-sm">/mo</span>}
+            {tier.price !== 0 && (tier.billing_interval === "month" || tier.billing_interval === "year") && (
+              <span className="text-muted-foreground text-sm">/{tier.billing_interval === "year" ? "yr" : "mo"}</span>
+            )}
           </div>
         </div>
 
@@ -90,12 +92,14 @@ export default function Pricing() {
   const navigate = useNavigate();
 
   const handleSelect = (tierKey: string) => {
+    // Subscription settings, with the chosen plan's sheet open. Visitors sign up
+    // first and are sent back there afterwards.
+    const target = `/settings?plan=${encodeURIComponent(tierKey)}`;
     if (!isAuthenticated) {
-      navigate("/auth");
+      navigate(`/auth?redirect=${encodeURIComponent(target)}`);
       return;
     }
-    // Navigate to subscription settings with the selected tier preselected
-    navigate(`/settings?plan=${tierKey}`);
+    navigate(target);
   };
 
   if (loading) {

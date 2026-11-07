@@ -42,6 +42,7 @@ async function invokeOrThrow<T>(fn: string, body: Record<string, unknown>): Prom
     let message = error.message;
     let code: string | undefined;
     const context = (error as { context?: Response }).context;
+    const status = typeof context?.status === "number" ? context.status : undefined;
     if (context && typeof context.json === "function") {
       try {
         const payload = await context.json();
@@ -51,7 +52,7 @@ async function invokeOrThrow<T>(fn: string, body: Record<string, unknown>): Prom
         // keep the generic message
       }
     }
-    throw Object.assign(new Error(message), { code });
+    throw Object.assign(new Error(message), { code, status });
   }
   return data as T;
 }
@@ -131,6 +132,20 @@ export function newTopupKey(): string {
  * card reuses the key (so a retry after a timeout never charges twice); any
  * change, or reset() after success, starts a new one.
  */
+/**
+ * Whether a failed top-up should get a fresh request key. Stripe replays the
+ * first result for a key, declines included, so a definitive failure (refunded,
+ * declined, invalid, card not found) needs a new key or the retry fails again.
+ * When the outcome is unknown (network error, 5xx, or 409 "already in use"),
+ * keep the key: a retry then returns the original payment instead of charging
+ * the card a second time.
+ */
+export function shouldResetTopupKey(err: unknown): boolean {
+  const { code, status } = (err ?? {}) as { code?: string; status?: number };
+  if (code === "topup_refunded") return true;
+  return status === 400 || status === 402 || status === 404;
+}
+
 export function useTopupKey() {
   const ref = useRef<{ sig: string; key: string } | null>(null);
   const keyFor = useCallback((amount: number, currency: string, paymentMethodId: string) => {

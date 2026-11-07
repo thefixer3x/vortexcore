@@ -4,7 +4,8 @@
 // off-session PaymentIntent (idempotent on the client's request key) → check
 // the PaymentIntent is exactly the one we asked for → credit the wallet
 // through public.vortex_credit_wallet_topup (idempotent on the PaymentIntent
-// id). If crediting fails after the card was charged, the charge is refunded.
+// id). If crediting definitely failed after the card was charged, the charge
+// is refunded; if the outcome is unknown, it is left for reconciliation.
 //
 // Disabled unless WALLET_TOPUP_ENABLED=true, so the function can be deployed
 // before the owner switches top-ups on (and before checking Stripe is in the
@@ -12,7 +13,7 @@
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
 import { createClient } from "../_shared/supabase-client.ts";
-import { fromMinorUnits, parseTopupRequest, paymentIntentMatches } from "../_shared/wallet-topup.ts";
+import { creditErrorRolledBack, fromMinorUnits, parseTopupRequest, paymentIntentMatches } from "../_shared/wallet-topup.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 const admin = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "");
@@ -123,16 +124,27 @@ Deno.serve(withAuthMiddleware(async (req, { auth }) => {
     console.error("[fund-wallet] credit failed after charge", pi.id, creditErr.message);
     // The error may have come back after the credit committed (e.g. a dropped
     // connection). If the ledger row exists, the wallet was credited: do not refund.
-    const { data: credited } = await admin
+    const { data: credited, error: lookupErr } = await admin
       .from("vortex_transactions")
       .select("id, wallet_id")
       .eq("reference", `topup_${pi.id}`)
       .maybeSingle();
+    if (lookupErr) {
+      // Cannot tell whether the credit committed: do not refund.
+      console.error("[fund-wallet] CRITICAL ledger lookup failed, needs reconciliation", pi.id, lookupErr.message);
+      return json({ error: "We could not confirm your top-up. Please contact support.", payment_intent: pi.id }, 500);
+    }
     if (credited) {
       return json({
         success: true, idempotent: true, wallet_id: credited.wallet_id, transaction_id: credited.id,
         amount: fromMinorUnits(pi.amount_received, currency), currency,
       });
+    }
+    if (!creditErrorRolledBack(creditErr)) {
+      // No database error code (e.g. a dropped connection or timeout): the
+      // credit may still commit, so refunding now could pay out twice.
+      console.error("[fund-wallet] CRITICAL credit outcome unknown, needs reconciliation", pi.id);
+      return json({ error: "We could not confirm your top-up. Please contact support.", payment_intent: pi.id }, 500);
     }
     try {
       await stripe.refunds.create(

@@ -10,7 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useObligations, classifyObligation, type Obligation } from "@/hooks/use-obligations";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
 import { StatementUpload } from "@/components/obligations/StatementUpload";
-import { usePaymentMethods, useFundWallet, useTopupKey } from "@/services/paymentMethodService";
+import { usePaymentMethods, useFundWallet, useTopupKey, shouldResetTopupKey } from "@/services/paymentMethodService";
 import { supabase } from "@/integrations/supabase/client";
 
 const stateBadge = {
@@ -66,8 +66,7 @@ const Obligations = () => {
       toast({ title: result.idempotent ? "Already added" : "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your ${depositCurrency} wallet.` });
       setDepositAmount("");
     } catch (e) {
-      // A refunded top-up cannot be retried with the same key.
-      if ((e as { code?: string })?.code === "topup_refunded") topupKey.reset();
+      if (shouldResetTopupKey(e)) topupKey.reset();
       toast({ title: "Funding failed", description: (e as Error).message, variant: "destructive" });
     } finally {
       setDepositing(false);

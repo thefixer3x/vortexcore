@@ -111,3 +111,15 @@ export function paymentIntentMatches(
     pi.metadata?.purpose === "wallet_topup"
   );
 }
+
+/**
+ * True when a failed credit call definitely rolled back: the database (or
+ * PostgREST in front of it) answered with an error code, so the transaction
+ * never committed and refunding is safe. A network failure or timeout carries
+ * no code, and the credit may still have committed, so it must not be refunded
+ * automatically; it is left for reconciliation.
+ */
+export function creditErrorRolledBack(err: { code?: string | null } | null | undefined): boolean {
+  const code = err?.code ?? "";
+  return /^[0-9A-Z]{5}$/.test(code) || code.startsWith("PGRST");
+}
