@@ -70,3 +70,11 @@ In the Stripe test dashboard, compare each succeeded PaymentIntent with a ledger
 - Every case above passes in test mode, with screenshots in the PR (`WALLET_FUNDING_PLAN.md`, section 4).
 - Owner sign-off on stored value (W1 in `WALLET_FUNDING_PLAN.md`): a top-up balance is customer money held by VortexCore.
 - Then set `WALLET_TOPUP_ENABLED=true` on production, and run one low-value live top-up and refund.
+
+## 6. Status (2026-11-07)
+
+- Owner decision: stored value (W1 = a) has compliance approval.
+- Owner decision: test on the production project with the live Stripe key, with top-ups on for all users. The test-card table in section 2 does not apply there: use a real card for small amounts and refund each test charge in the Stripe dashboard afterwards.
+- `stripe-payment-methods` (v1), `fund-wallet` (v1) and `stripe-issuing-authorization` (v22) are deployed to production from this branch.
+- `WALLET_TOPUP_ENABLED=true` is set in the Supabase dashboard (Edge Functions → Secrets); until then `fund-wallet` returns 503.
+- The Settings and Obligations screens that call these functions reach users only when this branch is merged and deployed.
