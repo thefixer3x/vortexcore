@@ -123,7 +123,7 @@ function DefaultCardDisplay() {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs text-muted-foreground">
-          Default card: •••• {defaultCard.stripe_last4 || defaultCard.last4}
+          Default card: •••• {defaultCard.last4}
         </p>
       </div>
       <Settings2 className="h-3 w-3 text-muted-foreground" />

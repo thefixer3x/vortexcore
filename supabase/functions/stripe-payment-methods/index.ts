@@ -1,275 +1,182 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// Saved cards for wallet top-ups.
+//
+// Cards are added on Stripe's hosted page (Checkout in setup mode), so no card
+// data touches VortexCore and no Stripe.js is needed in the app:
+//   start_card_setup  → returns a Checkout URL; the user saves a card there
+//   complete_card_setup(session_id) → called on return; reads the saved card
+//                        from Stripe (never from the client) and records it
+//   list / set_default / remove
+// Only the service role writes vortex_payment_methods; users can read their
+// own rows.
 import Stripe from "npm:stripe@14.18.0";
 import { withAuthMiddleware } from "../_shared/middleware.ts";
+import { safeOrigin } from "../_shared/safe-origin.ts";
 import { createClient } from "../_shared/supabase-client.ts";
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
-  apiVersion: "2023-10-16",
-});
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
+const admin = createClient(Deno.env.get("SUPABASE_URL") || "", Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "");
 
-const serviceClient = createClient(
-  Deno.env.get("SUPABASE_URL") || "",
-  Deno.env.get("VORTEX_SUPABASE_SECRET_KEY") || "",
-);
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
-serve(withAuthMiddleware(async (req, { auth }) => {
+class HttpError extends Error {
+  constructor(readonly status: number, message: string) { super(message); }
+}
+
+/** The caller's Stripe customer, created and recorded on first use. */
+async function ensureCustomer(userId: string): Promise<string> {
+  const { data: row, error } = await admin
+    .from("stripe_customers").select("customer_id").eq("user_id", userId).maybeSingle();
+  if (error) throw new Error(`stripe_customers lookup failed: ${error.message}`);
+  if (row?.customer_id) return row.customer_id as string;
+
+  const { data: userData } = await admin.auth.admin.getUserById(userId);
+  const customer = await stripe.customers.create(
+    { email: userData?.user?.email, metadata: { user_id: userId } },
+    { idempotencyKey: `customer:${userId}` },
+  );
+  const { error: upsertErr } = await admin
+    .from("stripe_customers")
+    .upsert({ user_id: userId, customer_id: customer.id }, { onConflict: "user_id" });
+  if (upsertErr) throw new Error(`stripe_customers upsert failed: ${upsertErr.message}`);
+  return customer.id;
+}
+
+async function existingCustomer(userId: string): Promise<string | null> {
+  const { data } = await admin.from("stripe_customers").select("customer_id").eq("user_id", userId).maybeSingle();
+  return (data?.customer_id as string | undefined) ?? null;
+}
+
+async function listCards(userId: string) {
+  const { data, error } = await admin
+    .from("vortex_payment_methods")
+    .select("id, source_id, type, brand, last4, exp_month, exp_year, is_default, created_at, updated_at")
+    .eq("user_id", userId)
+    .order("is_default", { ascending: false })
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(`list failed: ${error.message}`);
+  return data ?? [];
+}
+
+async function ownCard(userId: string, sourceId: unknown) {
+  if (typeof sourceId !== "string" || !sourceId.startsWith("pm_")) throw new HttpError(400, "payment_method_id is required");
+  const { data, error } = await admin
+    .from("vortex_payment_methods").select("source_id, is_default")
+    .eq("user_id", userId).eq("source_id", sourceId).maybeSingle();
+  if (error) throw new Error(`card lookup failed: ${error.message}`);
+  if (!data) throw new HttpError(404, "Card not found");
+  return data;
+}
+
+async function makeDefault(userId: string, sourceId: string, customerId: string | null) {
+  // Clear the old default first: a unique index allows one default per user.
+  const { error: clearErr } = await admin
+    .from("vortex_payment_methods").update({ is_default: false })
+    .eq("user_id", userId).eq("is_default", true).neq("source_id", sourceId);
+  if (clearErr) throw new Error(`clear default failed: ${clearErr.message}`);
+  const { error: setErr } = await admin
+    .from("vortex_payment_methods").update({ is_default: true })
+    .eq("user_id", userId).eq("source_id", sourceId);
+  if (setErr) throw new Error(`set default failed: ${setErr.message}`);
+  if (customerId) {
+    await stripe.customers.update(customerId, { invoice_settings: { default_payment_method: sourceId } });
+  }
+}
+
+Deno.serve(withAuthMiddleware(async (req, { auth }) => {
+  const userId = auth.userId;
+  if (!userId) return json({ error: "Please sign in" }, 401);
+
+  let action: unknown;
+  let data: Record<string, unknown>;
   try {
-    const { action, data } = await req.json();
-    const idempotencyKey = req.headers.get("x-idempotency-key") || undefined;
+    const body = await req.json();
+    action = body?.action;
+    data = (body?.data && typeof body.data === "object") ? body.data : {};
+  } catch {
+    return json({ error: "Invalid request" }, 400);
+  }
 
-    if (!auth.userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-      });
-    }
-
+  try {
     switch (action) {
-      case "create_setup_intent": {
-        // Create a SetupIntent for the user to securely attach a payment method.
-        // The frontend will use Stripe.js (confirmPayment / confirmSetup) and
-        // send back the returned setup_intent_id to attach.
-        const { currency } = data || {};
-        const setupIntent = await stripe.setupIntents.create({
-          payment_method_types: ["card"],
-          usage: "off_session",
-          metadata: { user_id: auth.userId },
-          ...(currency ? { currency } : {}),
-        }, idempotencyKey ? { idempotencyKey } : undefined);
-        return new Response(
-          JSON.stringify({ setupIntent }),
-          { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
-      }
-
-      case "attach_payment_method": {
-        // Attach a confirmed PaymentMethod to the user's Stripe customer record
-        // and persist the Stripe payment_method_id in our vault table.
-        const { setup_intent_id, payment_method_id } = data || {};
-        if (!payment_method_id) {
-          return new Response(JSON.stringify({ error: "payment_method_id is required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        // Verify the setup intent belongs to this user
-        if (setup_intent_id) {
-          const si = await stripe.setupIntents.retrieve(setup_intent_id);
-          if (si.metadata?.user_id !== auth.userId) {
-            return new Response(JSON.stringify({ error: "Forbidden" }), {
-              status: 403,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
-        }
-
-        // Retrieve or create the Stripe customer
-        const { data: custRow } = await serviceClient
-          .from("stripe_customers")
-          .select("customer_id")
-          .eq("user_id", auth.userId)
-          .maybeSingle();
-
-        let customerId = custRow?.customer_id;
-        if (!customerId) {
-          const customer = await stripe.customers.create({
-            metadata: { user_id: auth.userId },
-          });
-          await serviceClient.from("stripe_customers").insert({
-            user_id: auth.userId,
-            customer_id: customer.id,
-            email: "",
-            created_at: new Date().toISOString(),
-          });
-          customerId = customer.id;
-        }
-
-        // Attach the payment method to the customer
-        await stripe.paymentMethods.attach(payment_method_id, {
+      case "start_card_setup": {
+        const customerId = await ensureCustomer(userId);
+        const origin = safeOrigin(req);
+        const session = await stripe.checkout.sessions.create({
+          mode: "setup",
           customer: customerId,
-        }, idempotencyKey ? { idempotencyKey } : undefined);
-
-        // Set as default for this customer
-        await stripe.customers.update(customerId, {
-          invoice_settings: { default_payment_method: payment_method_id },
+          payment_method_types: ["card"],
+          metadata: { user_id: userId, purpose: "wallet_card" },
+          setup_intent_data: { metadata: { user_id: userId, purpose: "wallet_card" } },
+          success_url: `${origin}/settings?card_setup={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${origin}/settings?card_setup=cancelled`,
         });
+        return json({ url: session.url });
+      }
 
-        // Persist to our table for quick lookup
-        await serviceClient.from("user_payment_methods").upsert({
-          user_id: auth.userId,
-          source_id: payment_method_id,
-          type: "card",
-          brand: "", // filled in below
-          last4: "",
-          exp_month: 0,
-          exp_year: 0,
-          is_default: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }, { onConflict: "source_id" });
-
-        // Refresh last4/brand/exp from Stripe
-        const pm = await stripe.paymentMethods.retrieve(payment_method_id);
-        if (pm.card) {
-          await serviceClient.from("user_payment_methods")
-            .update({
-              last4: pm.card.last4,
-              brand: pm.card.brand,
-              exp_month: pm.card.exp_month,
-              exp_year: pm.card.exp_year,
-            })
-            .eq("source_id", payment_method_id);
+      case "complete_card_setup": {
+        const sessionId = data.session_id;
+        if (typeof sessionId !== "string" || !sessionId.startsWith("cs_")) throw new HttpError(400, "session_id is required");
+        const customerId = await existingCustomer(userId);
+        const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: ["setup_intent"] });
+        const si = session.setup_intent as Stripe.SetupIntent | null;
+        const sessionCustomer = typeof session.customer === "string" ? session.customer : session.customer?.id;
+        if (
+          !customerId || session.mode !== "setup" || sessionCustomer !== customerId ||
+          session.metadata?.user_id !== userId || !si || si.status !== "succeeded"
+        ) {
+          throw new HttpError(400, "That card setup could not be confirmed");
         }
+        const pmId = typeof si.payment_method === "string" ? si.payment_method : si.payment_method?.id;
+        if (!pmId) throw new HttpError(400, "No card was saved");
+        const pm = await stripe.paymentMethods.retrieve(pmId);
+        const pmCustomer = typeof pm.customer === "string" ? pm.customer : pm.customer?.id;
+        if (pmCustomer !== customerId) throw new HttpError(400, "That card setup could not be confirmed");
 
-        return new Response(
-          JSON.stringify({ success: true, payment_method_id }),
-          { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
+        const existing = await listCards(userId);
+        const isFirst = !existing.some((c) => c.source_id !== pmId);
+        const { error: upErr } = await admin.from("vortex_payment_methods").upsert({
+          user_id: userId,
+          source_id: pmId,
+          type: pm.type,
+          brand: pm.card?.brand ?? null,
+          last4: pm.card?.last4 ?? null,
+          exp_month: pm.card?.exp_month ?? null,
+          exp_year: pm.card?.exp_year ?? null,
+        }, { onConflict: "source_id" });
+        if (upErr) throw new Error(`save card failed: ${upErr.message}`);
+        if (isFirst) await makeDefault(userId, pmId, customerId);
+        return json({ success: true, payment_method_id: pmId, paymentMethods: await listCards(userId) });
       }
 
-      case "list_payment_methods": {
-        const { data: rows, error } = await serviceClient
-          .from("user_payment_methods")
-          .select("*")
-          .eq("user_id", auth.userId)
-          .order("is_default", { ascending: false })
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-
-        // Enrich with Stripe details for cards
-        const enriched = await Promise.all(
-          (rows || []).map(async (row) => {
-            if (row.source_id && row.source_id.startsWith("pm_")) {
-              try {
-                const pm = await stripe.paymentMethods.retrieve(row.source_id);
-                if (pm.card) {
-                  return {
-                    ...row,
-                    stripe_last4: pm.card.last4,
-                    stripe_brand: pm.card.brand,
-                    stripe_exp_month: pm.card.exp_month,
-                    stripe_exp_year: pm.card.exp_year,
-                  };
-                }
-              } catch {
-                // silently fall back to stored data
-              }
-            }
-            return row;
-          }),
-        );
-
-        return new Response(
-          JSON.stringify({ paymentMethods: enriched }),
-          { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
-      }
+      case "list_payment_methods":
+        return json({ paymentMethods: await listCards(userId) });
 
       case "set_default_payment_method": {
-        const { payment_method_id } = data || {};
-        if (!payment_method_id) {
-          return new Response(JSON.stringify({ error: "payment_method_id is required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        // Verify ownership
-        const { data: row } = await serviceClient
-          .from("user_payment_methods")
-          .select("user_id")
-          .eq("source_id", payment_method_id)
-          .eq("user_id", auth.userId)
-          .maybeSingle();
-
-        if (!row) {
-          return new Response(JSON.stringify({ error: "Payment method not found" }), {
-            status: 404,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        await serviceClient
-          .from("user_payment_methods")
-          .update({ is_default: false })
-          .eq("user_id", auth.userId);
-
-        await serviceClient
-          .from("user_payment_methods")
-          .update({ is_default: true })
-          .eq("source_id", payment_method_id);
-
-        // Also set on Stripe customer side
-        const { data: custRow } = await serviceClient
-          .from("stripe_customers")
-          .select("customer_id")
-          .eq("user_id", auth.userId)
-          .maybeSingle();
-
-        if (custRow?.customer_id) {
-          await stripe.customers.update(custRow.customer_id, {
-            invoice_settings: { default_payment_method: payment_method_id },
-          });
-        }
-
-        return new Response(
-          JSON.stringify({ success: true }),
-          { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
+        const card = await ownCard(userId, data.payment_method_id);
+        await makeDefault(userId, card.source_id, await existingCustomer(userId));
+        return json({ success: true });
       }
 
       case "detach_payment_method": {
-        const { payment_method_id } = data || {};
-        if (!payment_method_id) {
-          return new Response(JSON.stringify({ error: "payment_method_id is required" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
+        const card = await ownCard(userId, data.payment_method_id);
+        await stripe.paymentMethods.detach(card.source_id);
+        const { error: delErr } = await admin.from("vortex_payment_methods").delete()
+          .eq("user_id", userId).eq("source_id", card.source_id);
+        if (delErr) throw new Error(`remove card failed: ${delErr.message}`);
+        if (card.is_default) {
+          const [next] = await listCards(userId);
+          if (next) await makeDefault(userId, next.source_id, await existingCustomer(userId));
         }
-
-        // Verify ownership
-        const { data: row } = await serviceClient
-          .from("user_payment_methods")
-          .select("source_id")
-          .eq("user_id", auth.userId)
-          .eq("source_id", payment_method_id)
-          .maybeSingle();
-
-        if (!row) {
-          return new Response(JSON.stringify({ error: "Payment method not found" }), {
-            status: 404,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        await stripe.paymentMethods.detach(payment_method_id);
-        await serviceClient
-          .from("user_payment_methods")
-          .delete()
-          .eq("user_id", auth.userId)
-          .eq("source_id", payment_method_id);
-
-        return new Response(
-          JSON.stringify({ success: true }),
-          { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
+        return json({ success: true });
       }
 
       default:
-        return new Response(
-          JSON.stringify({ error: "Invalid action" }),
-          { status: 400, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-        );
+        return json({ error: "Invalid action" }, 400);
     }
-  } catch (error: unknown) {
-    console.error("Error in payment-methods function:", error);
-    return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : "An error occurred",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } },
-    );
+  } catch (err) {
+    if (err instanceof HttpError) return json({ error: err.message }, err.status);
+    console.error("[stripe-payment-methods]", action, (err as Error).message);
+    return json({ error: "Something went wrong with your cards. Please try again." }, 500);
   }
 }, ["POST"]));

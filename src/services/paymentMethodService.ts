@@ -1,135 +1,141 @@
 import { supabase } from "@/integrations/supabase/client";
+import { useCallback, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // --- Types ---
 
 export interface UserPaymentMethod {
   id: string;
-  user_id: string;
   source_id: string;
-  last4: string;
-  brand: string;
-  exp_month: number;
-  exp_year: number;
+  type: string;
+  brand: string | null;
+  last4: string | null;
+  exp_month: number | null;
+  exp_year: number | null;
   is_default: boolean;
   created_at: string;
   updated_at: string;
-  // Enriched from Stripe:
-  stripe_last4?: string;
-  stripe_brand?: string;
-  stripe_exp_month?: number;
-  stripe_exp_year?: number;
 }
 
-export interface SetupIntentResult {
-  setupIntent: { client_secret: string; id: string };
+export interface FundWalletInput {
+  amount: number;
+  currency: string;
+  payment_method_id: string;
+  /** Same key for retries of one top-up, so the card is charged at most once. */
+  idempotency_key: string;
 }
+
+export interface FundWalletResult {
+  success: true;
+  idempotent: boolean;
+  wallet_id: string;
+  transaction_id: string;
+  amount: string;
+  currency: string;
+  new_balance?: string;
+}
+
+/** Edge functions return { error } with a non-2xx status; surface that message. */
+async function invokeOrThrow<T>(fn: string, body: Record<string, unknown>): Promise<T> {
+  const { data, error } = await supabase.functions.invoke(fn, { body });
+  if (error) {
+    let message = error.message;
+    const context = (error as { context?: Response }).context;
+    if (context && typeof context.json === "function") {
+      try {
+        const payload = await context.json();
+        if (payload?.error) message = payload.error;
+      } catch {
+        // keep the generic message
+      }
+    }
+    throw new Error(message);
+  }
+  return data as T;
+}
+
+const cards = (action: string, data?: Record<string, unknown>) =>
+  invokeOrThrow<{ paymentMethods?: UserPaymentMethod[]; url?: string; success?: boolean }>(
+    "stripe-payment-methods",
+    { action, data },
+  );
 
 // --- Queries ---
 
 export function usePaymentMethods() {
   return useQuery({
     queryKey: ["payment-methods"],
-    queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("stripe-payment-methods", {
-        body: { action: "list_payment_methods" },
-      });
-      if (error) throw error;
-      return (data?.paymentMethods as UserPaymentMethod[]) ?? [];
-    },
+    queryFn: async () => (await cards("list_payment_methods")).paymentMethods ?? [],
     staleTime: 30_000,
   });
 }
 
 // --- Mutations ---
 
-export function useCreateSetupIntent() {
-  const qc = useQueryClient();
+/** Sends the user to Stripe's hosted page to save a card. */
+export function useStartCardSetup() {
   return useMutation({
-    mutationFn: async (currency?: string) => {
-      const { data, error } = await supabase.functions.invoke("stripe-payment-methods", {
-        body: { action: "create_setup_intent", data: { currency } },
-      });
-      if (error) throw error;
-      return data as SetupIntentResult;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["payment-methods"] });
+    mutationFn: async () => {
+      const { url } = await cards("start_card_setup");
+      if (!url) throw new Error("Could not open the card form");
+      window.location.assign(url);
     },
   });
 }
 
-export function useAttachPaymentMethod() {
+/** Records the card saved on Stripe's page; called when the user returns. */
+export function useCompleteCardSetup() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ setup_intent_id, payment_method_id }: { setup_intent_id?: string; payment_method_id: string }) => {
-      const { data, error } = await supabase.functions.invoke("stripe-payment-methods", {
-        body: { action: "attach_payment_method", data: { setup_intent_id, payment_method_id } },
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["payment-methods"] });
-    },
+    mutationFn: (session_id: string) => cards("complete_card_setup", { session_id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["payment-methods"] }),
   });
 }
 
 export function useSetDefaultPaymentMethod() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payment_method_id: string) => {
-      const { data, error } = await supabase.functions.invoke("stripe-payment-methods", {
-        body: { action: "set_default_payment_method", data: { payment_method_id } },
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["payment-methods"] });
-    },
+    mutationFn: (payment_method_id: string) => cards("set_default_payment_method", { payment_method_id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["payment-methods"] }),
   });
 }
 
 export function useDetachPaymentMethod() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payment_method_id: string) => {
-      const { data, error } = await supabase.functions.invoke("stripe-payment-methods", {
-        body: { action: "detach_payment_method", data: { payment_method_id } },
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["payment-methods"] });
-    },
+    mutationFn: (payment_method_id: string) => cards("detach_payment_method", { payment_method_id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["payment-methods"] }),
   });
 }
 
 export function useFundWallet() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      amount,
-      currency,
-      payment_method_id,
-      note,
-    }: {
-      amount: number;
-      currency: string;
-      payment_method_id: string;
-      note?: string;
-    }) => {
-      const { data, error } = await supabase.functions.invoke("fund-wallet", {
-        body: { amount, currency, payment_method_id, note },
-      });
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: (input: FundWalletInput) => invokeOrThrow<FundWalletResult>("fund-wallet", { ...input }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["wallets"] });
-      qc.invalidateQueries({ queryKey: ["payment-methods"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
+}
+
+/** A fresh request key for one top-up attempt. */
+export function newTopupKey(): string {
+  return `topup_${crypto.randomUUID().replace(/-/g, "")}`;
+}
+
+/**
+ * One request key per intended top-up: retrying the same amount, currency and
+ * card reuses the key (so a retry after a timeout never charges twice); any
+ * change, or reset() after success, starts a new one.
+ */
+export function useTopupKey() {
+  const ref = useRef<{ sig: string; key: string } | null>(null);
+  const keyFor = useCallback((amount: number, currency: string, paymentMethodId: string) => {
+    const sig = `${amount}|${currency}|${paymentMethodId}`;
+    if (!ref.current || ref.current.sig !== sig) ref.current = { sig, key: newTopupKey() };
+    return ref.current.key;
+  }, []);
+  const reset = useCallback(() => { ref.current = null; }, []);
+  return { keyFor, reset };
 }

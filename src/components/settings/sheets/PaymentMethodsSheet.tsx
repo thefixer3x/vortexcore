@@ -17,13 +17,13 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import {
   usePaymentMethods,
-  useCreateSetupIntent,
-  useAttachPaymentMethod,
+  useStartCardSetup,
   useSetDefaultPaymentMethod,
   useDetachPaymentMethod,
+  useFundWallet,
+  useTopupKey,
 } from "@/services/paymentMethodService";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
@@ -45,42 +45,20 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
 
   // Data
   const { data: methods = [], isLoading: loadingMethods } = usePaymentMethods();
-  const createSetupIntent = useCreateSetupIntent();
-  const attachPaymentMethod = useAttachPaymentMethod();
+  const startCardSetup = useStartCardSetup();
   const setDefault = useSetDefaultPaymentMethod();
   const detach = useDetachPaymentMethod();
+  const fundWallet = useFundWallet();
+  const topupKey = useTopupKey();
 
-  // Redirect URL for Stripe ConfirmSetup
-  const redirectUrl = `${window.location.origin}/dashboard/settings`;
 
   // --- Handlers ---
 
+  // Cards are saved on Stripe's hosted page; Settings records the card when
+  // the user comes back (?card_setup=<session id>).
   const handleAddCard = async () => {
     try {
-      const { setupIntent } = await createSetupIntent.mutateAsync(fundCurrency);
-
-      // Use Stripe.js to confirm setup (requires stripe script loaded in index.html)
-      // Fallback: show instructions if stripe.js is not available
-      if ((window as any).Stripe) {
-        const stripe = (window as any).Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
-        const { error } = await stripe.confirmSetup({
-          clientSecret: setupIntent.client_secret,
-          redirect: "if_required",
-        });
-
-        if (error) throw error;
-
-        // If we got here, setup succeeded without redirect — attach it
-        // We need the payment_method from the confirmed setup intent
-        // For simplicity, we'll show a success message and let the user try again
-        // or use the confirmAndAttach flow below
-      } else {
-        toast({
-          title: "Stripe not loaded",
-          description: "Please ensure the Stripe.js script is loaded in index.html",
-          variant: "destructive",
-        });
-      }
+      await startCardSetup.mutateAsync();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to add card";
       toast({ title: "Couldn't add card", description: message, variant: "destructive" });
@@ -123,25 +101,17 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
 
     setLoadingFund(true);
     try {
-      // For now, use the fund-wallet function which charges directly
-      // In a real implementation, you'd use the SetupIntent + confirmPayment flow
-      const { data: session } = await supabase.auth.getSession();
-      const token = session?.session?.access_token || "";
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fund-wallet`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount,
-          currency: fundCurrency,
-          payment_method_id: pm.source_id,
-        }),
+      const result = await fundWallet.mutateAsync({
+        amount,
+        currency: fundCurrency,
+        payment_method_id: pm.source_id,
+        idempotency_key: topupKey.keyFor(amount, fundCurrency, pm.source_id),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Funding failed");
-      toast({ title: "Wallet funded", description: `${formatCurrency(amount, fundCurrency)} added to your wallet.` });
+      topupKey.reset();
+      toast({
+        title: result.idempotent ? "Already added" : "Wallet funded",
+        description: `${formatCurrency(amount, fundCurrency)} added to your ${fundCurrency} wallet.`,
+      });
       setFundAmount("");
     } catch (err: unknown) {
       toast({ title: "Funding failed", description: (err as Error).message, variant: "destructive" });
@@ -176,10 +146,10 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
                 size="sm"
                 variant="outline"
                 className="gap-1"
-                disabled={createSetupIntent.isPending}
+                disabled={startCardSetup.isPending}
                 onClick={handleAddCard}
               >
-                {createSetupIntent.isPending ? (
+                {startCardSetup.isPending ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
                   <Plus className="h-3 w-3" />
@@ -207,19 +177,19 @@ export const PaymentMethodsSheet = ({ open, onClose }: PaymentMethodsSheetProps)
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-7 rounded flex items-center justify-center ${
-                        pm.stripe_brand === "visa" ? "bg-blue-600" :
-                        pm.stripe_brand === "mastercard" ? "bg-red-500" :
-                        pm.stripe_brand === "amex" ? "bg-green-600" :
+                        pm.brand === "visa" ? "bg-blue-600" :
+                        pm.brand === "mastercard" ? "bg-red-500" :
+                        pm.brand === "amex" ? "bg-green-600" :
                         "bg-gray-400"
                       }`}>
                         <CreditCard className="h-4 w-4 text-white" />
                       </div>
                       <div>
                         <div className="font-medium text-sm">
-                          {formatBrand(pm.stripe_brand || pm.brand)} •••• {pm.stripe_last4 || pm.last4}
+                          {formatBrand(pm.brand ?? undefined)} •••• {pm.last4}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Exp {String(pm.stripe_exp_month || pm.exp_month).padStart(2, "0")}/{pm.stripe_exp_year || pm.exp_year}
+                          Exp {String(pm.exp_month ?? "").padStart(2, "0")}/{pm.exp_year}
                         </div>
                       </div>
                     </div>

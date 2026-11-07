@@ -10,7 +10,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useObligations, classifyObligation, type Obligation } from "@/hooks/use-obligations";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
 import { StatementUpload } from "@/components/obligations/StatementUpload";
-import { usePaymentMethods, useFundWallet } from "@/services/paymentMethodService";
+import { usePaymentMethods, useFundWallet, useTopupKey } from "@/services/paymentMethodService";
 import { supabase } from "@/integrations/supabase/client";
 
 const stateBadge = {
@@ -36,6 +36,7 @@ const Obligations = () => {
   const [depositing, setDepositing] = useState(false);
   const { data: paymentMethods = [], isLoading: loadingMethods } = usePaymentMethods();
   const fundWallet = useFundWallet();
+  const topupKey = useTopupKey();
 
   // Show deposit prompt when there are unpaid obligations
   const hasUnpaidObligations = obligations.some(o => o.status !== "paid" && o.amount != null && o.amount > 0);
@@ -59,8 +60,10 @@ const Obligations = () => {
         amount,
         currency: depositCurrency,
         payment_method_id: pm.source_id,
+        idempotency_key: topupKey.keyFor(amount, depositCurrency, pm.source_id),
       });
-      toast({ title: "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your wallet.` });
+      topupKey.reset();
+      toast({ title: result.idempotent ? "Already added" : "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your ${depositCurrency} wallet.` });
       setDepositAmount("");
     } catch (e) {
       toast({ title: "Funding failed", description: (e as Error).message, variant: "destructive" });
@@ -103,7 +106,7 @@ const Obligations = () => {
                 <span className="text-xs text-muted-foreground flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3 text-amber-500" />
                   Fund wallet to pay obligations.{" "}
-                  <a href="/dashboard/settings" className="text-primary underline">Add a card</a>
+                  <a href="/settings" className="text-primary underline">Add a card</a>
                 </span>
               ) : (
                 <div className="flex gap-2 items-center bg-muted/50 rounded-lg px-3 py-1.5">
