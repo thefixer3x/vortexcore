@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { Activity, Check, Loader2, Trash2, Wallet } from "lucide-react";
+import { Activity, Check, Loader2, Trash2, Wallet, Plus, AlertTriangle } from "lucide-react";
 import { VortexAIIcon } from "@/components/ai/VortexAIIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useObligations, classifyObligation, type Obligation } from "@/hooks/use-obligations";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
 import { StatementUpload } from "@/components/obligations/StatementUpload";
+import { usePaymentMethods, useFundWallet, useTopupKey, shouldResetTopupKey } from "@/services/paymentMethodService";
+import { supabase } from "@/integrations/supabase/client";
 
 const stateBadge = {
   overdue: { label: "Overdue", variant: "destructive" as const },
@@ -23,12 +26,52 @@ const Obligations = () => {
   const { obligations, feed, isLoading, isDetecting, error, detect, importStatement, pay, markPaid, remove } = useObligations({ live: true });
   const { toast } = useToast();
   const { formatCurrency } = useCurrency();
-  // Each amount keeps its own currency. Detected obligations can have no currency;
-  // show those as a plain number rather than labelling them with the user's
-  // preferred currency, which may not be the source currency.
   const fmt = (n: number | null, c?: string | null) =>
     n == null ? "" : c ? formatCurrency(n, c) : new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n);
   const [payingId, setPayingId] = useState<string | null>(null);
+
+  // Deposit state
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositCurrency, setDepositCurrency] = useState("USD");
+  const [depositing, setDepositing] = useState(false);
+  const { data: paymentMethods = [], isLoading: loadingMethods } = usePaymentMethods();
+  const fundWallet = useFundWallet();
+  const topupKey = useTopupKey();
+
+  // Show deposit prompt when there are unpaid obligations
+  const hasUnpaidObligations = obligations.some(o => o.status !== "paid" && o.amount != null && o.amount > 0);
+  const defaultCard = paymentMethods.find(m => m.is_default);
+  const hasSavedCard = paymentMethods.length > 0;
+
+  const handleFund = async () => {
+    const amount = parseFloat(depositAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast({ title: "Invalid amount", description: "Enter a positive number.", variant: "destructive" });
+      return;
+    }
+    const pm = defaultCard || paymentMethods[0];
+    if (!pm) {
+      toast({ title: "No card on file", description: "Add a card in Settings → Payment Methods first." });
+      return;
+    }
+    setDepositing(true);
+    try {
+      const result = await fundWallet.mutateAsync({
+        amount,
+        currency: depositCurrency,
+        payment_method_id: pm.source_id,
+        idempotency_key: topupKey.keyFor(amount, depositCurrency, pm.source_id),
+      });
+      topupKey.reset();
+      toast({ title: result.idempotent ? "Already added" : "Wallet funded", description: `${formatCurrency(amount, depositCurrency)} added to your ${depositCurrency} wallet.` });
+      setDepositAmount("");
+    } catch (e) {
+      if (shouldResetTopupKey(e)) topupKey.reset();
+      toast({ title: "Funding failed", description: (e as Error).message, variant: "destructive" });
+    } finally {
+      setDepositing(false);
+    }
+  };
 
   const runDetection = async () => {
     try {
@@ -57,10 +100,54 @@ const Obligations = () => {
           <h1 className="text-2xl font-bold">Obligations</h1>
           <p className="text-sm text-muted-foreground">Bills, subscriptions and repayments VortexAI found in your transactions and bank statements.</p>
         </div>
-        <Button onClick={runDetection} disabled={isDetecting} className="gap-2">
-          {isDetecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <VortexAIIcon className="h-4 w-4" />}
-          {isDetecting ? "Scanning…" : "Detect with VortexAI"}
-        </Button>
+        <div className="flex gap-2">
+          {hasUnpaidObligations && (
+            <div className="flex items-center gap-2">
+              {!hasSavedCard ? (
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3 text-amber-500" />
+                  Fund wallet to pay obligations.{" "}
+                  <a href="/settings" className="text-primary underline">Add a card</a>
+                </span>
+              ) : (
+                <div className="flex gap-2 items-center bg-muted/50 rounded-lg px-3 py-1.5">
+                  <Wallet className="h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="number"
+                    placeholder="Amount"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    className="h-8 w-24 text-sm"
+                    min="0"
+                    step="0.01"
+                  />
+                  <select
+                    value={depositCurrency}
+                    onChange={(e) => setDepositCurrency(e.target.value)}
+                    className="h-8 px-2 rounded border text-sm bg-background"
+                  >
+                    {["USD", "EUR", "GBP", "NGN", "ZAR", "KES"].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <Button
+                    size="sm"
+                    className="h-8 gap-1 text-sm"
+                    disabled={depositing || !depositAmount || parseFloat(depositAmount) <= 0}
+                    onClick={handleFund}
+                  >
+                    {depositing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                    Fund
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+          <Button onClick={runDetection} disabled={isDetecting} className="gap-2">
+            {isDetecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <VortexAIIcon className="h-4 w-4" />}
+            {isDetecting ? "Scanning…" : "Detect with VortexAI"}
+          </Button>
+        </div>
       </div>
 
       <ObligationsWidget />

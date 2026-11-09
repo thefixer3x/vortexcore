@@ -141,11 +141,14 @@ export const useAnalytics = () => {
           .eq('id', userId)
           .single(),
         
+        // Users can hold one wallet per currency; analytics uses the oldest.
         supabase
           .from('vortex_wallets')
           .select('*')
           .eq('user_id', userId)
-          .single(),
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .maybeSingle(),
 
         supabase
           .from('vortex_transactions')

@@ -16,6 +16,7 @@ import Ecosystem from "./pages/Ecosystem";
 import VirtualCards from "./pages/VirtualCards";
 import VortexIQDemo from "./pages/VortexIQDemo";
 import VortexDeepresearchDemo from "./pages/VortexDeepresearchDemo";
+import Pricing from "./pages/Pricing";
 import { AuthCallbackHandler } from "./components/auth/AuthCallbackHandler";
 import { SignupForm } from "./components/auth/SignupPage";
 import BeneficiaryManager from "./components/payments/beneficiaries/BeneficiaryManager";
@@ -37,6 +38,7 @@ const App = () => {
             <SidebarProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/ecosystem/vortex-iq" element={<VortexIQDemo />} />
             <Route path="/ecosystem/deep-research" element={<VortexDeepresearchDemo />} />

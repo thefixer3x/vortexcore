@@ -195,10 +195,13 @@ export const getUserWallet = async (userId: string) => {
     return { data: cachedResult, error: null };
   }
 
+  // Users can hold one wallet per currency; this returns the oldest.
   const query = supabase
     .from('vortex_wallets')
     .select('*')
     .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .limit(1)
     .maybeSingle();
     
   const { data, error} = await logSlowQueries(query, 'get_user_wallet');

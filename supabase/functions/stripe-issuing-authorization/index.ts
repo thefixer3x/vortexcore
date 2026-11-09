@@ -78,12 +78,14 @@ Deno.serve(async (req: Request) => {
       return respond(false);
     }
 
+    // Users can hold one wallet per currency: authorise against the wallet in
+    // the authorization's currency (wallet currencies are stored upper-case).
     const { data: wallet, error: walletError } = await admin
       .from("vortex_wallets")
       .select("id, balance, currency, is_locked")
       .eq("user_id", virtualCard.user_id)
+      .eq("currency", (pending.currency ?? "").toUpperCase())
       .eq("is_locked", false)
-      .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
 

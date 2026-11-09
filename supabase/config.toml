@@ -50,5 +50,11 @@ major_version = 15
 [functions.stripe-issuing-authorization]
   verify_jwt = false
 
+# Both check the caller's token themselves (withAuthMiddleware).
+[functions.fund-wallet]
+  verify_jwt = false
+[functions.stripe-payment-methods]
+  verify_jwt = false
+
 [functions.import-statement]
 verify_jwt = false

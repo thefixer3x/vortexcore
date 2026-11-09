@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Home, Users } from "lucide-react";
 
 // Import section components
@@ -21,6 +21,8 @@ import { NotificationSheet } from "@/components/settings/sheets/NotificationShee
 import { BusinessSheet } from "@/components/settings/sheets/BusinessSheet";
 import { SubscriptionSheet } from "@/components/settings/sheets/SubscriptionSheet";
 import { ThemeSheet } from "@/components/settings/sheets/ThemeSheet";
+import { PaymentMethodsSheet } from "@/components/settings/sheets/PaymentMethodsSheet";
+import { useCompleteCardSetup } from "@/services/paymentMethodService";
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -29,6 +31,36 @@ export default function Settings() {
 
   const openSheet = (id: string) => setActiveSheet(id);
   const closeSheet = () => setActiveSheet(null);
+
+  // Returning from Stripe's hosted card form: ?card_setup=<checkout session id>
+  // or ?card_setup=cancelled. Record the card once, then clear the parameter.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const completeCardSetup = useCompleteCardSetup();
+  const handledSetup = useRef<string | null>(null);
+  useEffect(() => {
+    const setup = searchParams.get("card_setup");
+    if (!setup || handledSetup.current === setup) return;
+    handledSetup.current = setup;
+    const next = new URLSearchParams(searchParams);
+    next.delete("card_setup");
+    setSearchParams(next, { replace: true });
+    setActiveSheet("payment-methods");
+    if (setup === "cancelled") return;
+    completeCardSetup.mutate(setup, {
+      onSuccess: () => toast({ title: "Card saved", description: "You can now use it to fund your wallet." }),
+      onError: (err) => toast({ title: "Couldn't save card", description: err.message, variant: "destructive" }),
+    });
+  }, [searchParams, setSearchParams, completeCardSetup, toast]);
+
+  // From the pricing page: ?plan=<tier key> opens the subscription sheet,
+  // which lists every plan with its upgrade button.
+  useEffect(() => {
+    if (!searchParams.get("plan")) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete("plan");
+    setSearchParams(next, { replace: true });
+    setActiveSheet("subscription");
+  }, [searchParams, setSearchParams]);
 
   const showToast = () => {
     toast({
@@ -107,6 +139,11 @@ export default function Settings() {
 
       <ThemeSheet
         open={activeSheet === "theme"}
+        onClose={closeSheet}
+      />
+
+      <PaymentMethodsSheet
+        open={activeSheet === "payment-methods"}
         onClose={closeSheet}
       />
       

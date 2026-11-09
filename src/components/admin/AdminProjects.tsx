@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2, ShieldOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { callAdmin } from "@/lib/admin-api";
 
 interface Project { id: string; name: string; description: string | null; type: string | null; status: string | null; created_at: string }
@@ -12,6 +13,7 @@ const emptyForm = { id: "", name: "", description: "", type: "web", status: "act
 
 export function AdminProjects() {
   const { toast } = useToast();
+  const isAdmin = useIsAdmin();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [busy, setBusy] = useState(false);
@@ -37,7 +39,13 @@ export function AdminProjects() {
         <p className="text-sm text-muted-foreground">Stored in the control room. Only VortexCore's projects are shown; other apps' projects can't be changed from here.</p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-2 sm:grid-cols-[1fr_1fr_110px_120px_auto]">
+        {!isAdmin && (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+            <ShieldOff className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-sm text-amber-700 dark:text-amber-300">Admin access required to manage projects.</span>
+          </div>
+        )}
+        <div className={`grid gap-2 sm:grid-cols-[1fr_1fr_110px_120px_auto] ${!isAdmin ? 'pointer-events-none opacity-50' : ''}`}>
           <Input placeholder="Project name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} aria-label="Project name" />
           <Input placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} aria-label="Description" />
           <Input placeholder="Type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} aria-label="Type" />
@@ -45,7 +53,7 @@ export function AdminProjects() {
             <option value="active">Active</option><option value="paused">Paused</option><option value="archived">Archived</option>
           </select>
           <div className="flex gap-2">
-            <Button onClick={save} disabled={busy || !form.name.trim()} className="gap-1">
+            <Button onClick={save} disabled={busy || !form.name.trim() || !isAdmin} className="gap-1">
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}{form.id ? "Save" : "Add"}
             </Button>
             {form.id && <Button variant="ghost" onClick={() => setForm(emptyForm)}>Cancel</Button>}
@@ -67,8 +75,8 @@ export function AdminProjects() {
                   {p.description && <p className="truncate text-sm text-muted-foreground">{p.description}</p>}
                 </div>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" aria-label="Edit project" onClick={() => setForm({ id: p.id, name: p.name, description: p.description ?? "", type: p.type ?? "web", status: p.status ?? "active" })}><Pencil className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="ghost" aria-label="Delete project" onClick={() => del(p)}><Trash2 className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" aria-label="Edit project" disabled={!isAdmin} onClick={() => setForm({ id: p.id, name: p.name, description: p.description ?? "", type: p.type ?? "web", status: p.status ?? "active" })}><Pencil className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" aria-label="Delete project" disabled={!isAdmin} onClick={() => del(p)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </li>
             ))}
