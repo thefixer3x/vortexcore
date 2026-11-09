@@ -15,7 +15,9 @@
 #
 # Env:
 #   SUPABASE_DB_CONNECTION_STRING   Gate 2 (RLS/migration dry-run)
-#   TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD, TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  Gate 2 REST
+#   TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD, TEST_USER_B_EMAIL, TEST_USER_B_PASSWORD, VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY  Gate 2 REST
+#     (VITE_SUPABASE_ANON_KEY is still accepted when it holds a publishable key;
+#      legacy JWT anon keys were disabled on 2026-10-26 and now return HTTP 401)
 #   BASE_URL                        Gate 3 (playwright) + Gate 6 (live probe)
 #   VERCEL_TOKEN, VERCEL_PROJECT_ID Gate 7
 #   CI                              when set, skip-with-warning on missing env (not failure)
@@ -73,10 +75,11 @@ if gate_gated 2; then
       snapshot_ok=1
     else
       log "  - direct catalog snapshot unavailable; trying authenticated REST isolation"
+      log "    (a psql 'Network is unreachable' means the direct db.<ref>.supabase.co host is IPv6-only; point SUPABASE_DB_CONNECTION_STRING at the Supavisor pooler on an IPv4 host)"
     fi
   fi
 
-  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_EMAIL:-}" && -n "${TEST_USER_A_PASSWORD:-}" && -n "${TEST_USER_B_EMAIL:-}" && -n "${TEST_USER_B_PASSWORD:-}" ]]; then
+  if [[ -n "${VITE_SUPABASE_URL:-}" && -n "${VITE_SUPABASE_PUBLISHABLE_KEY:-}${VITE_SUPABASE_ANON_KEY:-}" && -n "${TEST_USER_A_EMAIL:-}" && -n "${TEST_USER_A_PASSWORD:-}" && -n "${TEST_USER_B_EMAIL:-}" && -n "${TEST_USER_B_PASSWORD:-}" ]]; then
     if node "$GATES_DIR/rls-rest-check.mjs" >>"$LOG" 2>&1; then
       rest_ok=1
     fi

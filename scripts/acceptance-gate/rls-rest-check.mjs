@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
 const {
   VITE_SUPABASE_URL,
+  VITE_SUPABASE_PUBLISHABLE_KEY,
   VITE_SUPABASE_ANON_KEY,
   TEST_USER_A_EMAIL,
   TEST_USER_A_PASSWORD,
@@ -9,9 +14,40 @@ const {
   TEST_USER_B_PASSWORD,
 } = process.env;
 
+// Legacy JWT anon keys were disabled on this project on 2026-10-26, so the gate
+// must authenticate with a publishable key. Mirror the app's resolver
+// (src/integrations/supabase/publishable-key.ts) rather than carrying a stale
+// copy: prefer an explicit publishable key, then the in-repo constant, and only
+// accept the legacy anon variable when it already holds a publishable key.
+const readModernPublishableKey = () => {
+  const modulePath = join(
+    dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "..",
+    "src",
+    "integrations",
+    "supabase",
+    "publishable-key.ts",
+  );
+  const source = readFileSync(modulePath, "utf8");
+  const match = source.match(/MODERN_PUBLISHABLE_KEY\s*=\s*"(sb_publishable_[^"]+)"/);
+  if (!match) {
+    console.error("Unable to read MODERN_PUBLISHABLE_KEY from publishable-key.ts");
+    process.exit(1);
+  }
+  return match[1];
+};
+
+const isPublishable = (key) => typeof key === "string" && key.startsWith("sb_publishable_");
+
+const SUPABASE_API_KEY = isPublishable(VITE_SUPABASE_PUBLISHABLE_KEY)
+  ? VITE_SUPABASE_PUBLISHABLE_KEY
+  : isPublishable(VITE_SUPABASE_ANON_KEY)
+    ? VITE_SUPABASE_ANON_KEY
+    : readModernPublishableKey();
+
 const required = {
   VITE_SUPABASE_URL,
-  VITE_SUPABASE_ANON_KEY,
   TEST_USER_A_EMAIL,
   TEST_USER_A_PASSWORD,
   TEST_USER_B_EMAIL,
@@ -42,7 +78,7 @@ const signIn = async (label, email, password) => {
     {
       method: "POST",
       headers: {
-        apikey: VITE_SUPABASE_ANON_KEY,
+        apikey: SUPABASE_API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
@@ -50,7 +86,11 @@ const signIn = async (label, email, password) => {
   );
 
   if (!response.ok) {
-    console.error(`Unable to create a fresh session for ${label} (HTTP ${response.status})`);
+    const detail = await response.text().catch(() => "");
+    console.error(
+      `Unable to create a fresh session for ${label} (HTTP ${response.status})` +
+        (detail ? ` — ${detail.slice(0, 200)}` : ""),
+    );
     process.exit(1);
   }
 
@@ -79,7 +119,7 @@ const tables = [
 const requestRows = async (table, token, query) => {
   const response = await fetch(`${VITE_SUPABASE_URL}/rest/v1/${table}?${query}`, {
     headers: {
-      apikey: VITE_SUPABASE_ANON_KEY,
+      apikey: SUPABASE_API_KEY,
       Authorization: `Bearer ${token}`,
     },
   });
@@ -120,7 +160,7 @@ for (const table of tables) {
 
   const anonymousResponse = await fetch(
     `${VITE_SUPABASE_URL}/rest/v1/${table}?select=user_id&limit=1`,
-    { headers: { apikey: VITE_SUPABASE_ANON_KEY } },
+    { headers: { apikey: SUPABASE_API_KEY } },
   );
   if (anonymousResponse.ok) {
     console.error(`${table} is readable without an authenticated user`);

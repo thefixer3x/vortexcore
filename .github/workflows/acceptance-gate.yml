@@ -48,6 +48,7 @@ jobs:
           BASE_URL: https://me.vortexcore.app
           SUPABASE_DB_CONNECTION_STRING: ${{ secrets.SUPABASE_DB_CONNECTION_STRING }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           TEST_USER_A_EMAIL: ${{ secrets.TEST_USER_A_EMAIL }}
           TEST_USER_A_PASSWORD: ${{ secrets.TEST_USER_A_PASSWORD }}
