@@ -162,8 +162,39 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         }
 
         const card = await stripe.issuing.cards.create(cardData, idempotencyKey ? { idempotencyKey } : undefined);
+
+        // Record the card with the service role. Clients can only read
+        // virtual_cards (SubTrack S401 migration), and get_card /
+        // update_card / get_card_details trust this row for ownership, so it
+        // must never be client-writable. An idempotent retry returns the
+        // same Stripe card, so reuse its row instead of inserting twice.
+        const { data: existing } = await serviceClient
+          .from('virtual_cards')
+          .select('*')
+          .eq('card_id', card.id)
+          .eq('user_id', auth.userId)
+          .maybeSingle();
+        const { data: record, error: recordError } = existing
+          ? { data: existing, error: null }
+          : await serviceClient
+              .from('virtual_cards')
+              .insert({
+                user_id: auth.userId,
+                cardholder_id,
+                card_id: card.id,
+                last4: card.last4,
+                brand: card.brand,
+                status: card.status,
+                is_locked: card.status !== 'active',
+              })
+              .select()
+              .single();
+        if (recordError) {
+          console.error('create_card: failed to record card', recordError.message);
+          return new Response(JSON.stringify({ error: 'Card was created but could not be saved. Please contact support.', card_id: card.id }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
         return new Response(
-          JSON.stringify({ card }),
+          JSON.stringify({ card, record }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -204,8 +235,23 @@ serve(withAuthMiddleware(async (req, { auth, admin }) => {
         const updatedCard = await stripe.issuing.cards.update(updateCardId, {
           status,
         }, idempotencyKey ? { idempotencyKey } : undefined);
+        // Mirror Stripe's status into virtual_cards (service role only).
+        const { data: updatedRecord, error: updateRecordError } = await serviceClient
+          .from('virtual_cards')
+          .update({
+            status: updatedCard.status,
+            is_locked: updatedCard.status !== 'active',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('card_id', updateCardId)
+          .eq('user_id', auth.userId)
+          .select()
+          .single();
+        if (updateRecordError) {
+          console.error('update_card: failed to record status', updateRecordError.message);
+        }
         return new Response(
-          JSON.stringify({ card: updatedCard }),
+          JSON.stringify({ card: updatedCard, record: updatedRecord ?? null }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
