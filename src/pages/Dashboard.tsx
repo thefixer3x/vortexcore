@@ -18,7 +18,8 @@ import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 import { DashboardActionDialog } from "@/components/dashboard/DashboardActionDialog";
 import {
   type DashboardActionType,
-  DASHBOARD_ACTIONS
+  DASHBOARD_ACTIONS,
+  transactionDirection
 } from "@/components/dashboard/action-config";
 import { OBFAccountPanel } from "@/components/obf";
 import { ObligationsWidget } from "@/components/dashboard/ObligationsWidget";
@@ -78,9 +79,14 @@ const Dashboard = () => {
       const transactionType = transaction.type ?? "";
 
       const typeLabel: Record<string, string> = {
+        credit: "Credit",
+        debit: "Debit",
+        transfer: "Transfer",
+        refund: "Refund",
+        fee: "Fee",
+        reversal: "Reversal",
         deposit: "Deposit",
         withdrawal: "Withdrawal",
-        transfer: "Transfer",
         payment: "Payment"
       };
 
@@ -104,15 +110,7 @@ const Dashboard = () => {
           ? "reversed"
           : (transaction.status as "completed" | "pending" | "failed" | "reversed");
 
-      const type: "income" | "expense" = transaction.type === "deposit"
-        ? "income"
-        : transaction.type === "withdrawal"
-          ? "expense"
-          : transaction.type === "transfer"
-            ? (actionKey === "request" ? "income" : "expense")
-            : transaction.type === "payment"
-              ? "expense"
-              : "expense";
+      const type = transactionDirection(transaction.type, actionKey);
 
       return {
         id: transaction.id,
