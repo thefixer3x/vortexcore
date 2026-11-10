@@ -30,29 +30,17 @@ export async function createUserVirtualCard(
     const cardholder = await createCardholder(userId, name, email, billing);
     
     // Then create a virtual card for the cardholder
-    const card = await createVirtualCard(
+    const created = await createVirtualCard(
       cardholder.id, 
       currency,
       spendingLimit
     );
     
-    // Save the card to our database
-    const { data, error } = await supabase
-      .from('virtual_cards')
-      .insert({
-        user_id: userId,
-        cardholder_id: cardholder.id,
-        card_id: card.id,
-        last4: card.last4,
-        status: card.status,
-        is_locked: false
-      })
-      .select()
-      .single();
+    // The edge function saved the card row (service role); use it as is.
+    const { record } = created;
+    if (!record) throw new Error('Card was created but not saved');
     
-    if (error) throw error;
-    
-    return data;
+    return record;
   } catch (error) {
     console.error('Failed to create virtual card:', error);
     throw error;
@@ -123,25 +111,12 @@ export async function toggleCardLock(cardId: string, lock: boolean) {
     if (error) throw error;
     if (!dbCard?.card_id) throw new Error('Card is missing its Stripe identifier');
     
-    // Update the card status in Stripe
+    // Update the card in Stripe; the edge function mirrors the new status
+    // into virtual_cards (clients can only read that table).
     const newStatus = lock ? 'inactive' : 'active';
-    await updateCardStatus(dbCard.card_id, newStatus);
+    const { record } = await updateCardStatus(dbCard.card_id, newStatus);
     
-    // Update our database
-    const { data, error: updateError } = await supabase
-      .from('virtual_cards')
-      .update({
-        is_locked: lock,
-        status: newStatus,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', cardId)
-      .select()
-      .single();
-    
-    if (updateError) throw updateError;
-    
-    return data;
+    return record ?? { ...dbCard, is_locked: lock, status: newStatus };
   } catch (error) {
     console.error('Failed to toggle card lock:', error);
     throw error;

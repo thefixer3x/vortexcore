@@ -1,5 +1,19 @@
 import { supabase } from "@/integrations/supabase/client";
 
+/** A row of public.virtual_cards, as returned by the stripe edge function. */
+export interface VirtualCardRecord {
+  id: string;
+  user_id: string | null;
+  cardholder_id: string | null;
+  card_id: string | null;
+  last4: string | null;
+  brand: string | null;
+  status: string;
+  is_locked: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CardholderBillingAddress {
   line1: string;
   line2?: string;
@@ -50,7 +64,9 @@ export async function createVirtualCard(
     body: { action: 'create_card', data: payload }
   });
   if (error) throw error;
-  return data.card as StripeCard;
+  // The edge function records the card in virtual_cards with the service
+  // role (clients can only read that table) and returns the saved row.
+  return { card: data.card as StripeCard, record: data.record as VirtualCardRecord };
 }
 
 /**
@@ -72,7 +88,7 @@ export async function updateCardStatus(cardId: string, status: 'active' | 'inact
     body: { action: 'update_card', data: { card_id: cardId, status } }
   });
   if (error) throw error;
-  return data.card as StripeCard;
+  return { card: data.card as StripeCard, record: (data.record ?? null) as VirtualCardRecord | null };
 }
 
 /**
