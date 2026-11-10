@@ -8,6 +8,10 @@ import {
 
 export type DashboardActionType = "send" | "request" | "pay_bills" | "top_up";
 
+// Must match the vortex_transactions_type_check constraint:
+// credit, debit, transfer, refund, fee, reversal.
+export type LedgerTransactionType = "credit" | "debit" | "transfer";
+
 export interface DashboardActionConfig {
   key: DashboardActionType;
   label: string;
@@ -16,7 +20,7 @@ export interface DashboardActionConfig {
   gradient: string;
   iconBg: string;
   iconColor: string;
-  transactionType: "deposit" | "withdrawal" | "transfer" | "payment";
+  transactionType: LedgerTransactionType;
   defaultStatus: "pending" | "completed";
   category: string;
   counterpartyLabel: string;
@@ -48,7 +52,7 @@ export const DASHBOARD_ACTIONS: Record<DashboardActionType, DashboardActionConfi
     gradient: "from-green-500 to-green-600",
     iconBg: "bg-green-100 dark:bg-green-900/20",
     iconColor: "text-green-600 dark:text-green-400",
-    transactionType: "deposit",
+    transactionType: "credit",
     defaultStatus: "pending",
     category: "Request",
     counterpartyLabel: "From",
@@ -63,7 +67,7 @@ export const DASHBOARD_ACTIONS: Record<DashboardActionType, DashboardActionConfi
     gradient: "from-purple-500 to-purple-600",
     iconBg: "bg-purple-100 dark:bg-purple-900/20",
     iconColor: "text-purple-600 dark:text-purple-400",
-    transactionType: "payment",
+    transactionType: "debit",
     defaultStatus: "completed",
     category: "Bills",
     counterpartyLabel: "Biller",
@@ -78,7 +82,7 @@ export const DASHBOARD_ACTIONS: Record<DashboardActionType, DashboardActionConfi
     gradient: "from-orange-500 to-orange-600",
     iconBg: "bg-orange-100 dark:bg-orange-900/20",
     iconColor: "text-orange-600 dark:text-orange-400",
-    transactionType: "deposit",
+    transactionType: "debit",
     defaultStatus: "completed",
     category: "Top Up",
     counterpartyLabel: "Provider",
@@ -94,3 +98,15 @@ export const DASHBOARD_ACTION_ORDER: DashboardActionType[] = [
   "top_up"
 ];
 
+
+const INCOME_TYPES = new Set(["credit", "refund", "reversal", "deposit"]);
+
+// Whether a stored transaction adds to or takes from the user. A transfer is
+// income only when it was a money request; "deposit" covers legacy rows.
+export function transactionDirection(
+  type: string | null | undefined,
+  actionKey?: string
+): "income" | "expense" {
+  if (type === "transfer") return actionKey === "request" ? "income" : "expense";
+  return INCOME_TYPES.has(type ?? "") ? "income" : "expense";
+}
